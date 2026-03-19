@@ -3,6 +3,7 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
+import SafeImage from '@/components/Common/SafeImage';
 import { usePathname, useRouter } from 'next/navigation';
 import { Search, ShoppingCart, Menu, X, ChevronDown, Phone, Mail, Home, MessageCircle, Loader2, Tag } from 'lucide-react';
 import { useAppSelector, useAppDispatch } from '@/store/hooks';
@@ -17,51 +18,117 @@ import ThemeToggle from '@/components/ThemeToggle/ThemeToggle';
 
 const categories = [
   {
-    name: 'Marketing Materials',
+    name: 'T-Shirts',
+    slug: 'tshirts',
     items: [
-      { name: 'Business Cards', link: '/products?category=cards' },
-      { name: 'Flyers & Leaflets', link: '/products?category=printing' },
-      { name: 'Brochures', link: '/products?category=printing' },
-      { name: 'Posters', link: '/products?category=printing' },
+      { name: 'Dry Fit T-Shirts', link: '/products?category=tshirts&sub=dry-fit' },
+      { name: 'Cotton T-Shirts', link: '/products?category=tshirts&sub=cotton' },
+      { name: 'Polyester T-Shirts', link: '/products?category=tshirts&sub=polyester' },
+      { name: 'Cotton + Polyester T-Shirts', link: '/products?category=tshirts&sub=cotton-polyester' },
+      { name: 'Sports Jersey', link: '/products?category=tshirts&sub=sports-jersey' },
+      { name: 'Promotional T-Shirts', link: '/products?category=tshirts&sub=promotional' },
+      { name: 'Custom T-Shirts', link: '/products?category=tshirts&sub=custom' },
+      { name: 'Oversized T-Shirts', link: '/products?category=tshirts&sub=oversized' },
+      { name: 'Lycra T-Shirts', link: '/products?category=tshirts&sub=lycra' },
     ]
   },
   {
-    name: 'Clothing & Bags',
+    name: 'Bags',
+    slug: 'bags',
     items: [
-      { name: 'T-Shirts', link: '/products?category=tshirts' },
-      { name: 'Hoodies & Sweatshirts', link: '/products?category=sweatshirts' },
-      { name: 'Caps & Hats', link: '/products?category=caps' },
-      { name: 'Bags & Totes', link: '/products?category=bags' },
+      { name: 'School Bags', link: '/products?category=bags&sub=school' },
+      { name: 'Laptop Bags', link: '/products?category=bags&sub=laptop' },
+      { name: 'Office Bags', link: '/products?category=bags&sub=office' },
+      { name: 'Gym Bags', link: '/products?category=bags&sub=gym' },
+      { name: 'Corporate Bags', link: '/products?category=bags&sub=corporate' },
+      { name: 'Food Delivery Bags', link: '/products?category=bags&sub=food-delivery' },
+      { name: 'Cotton Bags', link: '/products?category=bags&sub=cotton' },
+      { name: 'File & Folder Bags', link: '/products?category=bags&sub=file-folder' },
     ]
   },
   {
-    name: 'Gifts & Accessories',
+    name: 'Caps',
+    slug: 'caps',
     items: [
-      { name: 'Mugs & Drinkware', link: '/products?category=mugs' },
-      { name: 'Custom Gifts', link: '/products?category=gifts' },
-      { name: 'Promotional Items', link: '/products?category=gifts' },
+      { name: 'Cotton Caps', link: '/products?category=caps&sub=cotton' },
+      { name: 'Cotton & Polyester Caps', link: '/products?category=caps&sub=cotton-polyester' },
+      { name: 'Polyester Caps', link: '/products?category=caps&sub=polyester' },
+      { name: 'Promotional & Custom Caps', link: '/products?category=caps&sub=promotional-custom' },
+      { name: 'Hats', link: '/products?category=caps&sub=hats' },
+      { name: 'Tennis Caps', link: '/products?category=caps&sub=tennis' },
+      { name: 'Sports Caps', link: '/products?category=caps&sub=sports' },
+      { name: 'Corduroy Fabric Caps', link: '/products?category=caps&sub=corduroy' },
+      { name: 'Denim Caps', link: '/products?category=caps&sub=denim' },
+      { name: 'Kids Caps', link: '/products?category=caps&sub=kids' },
+      { name: 'Imported Fabric Caps', link: '/products?category=caps&sub=imported' },
     ]
   },
   {
-    name: 'Uniforms',
+    name: 'Sweatshirts & Hoodies',
+    slug: 'sweatshirts',
     items: [
-      { name: 'School Uniforms', link: '/products?category=uniforms' },
-      { name: 'Staff Uniforms', link: '/products?category=uniforms' },
-      { name: 'Sports Uniforms', link: '/products?category=uniforms' },
+      { name: 'Jackets', link: '/products?category=sweatshirts&sub=jackets' },
+      { name: 'Cotton Jackets', link: '/products?category=sweatshirts&sub=cotton-jackets' },
+      { name: 'Sweatshirts & Hoodies', link: '/products?category=sweatshirts&sub=sweatshirts-hoodies' },
+      { name: 'Spun-Spun Sweatshirts & Hoodies', link: '/products?category=sweatshirts&sub=spun-spun' },
+      { name: 'Polyester Sweatshirts & Hoodies', link: '/products?category=sweatshirts&sub=polyester' },
+      { name: 'Cotton & Polyester Sweatshirts & Hoodies', link: '/products?category=sweatshirts&sub=cotton-polyester' },
+    ]
+  },
+  {
+    name: 'Lower & Shorts',
+    slug: 'lowers',
+    items: [
+      { name: 'Dot Knit Fabric Shorts & Lower', link: '/products?category=lowers&sub=dot-knit' },
+      { name: 'Nirmal Material Fabric Lower & Shorts', link: '/products?category=lowers&sub=nirmal' },
+      { name: 'Raisenet Lower & Shorts', link: '/products?category=lowers&sub=raisenet' },
+      { name: 'Dry Fit Lower & Shorts', link: '/products?category=lowers&sub=dry-fit' },
+      { name: 'Cotton Lower & Shorts', link: '/products?category=lowers&sub=cotton' },
+      { name: 'NS Lower & Shorts', link: '/products?category=lowers&sub=ns' },
+    ]
+  },
+  {
+    name: 'School & Office Uniform',
+    slug: 'uniforms',
+    items: [
+      { name: 'School Uniform & Dress', link: '/products?category=uniforms&sub=school' },
+      { name: 'Office Employee Uniform & Dress', link: '/products?category=uniforms&sub=office' },
+      { name: 'Custom Uniforms', link: '/products?category=uniforms&sub=custom' },
+    ]
+  },
+  {
+    name: 'Printing & Embroidery',
+    slug: 'printing',
+    items: [
+      { name: 'Screen Printing', link: '/products?category=printing&sub=screen' },
+      { name: 'TF Printing', link: '/products?category=printing&sub=tf' },
+      { name: 'Digital Printing', link: '/products?category=printing&sub=digital' },
+      { name: 'Sublimation Printing', link: '/products?category=printing&sub=sublimation' },
+      { name: 'Embroidery', link: '/products?category=printing&sub=embroidery' },
+    ]
+  },
+  {
+    name: 'More',
+    slug: '',
+    items: [
+      { name: 'Apron', link: '/products?category=apron' },
+      { name: 'Chef Coat', link: '/products?category=chef-coat' },
+      { name: 'Raincoats', link: '/products?category=raincoats' },
     ]
   },
 ];
 
 const FLAT_CATEGORIES = [
   { name: 'T-Shirts', slug: 'tshirts' },
-  { name: 'Hoodies & Sweatshirts', slug: 'sweatshirts' },
-  { name: 'Caps & Hats', slug: 'caps' },
-  { name: 'Bags & Totes', slug: 'bags' },
-  { name: 'Mugs & Drinkware', slug: 'mugs' },
-  { name: 'Custom Gifts', slug: 'gifts' },
-  { name: 'Business Cards', slug: 'cards' },
-  { name: 'Printing', slug: 'printing' },
-  { name: 'Uniforms', slug: 'uniforms' },
+  { name: 'Bags', slug: 'bags' },
+  { name: 'Caps', slug: 'caps' },
+  { name: 'Sweatshirts & Hoodies', slug: 'sweatshirts' },
+  { name: 'Lower & Shorts', slug: 'lowers' },
+  { name: 'School & Office Uniform', slug: 'uniforms' },
+  { name: 'Printing & Embroidery', slug: 'printing' },
+  { name: 'Apron', slug: 'apron' },
+  { name: 'Chef Coat', slug: 'chef-coat' },
+  { name: 'Raincoats', slug: 'raincoats' },
 ];
 
 function SearchBox({
@@ -148,7 +215,7 @@ function SearchBox({
                   className="w-full flex items-center gap-3 px-4 py-3 hover:bg-theme-bg-soft dark:hover:bg-[#26211A] transition-colors text-left">
                   {product.image ? (
                     <div className="relative w-10 h-10 rounded-lg overflow-hidden flex-shrink-0 bg-theme-bg-soft">
-                      <Image src={product.image} alt={product.name} fill className="object-cover" />
+                      <SafeImage src={product.image} alt={product.name} fill className="object-contain" />
                     </div>
                   ) : (
                     <div className="w-10 h-10 rounded-lg bg-theme-bg-soft flex-shrink-0" />
@@ -377,7 +444,7 @@ export default function VistaprintHeader() {
 
           {/* Desktop Navigation */}
           <nav className="hidden lg:block border-t border-theme-border">
-            <ul className="flex items-center gap-8 py-3">
+            <ul className="flex items-center gap-6 py-3">
               <li>
                 <Link href="/products" className={`text-sm font-semibold transition-colors ${
                   isProductsPage ? 'text-primary' : 'text-theme-text-secondary hover:text-primary'
@@ -387,14 +454,20 @@ export default function VistaprintHeader() {
                 <li key={idx} className="relative"
                   onMouseEnter={() => setActiveDropdown(category.name)}
                   onMouseLeave={() => setActiveDropdown(null)}>
-                  <button className="flex items-center gap-1 text-sm font-medium text-theme-text-secondary hover:text-primary transition-colors py-2">
-                    {category.name}<ChevronDown className="w-4 h-4" />
-                  </button>
+                  {category.slug ? (
+                    <Link href={`/products?category=${category.slug}`} className="flex items-center gap-1 text-sm font-medium text-theme-text-secondary hover:text-primary transition-colors py-2">
+                      {category.name}<ChevronDown className="w-4 h-4" />
+                    </Link>
+                  ) : (
+                    <button className="flex items-center gap-1 text-sm font-medium text-theme-text-secondary hover:text-primary transition-colors py-2">
+                      {category.name}<ChevronDown className="w-4 h-4" />
+                    </button>
+                  )}
                   {activeDropdown === category.name && (
-                    <div className="absolute top-full left-0 mt-0 bg-theme-bg dark:bg-[#1E1A14] border border-theme-border shadow-lg dark:shadow-[0_8px_24px_rgba(0,0,0,0.4)] rounded-lg min-w-[200px] py-2">
+                    <div className="absolute top-full left-0 mt-0 bg-theme-bg dark:bg-[#222222] border border-theme-border shadow-lg dark:shadow-[0_8px_24px_rgba(0,0,0,0.4)] rounded-lg min-w-[240px] py-2 max-h-[400px] overflow-y-auto">
                       {category.items.map((item, i) => (
                         <Link key={i} href={item.link}
-                          className="block px-4 py-2 text-sm text-theme-text-secondary hover:text-primary hover:bg-theme-bg-soft dark:hover:bg-[#26211A] transition-colors">
+                          className="block px-4 py-2 text-sm text-theme-text-secondary hover:text-primary hover:bg-theme-bg-soft dark:hover:bg-[#2C2C2C] transition-colors">
                           {item.name}
                         </Link>
                       ))}
@@ -406,6 +479,28 @@ export default function VistaprintHeader() {
                 <Link href="/blog" className={`text-sm font-medium transition-colors ${
                   isBlogPage ? 'text-primary' : 'text-theme-text-secondary hover:text-primary'
                 }`}>Blog</Link>
+              </li>
+              <li className="ml-auto relative"
+                onMouseEnter={() => setActiveDropdown('custom-cta')}
+                onMouseLeave={() => setActiveDropdown(null)}>
+                <button className="group relative px-3 py-1.5 text-xs font-bold uppercase tracking-wide text-white rounded-full bg-gradient-to-r from-primary to-orange-500 shadow-[0_0_12px_rgba(249,115,22,0.4)] hover:shadow-[0_0_20px_rgba(249,115,22,0.6)] hover:scale-105 active:scale-95 transition-all duration-200">
+                  <span className="absolute inset-0 rounded-full bg-gradient-to-r from-primary to-orange-500 animate-pulse opacity-30" />
+                  <span className="relative">Customize</span>
+                </button>
+                {activeDropdown === 'custom-cta' && (
+                  <div className="absolute top-full right-0 mt-2 bg-theme-bg dark:bg-[#222222] border border-theme-border shadow-lg dark:shadow-[0_8px_24px_rgba(0,0,0,0.4)] rounded-lg min-w-[200px] py-2">
+                    <a href="https://wa.me/919529626262?text=Hello%2C%20I%20want%20to%20create%20a%20custom%20product." target="_blank" rel="noopener noreferrer"
+                      className="flex items-center gap-3 px-4 py-2.5 text-sm text-theme-text-secondary hover:text-green-500 hover:bg-theme-bg-soft dark:hover:bg-[#2C2C2C] transition-colors">
+                      <MessageCircle className="w-4 h-4 text-green-500" />
+                      WhatsApp
+                    </a>
+                    <a href="mailto:info@thecrosswild.com?subject=Custom%20Product%20Inquiry&body=Hello%2C%20I%20want%20to%20create%20a%20custom%20product.%20Please%20share%20the%20details." target="_blank" rel="noopener noreferrer"
+                      className="flex items-center gap-3 px-4 py-2.5 text-sm text-theme-text-secondary hover:text-primary hover:bg-theme-bg-soft dark:hover:bg-[#2C2C2C] transition-colors">
+                      <Mail className="w-4 h-4 text-primary" />
+                      Email Us
+                    </a>
+                  </div>
+                )}
               </li>
             </ul>
           </nav>
@@ -421,21 +516,54 @@ export default function VistaprintHeader() {
                 className={`block py-2 font-semibold transition-colors ${
                   isProductsPage ? 'text-primary' : 'text-theme-text hover:text-primary'
                 }`}>All Products</Link>
-              {categories.map((category, idx) => (
-                <div key={idx} className="border-t border-theme-border pt-2">
-                  <div className="font-semibold mb-2 text-theme-text">{category.name}</div>
-                  {category.items.map((item, i) => (
-                    <Link key={i} href={item.link} onClick={() => dispatch(closeMenu())}
-                      className="block py-1.5 pl-4 text-sm text-theme-text-secondary hover:text-primary transition-colors">
-                      {item.name}
-                    </Link>
-                  ))}
-                </div>
-              ))}
+              {categories.map((category, idx) => {
+                const isExpanded = activeDropdown === `mobile-${category.name}`;
+                return (
+                  <div key={idx} className="border-t border-theme-border pt-2">
+                    <button
+                      onClick={() => setActiveDropdown(isExpanded ? null : `mobile-${category.name}`)}
+                      className="w-full flex items-center justify-between py-2 font-semibold text-theme-text hover:text-primary transition-colors"
+                    >
+                      {category.name}
+                      <ChevronDown className={`w-4 h-4 transition-transform ${isExpanded ? 'rotate-180' : ''}`} />
+                    </button>
+                    <div className={`overflow-hidden transition-all duration-300 ease-in-out ${
+                      isExpanded ? 'max-h-[500px] opacity-100' : 'max-h-0 opacity-0'
+                    }`}>
+                      {category.slug && (
+                        <Link href={`/products?category=${category.slug}`} onClick={() => dispatch(closeMenu())}
+                          className="block py-1.5 pl-4 text-sm font-semibold text-primary hover:text-primary-dark transition-colors">
+                          View All {category.name}
+                        </Link>
+                      )}
+                      {category.items.map((item, i) => (
+                        <Link key={i} href={item.link} onClick={() => dispatch(closeMenu())}
+                          className="block py-1.5 pl-4 text-sm text-theme-text-secondary hover:text-primary transition-colors">
+                          {item.name}
+                        </Link>
+                      ))}
+                    </div>
+                  </div>
+                );
+              })}
+
               <Link href="/blog" onClick={() => dispatch(closeMenu())}
                 className={`block py-2 font-medium border-t border-theme-border pt-4 transition-colors ${
                   isBlogPage ? 'text-primary' : 'text-theme-text hover:text-primary'
                 }`}>Blog</Link>
+            </div>
+
+            {/* Custom Product CTA — compact */}
+            <div className="border-t border-theme-border pt-3 flex items-center gap-2">
+              <span className="text-xs font-bold uppercase tracking-wide text-theme-text-muted">Customize</span>
+              <a href="https://wa.me/919529626262?text=Hello%2C%20I%20want%20to%20create%20a%20custom%20product." target="_blank" rel="noopener noreferrer"
+                className="flex items-center gap-1.5 px-3 py-2 bg-green-500 text-white rounded-full hover:bg-green-600 transition-colors text-xs font-semibold">
+                <MessageCircle className="w-3.5 h-3.5" />WhatsApp
+              </a>
+              <a href="mailto:info@thecrosswild.com?subject=Custom%20Product%20Inquiry&body=Hello%2C%20I%20want%20to%20create%20a%20custom%20product.%20Please%20share%20the%20details."
+                className="flex items-center gap-1.5 px-3 py-2 bg-gradient-to-r from-primary to-orange-500 text-white rounded-full hover:shadow-[0_0_12px_rgba(249,115,22,0.4)] transition-all text-xs font-semibold">
+                <Mail className="w-3.5 h-3.5" />Email
+              </a>
             </div>
 
             <div className="flex gap-2 border-t border-theme-border pt-4">
@@ -452,7 +580,7 @@ export default function VistaprintHeader() {
             <div className="flex gap-2 pt-2">
               <Link href="/" onClick={() => dispatch(closeMenu())}
                 className={`flex-1 flex items-center justify-center gap-2 py-3 rounded-lg transition-colors ${
-                  isHomePage ? 'bg-primary text-white' : 'border border-theme-border text-theme-text hover:bg-theme-bg-soft dark:hover:bg-[#26211A]'
+                  isHomePage ? 'bg-primary text-white' : 'border border-theme-border text-theme-text hover:bg-theme-bg-soft dark:hover:bg-[#2C2C2C]'
                 }`}>
                 <Home className="w-5 h-5" />Home
               </Link>

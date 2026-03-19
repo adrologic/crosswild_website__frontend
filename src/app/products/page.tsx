@@ -4,7 +4,7 @@ import { useState, useMemo, useEffect, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { productCategories, getCategoryById } from '@/data/products';
 import { productsAPI, type Product } from '@/lib/api';
-import Image from 'next/image';
+import SafeImage from '@/components/Common/SafeImage';
 import Link from 'next/link';
 import {
   Search,
@@ -48,14 +48,15 @@ const getEmailLink = (product: Product) => {
 const formatCategoryName = (category: string) => {
   const names: Record<string, string> = {
     tshirts: 'T-Shirts',
-    sweatshirts: 'Sweatshirts',
-    caps: 'Caps',
     bags: 'Bags',
-    mugs: 'Mugs',
-    cards: 'Business Cards',
-    printing: 'Printing',
-    uniforms: 'Uniforms',
-    gifts: 'Gifts',
+    caps: 'Caps',
+    sweatshirts: 'Sweatshirts & Hoodies',
+    lowers: 'Lower & Shorts',
+    uniforms: 'School & Office Uniform',
+    printing: 'Printing & Embroidery',
+    apron: 'Apron',
+    'chef-coat': 'Chef Coat',
+    raincoats: 'Raincoats',
   };
   return names[category] || category;
 };
@@ -157,11 +158,12 @@ function ProductsContent() {
       <Link href={`/products/${product.id}`} className="block relative">
         <div className="relative aspect-[4/3] bg-gradient-to-br from-gray-100 to-gray-50 dark:from-gray-700 dark:to-gray-800 overflow-hidden">
           {product.image ? (
-            <Image
+            <SafeImage
               src={product.image}
               alt={product.name}
               fill
-              className="object-cover group-hover:scale-105 transition-transform duration-500"
+              className="object-contain p-2 group-hover:scale-105 transition-transform duration-500"
+              sizes="(max-width: 768px) 50vw, 25vw"
             />
           ) : (
             <div className="absolute inset-0 flex items-center justify-center">
@@ -252,11 +254,12 @@ function ProductsContent() {
       <Link href={`/products/${product.id}`} className="relative w-32 sm:w-44 md:w-56 flex-shrink-0">
         <div className="absolute inset-0 bg-gradient-to-br from-gray-100 to-gray-50 dark:from-gray-700 dark:to-gray-800">
           {product.image ? (
-            <Image
+            <SafeImage
               src={product.image}
               alt={product.name}
               fill
-              className="object-cover group-hover:scale-105 transition-transform duration-500"
+              className="object-contain p-2 group-hover:scale-105 transition-transform duration-500"
+              sizes="(max-width: 768px) 30vw, 20vw"
             />
           ) : (
             <div className="absolute inset-0 flex items-center justify-center">

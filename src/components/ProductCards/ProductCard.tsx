@@ -1,15 +1,16 @@
-import Image from "next/image";
+import SafeImage from "@/components/Common/SafeImage";
 import Link from "next/link";
 
 const ProductCard = ({ product }) => {
   return (
     <div className="bg-theme-bg-card dark:bg-[#26211A] rounded-lg shadow-md dark:shadow-[0_2px_8px_rgba(0,0,0,0.4)] overflow-hidden hover:shadow-lg dark:hover:shadow-[0_4px_16px_rgba(0,0,0,0.5)] transition-shadow duration-300 border border-theme-border">
-      <div className="relative h-64 w-full">
-        <Image
+      <div className="relative h-64 w-full bg-theme-bg-soft">
+        <SafeImage
           src={product.image}
           alt={product.name}
-          layout="fill"
-          objectFit="cover"
+          fill
+          className="object-contain p-2"
+          sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
         />
       </div>
       <div className="p-4">

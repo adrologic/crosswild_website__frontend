@@ -2,7 +2,7 @@
 
 import React, { useMemo } from 'react';
 import Link from 'next/link';
-import Image from 'next/image';
+import SafeImage from '@/components/Common/SafeImage';
 import { Product } from '@/lib/api';
 import { useProducts } from '@/hooks/useProducts';
 import { Star, Zap, ArrowRight, Loader2, MessageCircle, Mail, ChevronRight } from 'lucide-react';
@@ -75,14 +75,15 @@ export default function TrendingProducts() {
             >
               {/* Image Container */}
               {index === 0 ? (
-                <div className="relative overflow-hidden h-52 sm:h-96 lg:h-full">
+                <div className="relative overflow-hidden h-52 sm:h-96 lg:h-full bg-theme-bg-soft">
                   <Link href={`/products/${product.id}`} className="block absolute inset-0">
                     {product.image && (
-                      <Image
+                      <SafeImage
                         src={product.image}
                         alt={product.name}
                         fill
-                        className="object-cover group-hover:scale-110 transition-transform duration-500"
+                        className="object-contain p-3 group-hover:scale-110 transition-transform duration-500"
+                        sizes="(max-width: 768px) 100vw, 66vw"
                       />
                     )}
                     {/* Gradient Overlay */}
@@ -141,14 +142,15 @@ export default function TrendingProducts() {
               ) : (
                 <Link
                   href={`/products/${product.id}`}
-                  className="block relative overflow-hidden h-40 sm:h-64"
+                  className="block relative overflow-hidden h-40 sm:h-64 bg-theme-bg-soft"
                 >
                   {product.image && (
                     <Image
                       src={product.image}
                       alt={product.name}
                       fill
-                      className="object-cover group-hover:scale-110 transition-transform duration-500"
+                      className="object-contain p-2 group-hover:scale-110 transition-transform duration-500"
+                      sizes="(max-width: 768px) 50vw, 33vw"
                     />
                   )}
 

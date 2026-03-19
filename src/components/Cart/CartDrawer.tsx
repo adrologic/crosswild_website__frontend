@@ -1,7 +1,7 @@
 "use client";
 
 import React from 'react';
-import Image from 'next/image';
+import SafeImage from '@/components/Common/SafeImage';
 import Link from 'next/link';
 import { X, ShoppingCart, Plus, Minus, Trash2, MessageCircle, Mail } from 'lucide-react';
 import { useAppSelector, useAppDispatch } from '@/store/hooks';
@@ -103,7 +103,7 @@ export default function CartDrawer() {
                   className="flex gap-3 p-3 bg-theme-bg-soft rounded-xl border border-theme-border"
                 >
                   <div className="relative w-20 h-20 flex-shrink-0 rounded-lg overflow-hidden bg-theme-bg-card">
-                    <Image src={item.image} alt={item.name} fill className="object-cover" />
+                    <SafeImage src={item.image} alt={item.name} fill className="object-contain p-1" />
                   </div>
 
                   <div className="flex-1 min-w-0">

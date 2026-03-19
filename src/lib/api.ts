@@ -10,12 +10,16 @@ interface Product {
   id: string; // For compatibility with frontend
   name: string;
   title?: string;
+  tagline?: string;
   description: string;
+  shortDescription?: string;
+  sections?: Array<{ title: string; content: string }>;
   price: number;
   stock: number;
   category: string;
   image: string;
-  subImages?: string[]; // Additional images
+  imageTrackingCode?: string;
+  subImages?: Array<string | { url: string; trackingCode?: string; publicId?: string }>;
   images?: string[]; // Legacy: Multiple images
   sizes?: string[];
   colors?: string[];
@@ -47,7 +51,12 @@ interface Product {
     hasColors: boolean;
     customSizes?: string[];
   };
+  productCategories?: Array<{
+    category: string;
+    subcategories: string[];
+  }>;
   details?: Record<string, any>;
+  customFields?: Array<{ label: string; value: string }>;
 }
 
 interface Blog {

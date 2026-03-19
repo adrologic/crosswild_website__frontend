@@ -2,7 +2,7 @@
 
 import React, { useState, useRef, useCallback, memo } from "react";
 import Link from "next/link";
-import Image from "next/image";
+import SafeImage from "@/components/Common/SafeImage";
 import { ChevronLeft, ChevronRight, Star, Award, Sparkles, Loader2, MessageCircle, Mail } from "lucide-react";
 import { useProducts } from "@/hooks/useProducts";
 import { Product } from "@/lib/api";
@@ -46,11 +46,11 @@ const ProductCard = memo(({ product }: { product: Product }) => (
       {/* Image Container */}
       <Link href={`/products/${product.id}`} className="block relative h-72 bg-gray-50 dark:bg-gray-700 overflow-hidden">
         {product.image && (
-          <Image
+          <SafeImage
             src={product.image}
             alt={product.name}
             fill
-            className="object-cover group-hover:scale-110 transition-transform duration-500"
+            className="object-contain p-2 group-hover:scale-110 transition-transform duration-500"
             sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
           />
         )}

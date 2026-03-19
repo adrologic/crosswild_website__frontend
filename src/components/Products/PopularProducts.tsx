@@ -2,7 +2,7 @@
 
 import React from 'react';
 import Link from 'next/link';
-import Image from 'next/image';
+import SafeImage from '@/components/Common/SafeImage';
 import { Product } from '@/lib/api';
 import { useProducts } from '@/hooks/useProducts';
 import { Star, TrendingUp, Eye, Loader2, MessageCircle, Mail, ChevronRight } from 'lucide-react';
@@ -68,11 +68,12 @@ export default function PopularProducts() {
               {/* Image Container */}
               <Link href={`/products/${product.id}`} className="block relative h-40 sm:h-64 bg-theme-bg-soft overflow-hidden">
                 {product.image && (
-                  <Image
+                  <SafeImage
                     src={product.image}
                     alt={product.name}
                     fill
-                    className="object-cover group-hover:scale-110 transition-transform duration-500"
+                    className="object-contain p-2 group-hover:scale-110 transition-transform duration-500"
+                    sizes="(max-width: 768px) 50vw, 25vw"
                   />
                 )}
 

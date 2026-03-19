@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import { useAppSelector, useAppDispatch } from '@/store/hooks';
 import { selectCartItems, selectTotalPrice, clearCart } from '@/store/slices/cartSlice';
-import Image from 'next/image';
+import SafeImage from '@/components/Common/SafeImage';
 import Link from 'next/link';
 import { ArrowLeft, Package, Truck, CheckCircle, Mail, MessageCircle } from 'lucide-react';
 import { ordersAPI } from '@/lib/api';
@@ -443,11 +443,11 @@ export default function CheckoutPage() {
                 {cart.map((item, index) => (
                   <div key={index} className="flex gap-3">
                     <div className="relative w-16 h-16 flex-shrink-0 rounded-md overflow-hidden bg-gray-100">
-                      <Image
+                      <SafeImage
                         src={item.image}
                         alt={item.name}
                         fill
-                        className="object-cover"
+                        className="object-contain p-1"
                       />
                     </div>
                     <div className="flex-1 min-w-0">

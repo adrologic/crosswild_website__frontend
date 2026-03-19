@@ -49,11 +49,11 @@ const ProductCard = ({ product }) => (
     </div>
 
     {/* Product Image */}
-    <div className="h-40 sm:h-52 w-full overflow-hidden">
+    <div className="h-40 sm:h-52 w-full overflow-hidden bg-gray-100 dark:bg-gray-800">
       <img
         src={product.imageUrl}
         alt={product.title}
-        className="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
+        className="w-full h-full object-contain p-2 transition-transform duration-500 hover:scale-105"
       />
     </div>
 
