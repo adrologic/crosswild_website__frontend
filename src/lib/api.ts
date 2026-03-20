@@ -3,7 +3,7 @@
 const API_URL =
   typeof window !== 'undefined'
     ? '/api'
-    : `${process.env.BACKEND_URL || 'http://localhost:5001'}/api`;
+    : `${process.env.BACKEND_URL || 'https://crosswild-backend-p5l3.onrender.com'}/api`;
 
 interface Product {
   _id: string;

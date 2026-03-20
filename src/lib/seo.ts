@@ -1,6 +1,6 @@
 import { Metadata } from 'next';
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5001/api';
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://crosswild-backend-p5l3.onrender.com/api';
 
 // Default SEO values (fallback if API fails)
 const defaultSEO = {

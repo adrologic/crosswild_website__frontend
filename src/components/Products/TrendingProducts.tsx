@@ -145,7 +145,7 @@ export default function TrendingProducts() {
                   className="block relative overflow-hidden h-40 sm:h-64 bg-theme-bg-soft"
                 >
                   {product.image && (
-                    <Image
+                    <SafeImage
                       src={product.image}
                       alt={product.name}
                       fill
