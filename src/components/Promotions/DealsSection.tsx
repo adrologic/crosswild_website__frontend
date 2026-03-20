@@ -34,7 +34,7 @@ const deals = [
 
 export default function DealsSection() {
   return (
-    <section className="py-12 bg-theme-bg">
+    <section className="py-12 bg-theme-bg overflow-hidden">
       <div className="w-full px-6 lg:px-12">
         {/* Section Header */}
         <div className="text-center mb-8">

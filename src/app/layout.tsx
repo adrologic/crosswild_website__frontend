@@ -26,7 +26,7 @@ export default function RootLayout({
         <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
         <meta name="theme-color" content="#2563EB" />
       </head>
-      <body className={`bg-theme-bg text-theme-text transition-colors duration-200 ${inter.className}`}>
+      <body className={`overflow-x-hidden bg-theme-bg text-theme-text transition-colors duration-200 ${inter.className}`}>
         <Providers>
           <SEOHead />
           <VistaprintHeader />

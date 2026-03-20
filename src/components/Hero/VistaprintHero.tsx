@@ -133,8 +133,8 @@ export default function VistaprintHero() {
             </div>
 
             {/* Decorative Elements */}
-            <div className="absolute -top-4 -right-4 w-24 h-24 bg-yellow-300 rounded-full blur-2xl opacity-50"></div>
-            <div className="absolute -bottom-4 -left-4 w-32 h-32 bg-blue-300 rounded-full blur-2xl opacity-50"></div>
+            <div className="absolute -top-4 right-0 w-24 h-24 bg-yellow-300 rounded-full blur-2xl opacity-50"></div>
+            <div className="absolute -bottom-4 left-0 w-32 h-32 bg-blue-300 rounded-full blur-2xl opacity-50"></div>
           </div>
         </div>
       </div>
