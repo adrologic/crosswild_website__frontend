@@ -3,6 +3,11 @@
 import { useEffect, useState } from 'react';
 import Script from 'next/script';
 import { seoAPI, type GlobalSEO } from '@/lib/api';
+import {
+  generateLocalBusinessSchema,
+  generateBreadcrumbSchema,
+  generateFAQSchema,
+} from '@/lib/seo';
 
 interface SEOHeadProps {
   title?: string;
@@ -15,13 +20,18 @@ interface SEOHeadProps {
   noIndex?: boolean;
   noFollow?: boolean;
   structuredData?: object;
+  breadcrumbItems?: { name: string; url: string }[];
+  faqItems?: { question: string; answer: string }[];
 }
 
 export default function SEOHead({
   title,
   structuredData,
+  breadcrumbItems,
+  faqItems,
 }: SEOHeadProps) {
   const [globalSEO, setGlobalSEO] = useState<GlobalSEO | null>(null);
+  const [schemasData, setSchemasData] = useState<any>(null);
   const [isClient, setIsClient] = useState(false);
 
   useEffect(() => {
@@ -36,11 +46,24 @@ export default function SEOHead({
         const response = await seoAPI.getGlobalSettings();
         setGlobalSEO(response.settings);
       } catch (error) {
-        // Silently fail - SEO settings are optional
         console.log('SEO settings not available');
       }
     };
+
+    const loadSchemas = async () => {
+      try {
+        const response = await fetch('/api/seo/schemas');
+        if (response.ok) {
+          const data = await response.json();
+          setSchemasData(data);
+        }
+      } catch (error) {
+        // Schemas endpoint optional
+      }
+    };
+
     loadGlobalSEO();
+    loadSchemas();
   }, [isClient]);
 
   // Generate page title
@@ -54,6 +77,15 @@ export default function SEOHead({
       document.title = pageTitle;
     }
   }, [isClient, pageTitle]);
+
+  // Update favicon dynamically from admin panel
+  useEffect(() => {
+    if (!isClient || !globalSEO?.favicon) return;
+    const link = document.getElementById('favicon') as HTMLLinkElement || document.querySelector<HTMLLinkElement>('link[rel="icon"]');
+    if (link) {
+      link.href = globalSEO.favicon;
+    }
+  }, [isClient, globalSEO?.favicon]);
 
   // Don't render anything until client-side
   if (!isClient) {
@@ -112,7 +144,7 @@ export default function SEOHead({
         </Script>
       )}
 
-      {/* Structured Data */}
+      {/* Custom Structured Data */}
       {structuredData && (
         <Script
           id="structured-data"
@@ -151,12 +183,60 @@ export default function SEOHead({
           }}
         />
       )}
+
+      {/* LocalBusiness Schema */}
+      {globalSEO && (
+        <Script
+          id="local-business-schema"
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(generateLocalBusinessSchema(
+              schemasData?.localBusiness
+                ? { ...globalSEO, localBusiness: schemasData.localBusiness }
+                : globalSEO
+            )),
+          }}
+        />
+      )}
+
+      {/* Breadcrumb Schema */}
+      {breadcrumbItems && breadcrumbItems.length > 0 && (
+        <Script
+          id="breadcrumb-schema"
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(generateBreadcrumbSchema(breadcrumbItems)),
+          }}
+        />
+      )}
+
+      {/* FAQ Schema */}
+      {faqItems && faqItems.length > 0 && (
+        <Script
+          id="faq-schema"
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(generateFAQSchema(faqItems)),
+          }}
+        />
+      )}
+
+      {/* Dynamic FAQ from backend */}
+      {schemasData?.faqItems && schemasData.faqItems.length > 0 && !faqItems && (
+        <Script
+          id="faq-schema-backend"
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(generateFAQSchema(schemasData.faqItems)),
+          }}
+        />
+      )}
     </>
   );
 }
 
 // Product SEO component
-export function ProductSEO({ product }: { product: any }) {
+export function ProductSEO({ product, breadcrumbItems }: { product: any; breadcrumbItems?: { name: string; url: string }[] }) {
   const structuredData = {
     '@context': 'https://schema.org',
     '@type': 'Product',
@@ -173,6 +253,15 @@ export function ProductSEO({ product }: { product: any }) {
       priceCurrency: 'INR',
       price: product.price || 0,
     },
+    ...(product.reviews > 0 && product.rating > 0 ? {
+      aggregateRating: {
+        '@type': 'AggregateRating',
+        ratingValue: product.rating,
+        reviewCount: product.reviews,
+        bestRating: 5,
+        worstRating: 1,
+      },
+    } : {}),
   };
 
   return (
@@ -182,12 +271,13 @@ export function ProductSEO({ product }: { product: any }) {
       keywords={product.seo?.keywords || [product.name, product.category, 'custom printing']}
       ogImage={product.seo?.ogImage || product.image}
       structuredData={structuredData}
+      breadcrumbItems={breadcrumbItems}
     />
   );
 }
 
 // Blog SEO component
-export function BlogSEO({ blog }: { blog: any }) {
+export function BlogSEO({ blog, breadcrumbItems }: { blog: any; breadcrumbItems?: { name: string; url: string }[] }) {
   const structuredData = {
     '@context': 'https://schema.org',
     '@type': 'BlogPosting',
@@ -213,6 +303,7 @@ export function BlogSEO({ blog }: { blog: any }) {
       keywords={blog.seo?.keywords || blog.tags}
       ogImage={blog.seo?.ogImage || blog.image}
       structuredData={structuredData}
+      breadcrumbItems={breadcrumbItems}
     />
   );
 }

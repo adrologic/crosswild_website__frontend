@@ -1,8 +1,8 @@
-// Browser → relative /api (same origin, no CORS, proxied by Next.js rewrites)
-// SSR    → direct backend URL (server-to-server, no CORS)
+// Browser: use NEXT_PUBLIC_API_URL if set (dev), otherwise /api (production, proxied by Next.js rewrites)
+// SSR: use BACKEND_URL directly (server-to-server, no CORS)
 const API_URL =
   typeof window !== 'undefined'
-    ? '/api'
+    ? (process.env.NEXT_PUBLIC_API_URL || '/api')
     : `${process.env.BACKEND_URL || 'https://crosswild-backend-p5l3.onrender.com'}/api`;
 
 interface Product {

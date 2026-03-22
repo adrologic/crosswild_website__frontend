@@ -4,9 +4,22 @@ import Contact from "@/components/Contact";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Contact Page | Free Next.js Template for Startup and SaaS",
-  description: "This is Contact Page for Startup Nextjs Template",
-  // other metadata
+  title: "Contact Us - Get a Custom Merchandise Quote | The CrossWild",
+  description: "Contact The CrossWild for custom t-shirts, uniforms, and corporate merchandise. Get a free quote for bulk orders, printing, and embroidery services across India.",
+  keywords: "contact the crosswild, custom merchandise quote, bulk order inquiry, printing services India",
+  openGraph: {
+    title: "Contact Us - Get a Custom Merchandise Quote | The CrossWild",
+    description: "Contact us for custom t-shirts, uniforms, and corporate merchandise. Free quotes for bulk orders across India.",
+    type: "website",
+    url: "https://thecrosswild.com/contact",
+  },
+  alternates: {
+    canonical: "https://thecrosswild.com/contact",
+    languages: {
+      "en-IN": "https://thecrosswild.com/contact",
+      "x-default": "https://thecrosswild.com/contact",
+    },
+  },
 };
 
 const ContactPage = () => {

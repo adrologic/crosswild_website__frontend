@@ -1,6 +1,6 @@
 import { Metadata } from 'next';
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://crosswild-backend-p5l3.onrender.com/api';
+const API_URL = (process.env.BACKEND_URL || 'https://crosswild-backend-p5l3.onrender.com') + '/api';
 
 // Default SEO values (fallback if API fails)
 const defaultSEO = {
@@ -65,6 +65,7 @@ export async function generatePageMetadata(
   const noIndex = customData?.noIndex || pageSEO?.noIndex || false;
 
   const siteUrl = globalSEO.siteUrl || defaultSEO.siteUrl;
+  const canonicalUrl = pageSEO?.canonicalUrl || `${siteUrl}${path}`;
 
   return {
     title: {
@@ -78,7 +79,11 @@ export async function generatePageMetadata(
     publisher: globalSEO.siteName || defaultSEO.siteName,
     metadataBase: new URL(siteUrl),
     alternates: {
-      canonical: pageSEO?.canonicalUrl || `${siteUrl}${path}`,
+      canonical: canonicalUrl,
+      languages: {
+        'en-IN': canonicalUrl,
+        'x-default': canonicalUrl,
+      },
     },
     openGraph: {
       type: 'website',
@@ -252,7 +257,7 @@ export function generateOrganizationSchema(globalSEO: any) {
 }
 
 export function generateProductSchema(product: any, siteUrl: string) {
-  return {
+  const schema: any = {
     '@context': 'https://schema.org',
     '@type': 'Product',
     name: product.name,
@@ -270,6 +275,19 @@ export function generateProductSchema(product: any, siteUrl: string) {
       price: product.price || 0,
     },
   };
+
+  // Add aggregate rating if reviews exist
+  if (product.reviews && product.reviews > 0 && product.rating && product.rating > 0) {
+    schema.aggregateRating = {
+      '@type': 'AggregateRating',
+      ratingValue: product.rating,
+      reviewCount: product.reviews,
+      bestRating: 5,
+      worstRating: 1,
+    };
+  }
+
+  return schema;
 }
 
 export function generateBlogSchema(blog: any, siteUrl: string) {
@@ -292,3 +310,88 @@ export function generateBlogSchema(blog: any, siteUrl: string) {
     dateModified: blog.updatedAt,
   };
 }
+
+// Generate LocalBusiness JSON-LD schema
+export function generateLocalBusinessSchema(globalSEO: any) {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'LocalBusiness',
+    name: globalSEO.organizationSchema?.name || globalSEO.siteName || 'The CrossWild',
+    url: globalSEO.siteUrl || 'https://thecrosswild.com',
+    telephone: globalSEO.contactInfo?.phone,
+    email: globalSEO.contactInfo?.email,
+    image: globalSEO.organizationSchema?.logo,
+    description: globalSEO.organizationSchema?.description || globalSEO.defaultDescription,
+    priceRange: globalSEO.localBusiness?.priceRange || '₹₹',
+    openingHours: globalSEO.localBusiness?.openingHours || 'Mo-Sa 09:00-18:00',
+    address: globalSEO.contactInfo?.address ? {
+      '@type': 'PostalAddress',
+      streetAddress: globalSEO.contactInfo.address.street,
+      addressLocality: globalSEO.contactInfo.address.city,
+      addressRegion: globalSEO.contactInfo.address.state || 'India',
+      postalCode: globalSEO.contactInfo.address.postalCode,
+      addressCountry: 'IN',
+    } : undefined,
+    sameAs: [
+      globalSEO.socialLinks?.facebook,
+      globalSEO.socialLinks?.twitter,
+      globalSEO.socialLinks?.instagram,
+      globalSEO.socialLinks?.linkedin,
+      globalSEO.socialLinks?.youtube,
+    ].filter(Boolean),
+  };
+}
+
+// Generate BreadcrumbList JSON-LD schema
+export function generateBreadcrumbSchema(items: { name: string; url: string }[]) {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: items.map((item, index) => ({
+      '@type': 'ListItem',
+      position: index + 1,
+      name: item.name,
+      item: item.url,
+    })),
+  };
+}
+
+// Generate FAQPage JSON-LD schema
+export function generateFAQSchema(faqs: { question: string; answer: string }[]) {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: faqs.map((faq) => ({
+      '@type': 'Question',
+      name: faq.question,
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: faq.answer,
+      },
+    })),
+  };
+}
+
+// Default FAQ items for homepage and products page
+export const defaultFAQs = [
+  {
+    question: 'What is the minimum order quantity for custom merchandise?',
+    answer: 'Our minimum order quantity varies by product. For custom t-shirts, it starts at 10 pieces. For caps, bags, and other merchandise, the minimum is typically 25 pieces. Contact us for specific requirements.',
+  },
+  {
+    question: 'How long does delivery take for custom orders?',
+    answer: 'Standard delivery for custom orders takes 7-14 business days after design approval. Rush orders can be completed in 3-5 business days for an additional fee. Delivery time may vary based on order size and customization complexity.',
+  },
+  {
+    question: 'What customization options are available?',
+    answer: 'We offer screen printing, digital printing, sublimation printing, embroidery, and heat transfer. You can customize with your logo, brand colors, text, and artwork on t-shirts, caps, bags, uniforms, and more.',
+  },
+  {
+    question: 'What payment methods do you accept?',
+    answer: 'We accept all major payment methods including bank transfer (NEFT/RTGS), UPI, credit/debit cards, and cash on delivery for select orders. For bulk orders, we offer flexible payment terms with 50% advance.',
+  },
+  {
+    question: 'Do you offer bulk pricing discounts?',
+    answer: 'Yes, we offer tiered pricing with significant discounts for bulk orders. The more you order, the lower the per-unit cost. Contact us with your quantity requirements for a custom quote.',
+  },
+];

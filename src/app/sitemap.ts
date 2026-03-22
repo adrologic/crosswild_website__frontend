@@ -1,15 +1,18 @@
 import { MetadataRoute } from 'next';
 
-export default function sitemap(): MetadataRoute.Sitemap {
-  const baseUrl = 'https://thecrosswild.com';
+const API_URL = process.env.BACKEND_URL || 'https://crosswild-backend-p5l3.onrender.com';
+const baseUrl = 'https://thecrosswild.com';
 
-  const routes = [
+export const revalidate = 3600; // Refresh every hour
+
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
+  // Static routes (existing 18 pages)
+  const staticRoutes: MetadataRoute.Sitemap = [
     '',
     '/about',
     '/contact',
     '/blog',
-    '/blog-details',
-    '/blog-sidebar',
+    '/products',
     '/image-gallery',
     '/our_process',
     '/t-shirt_manufacturing',
@@ -22,12 +25,52 @@ export default function sitemap(): MetadataRoute.Sitemap {
     '/sanitizer_infrared_thermometer',
     '/school_uniform',
     '/staff_uniform',
-  ];
-
-  return routes.map((route) => ({
+  ].map((route) => ({
     url: `${baseUrl}${route}`,
     lastModified: new Date(),
     changeFrequency: route === '' ? 'daily' : 'weekly',
     priority: route === '' ? 1 : 0.8,
   }));
+
+  // Dynamic product URLs
+  let productRoutes: MetadataRoute.Sitemap = [];
+  try {
+    const productsRes = await fetch(`${API_URL}/api/products?limit=1000`, {
+      next: { revalidate: 3600 },
+    });
+    if (productsRes.ok) {
+      const data = await productsRes.json();
+      const products = data.products || [];
+      productRoutes = products.map((product: any) => ({
+        url: `${baseUrl}/products/${product._id || product.id}`,
+        lastModified: product.updatedAt ? new Date(product.updatedAt) : new Date(),
+        changeFrequency: 'weekly' as const,
+        priority: 0.8,
+      }));
+    }
+  } catch (error) {
+    console.error('Sitemap: Failed to fetch products', error);
+  }
+
+  // Dynamic blog URLs
+  let blogRoutes: MetadataRoute.Sitemap = [];
+  try {
+    const blogsRes = await fetch(`${API_URL}/api/blogs?limit=1000`, {
+      next: { revalidate: 3600 },
+    });
+    if (blogsRes.ok) {
+      const data = await blogsRes.json();
+      const blogs = data.blogs || [];
+      blogRoutes = blogs.map((blog: any) => ({
+        url: `${baseUrl}/blog/${blog._id || blog.id}`,
+        lastModified: blog.updatedAt ? new Date(blog.updatedAt) : new Date(),
+        changeFrequency: 'monthly' as const,
+        priority: 0.6,
+      }));
+    }
+  } catch (error) {
+    console.error('Sitemap: Failed to fetch blogs', error);
+  }
+
+  return [...staticRoutes, ...productRoutes, ...blogRoutes];
 }
