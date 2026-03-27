@@ -12,113 +12,44 @@ import {
   selectIsMenuOpen, selectIsMobileSearchOpen,
   openCart, toggleMenu, closeMenu, toggleMobileSearch, closeMobileSearch,
 } from '@/store/slices/uiSlice';
-import { productsAPI, Product } from '@/lib/api';
+import { productsAPI, categoriesAPI, Product } from '@/lib/api';
 import CartDrawer from '@/components/Cart/CartDrawer';
 import ThemeToggle from '@/components/ThemeToggle/ThemeToggle';
 
-const categories = [
-  {
-    name: 'T-Shirts',
-    slug: 'tshirts',
-    items: [
-      { name: 'Dry Fit T-Shirts', link: '/products?category=tshirts&sub=dry-fit' },
-      { name: 'Cotton T-Shirts', link: '/products?category=tshirts&sub=cotton' },
-      { name: 'Polyester T-Shirts', link: '/products?category=tshirts&sub=polyester' },
-      { name: 'Cotton + Polyester T-Shirts', link: '/products?category=tshirts&sub=cotton-polyester' },
-      { name: 'Sports Jersey', link: '/products?category=tshirts&sub=sports-jersey' },
-      { name: 'Promotional T-Shirts', link: '/products?category=tshirts&sub=promotional' },
-      { name: 'Custom T-Shirts', link: '/products?category=tshirts&sub=custom' },
-      { name: 'Oversized T-Shirts', link: '/products?category=tshirts&sub=oversized' },
-      { name: 'Lycra T-Shirts', link: '/products?category=tshirts&sub=lycra' },
-    ]
-  },
-  {
-    name: 'Bags',
-    slug: 'bags',
-    items: [
-      { name: 'School Bags', link: '/products?category=bags&sub=school' },
-      { name: 'Laptop Bags', link: '/products?category=bags&sub=laptop' },
-      { name: 'Office Bags', link: '/products?category=bags&sub=office' },
-      { name: 'Gym Bags', link: '/products?category=bags&sub=gym' },
-      { name: 'Corporate Bags', link: '/products?category=bags&sub=corporate' },
-      { name: 'Food Delivery Bags', link: '/products?category=bags&sub=food-delivery' },
-      { name: 'Cotton Bags', link: '/products?category=bags&sub=cotton' },
-      { name: 'File & Folder Bags', link: '/products?category=bags&sub=file-folder' },
-    ]
-  },
-  {
-    name: 'Caps',
-    slug: 'caps',
-    items: [
-      { name: 'Cotton Caps', link: '/products?category=caps&sub=cotton' },
-      { name: 'Cotton & Polyester Caps', link: '/products?category=caps&sub=cotton-polyester' },
-      { name: 'Polyester Caps', link: '/products?category=caps&sub=polyester' },
-      { name: 'Promotional & Custom Caps', link: '/products?category=caps&sub=promotional-custom' },
-      { name: 'Hats', link: '/products?category=caps&sub=hats' },
-      { name: 'Tennis Caps', link: '/products?category=caps&sub=tennis' },
-      { name: 'Sports Caps', link: '/products?category=caps&sub=sports' },
-      { name: 'Corduroy Fabric Caps', link: '/products?category=caps&sub=corduroy' },
-      { name: 'Denim Caps', link: '/products?category=caps&sub=denim' },
-      { name: 'Kids Caps', link: '/products?category=caps&sub=kids' },
-      { name: 'Imported Fabric Caps', link: '/products?category=caps&sub=imported' },
-    ]
-  },
-  {
-    name: 'Sweatshirts & Hoodies',
-    slug: 'sweatshirts',
-    items: [
-      { name: 'Jackets', link: '/products?category=sweatshirts&sub=jackets' },
-      { name: 'Cotton Jackets', link: '/products?category=sweatshirts&sub=cotton-jackets' },
-      { name: 'Sweatshirts & Hoodies', link: '/products?category=sweatshirts&sub=sweatshirts-hoodies' },
-      { name: 'Spun-Spun Sweatshirts & Hoodies', link: '/products?category=sweatshirts&sub=spun-spun' },
-      { name: 'Polyester Sweatshirts & Hoodies', link: '/products?category=sweatshirts&sub=polyester' },
-      { name: 'Cotton & Polyester Sweatshirts & Hoodies', link: '/products?category=sweatshirts&sub=cotton-polyester' },
-    ]
-  },
-  {
-    name: 'Lower & Shorts',
-    slug: 'lowers',
-    items: [
-      { name: 'Dot Knit Fabric Shorts & Lower', link: '/products?category=lowers&sub=dot-knit' },
-      { name: 'Nirmal Material Fabric Lower & Shorts', link: '/products?category=lowers&sub=nirmal' },
-      { name: 'Raisenet Lower & Shorts', link: '/products?category=lowers&sub=raisenet' },
-      { name: 'Dry Fit Lower & Shorts', link: '/products?category=lowers&sub=dry-fit' },
-      { name: 'Cotton Lower & Shorts', link: '/products?category=lowers&sub=cotton' },
-      { name: 'NS Lower & Shorts', link: '/products?category=lowers&sub=ns' },
-    ]
-  },
-  {
-    name: 'School & Office Uniform',
-    slug: 'uniforms',
-    items: [
-      { name: 'School Uniform & Dress', link: '/products?category=uniforms&sub=school' },
-      { name: 'Office Employee Uniform & Dress', link: '/products?category=uniforms&sub=office' },
-      { name: 'Custom Uniforms', link: '/products?category=uniforms&sub=custom' },
-    ]
-  },
-  {
-    name: 'Printing & Embroidery',
-    slug: 'printing',
-    items: [
-      { name: 'Screen Printing', link: '/products?category=printing&sub=screen' },
-      { name: 'TF Printing', link: '/products?category=printing&sub=tf' },
-      { name: 'Digital Printing', link: '/products?category=printing&sub=digital' },
-      { name: 'Sublimation Printing', link: '/products?category=printing&sub=sublimation' },
-      { name: 'Embroidery', link: '/products?category=printing&sub=embroidery' },
-    ]
-  },
-  {
-    name: 'More',
-    slug: '',
-    items: [
-      { name: 'Apron', link: '/products?category=apron' },
-      { name: 'Chef Coat', link: '/products?category=chef-coat' },
-      { name: 'Raincoats', link: '/products?category=raincoats' },
-    ]
-  },
+// Types for nav categories
+interface NavItem { name: string; link: string }
+interface NavCategory { name: string; slug: string; items: NavItem[] }
+interface FlatCategory { name: string; slug: string }
+
+// Fallback hardcoded categories (used until API loads)
+const FALLBACK_CATEGORIES: NavCategory[] = [
+  { name: 'T-Shirts', slug: 'tshirts', items: [
+    { name: 'Dry Fit T-Shirts', link: '/products?category=tshirts&sub=dry-fit-tshirts' },
+    { name: 'Cotton T-Shirts', link: '/products?category=tshirts&sub=cotton-tshirts' },
+    { name: 'Polyester T-Shirts', link: '/products?category=tshirts&sub=polyester-tshirts' },
+    { name: 'Sports Jersey', link: '/products?category=tshirts&sub=sports-jersey' },
+  ]},
+  { name: 'Bags', slug: 'bags', items: [
+    { name: 'School Bags', link: '/products?category=bags&sub=school-bags' },
+    { name: 'Laptop Bags', link: '/products?category=bags&sub=laptop-bags' },
+    { name: 'Office Bags', link: '/products?category=bags&sub=office-bags' },
+  ]},
+  { name: 'Caps', slug: 'caps', items: [
+    { name: 'Cotton Caps', link: '/products?category=caps&sub=cotton-caps' },
+    { name: 'Sports Caps', link: '/products?category=caps&sub=sports-caps' },
+  ]},
+  { name: 'More', slug: '', items: [
+    { name: 'Sweatshirts & Hoodies', link: '/products?category=sweatshirts' },
+    { name: 'Lower & Shorts', link: '/products?category=lowers' },
+    { name: 'Uniforms', link: '/products?category=uniforms' },
+    { name: 'Printing & Embroidery', link: '/products?category=printing' },
+    { name: 'Apron', link: '/products?category=apron' },
+    { name: 'Chef Coat', link: '/products?category=chef-coat' },
+    { name: 'Raincoats', link: '/products?category=raincoats' },
+  ]},
 ];
 
-const FLAT_CATEGORIES = [
+const FALLBACK_FLAT: FlatCategory[] = [
   { name: 'T-Shirts', slug: 'tshirts' },
   { name: 'Bags', slug: 'bags' },
   { name: 'Caps', slug: 'caps' },
@@ -131,9 +62,45 @@ const FLAT_CATEGORIES = [
   { name: 'Raincoats', slug: 'raincoats' },
 ];
 
+// Transform API tree into nav format
+function buildNavCategories(tree: any[]): { nav: NavCategory[]; flat: FlatCategory[] } {
+  const flat: FlatCategory[] = [];
+  const mainCats: NavCategory[] = [];
+  const standaloneCats: NavItem[] = [];
+
+  for (const cat of tree) {
+    flat.push({ name: cat.name, slug: cat.id });
+    const subs = cat.subcategories || [];
+
+    if (subs.length > 0) {
+      mainCats.push({
+        name: cat.name,
+        slug: cat.id,
+        items: subs.map((sub: any) => ({
+          name: sub.name,
+          link: `/products?category=${cat.id}&sub=${sub.id}`,
+        })),
+      });
+      // Also add subcategories to flat list
+      for (const sub of subs) {
+        flat.push({ name: sub.name, slug: sub.id });
+      }
+    } else {
+      standaloneCats.push({ name: cat.name, link: `/products?category=${cat.id}` });
+    }
+  }
+
+  // Group standalone categories under "More"
+  if (standaloneCats.length > 0) {
+    mainCats.push({ name: 'More', slug: '', items: standaloneCats });
+  }
+
+  return { nav: mainCats, flat };
+}
+
 function SearchBox({
   value, onChange, onSubmit, suggestions, loading, showDropdown,
-  onSelectProduct, onSelectCategory, onClose, containerRef, inputClass, isMobile,
+  onSelectProduct, onSelectCategory, onClose, containerRef, inputClass, isMobile, flatCategories,
 }: {
   value: string;
   onChange: (v: string) => void;
@@ -147,8 +114,9 @@ function SearchBox({
   containerRef: React.RefObject<HTMLDivElement | null>;
   inputClass: string;
   isMobile: boolean;
+  flatCategories: FlatCategory[];
 }) {
-  const matchingCategories = FLAT_CATEGORIES.filter(c =>
+  const matchingCategories = flatCategories.filter(c =>
     value.trim().length > 0 && c.name.toLowerCase().includes(value.toLowerCase())
   );
   const hasResults = matchingCategories.length > 0 || suggestions.length > 0;
@@ -260,6 +228,22 @@ export default function VistaprintHeader() {
   const [suggestions, setSuggestions] = useState<Product[]>([]);
   const [showDropdown, setShowDropdown] = useState(false);
   const [searchLoading, setSearchLoading] = useState(false);
+
+  // Dynamic categories from API
+  const [categories, setCategories] = useState<NavCategory[]>(FALLBACK_CATEGORIES);
+  const [flatCategories, setFlatCategories] = useState<FlatCategory[]>(FALLBACK_FLAT);
+
+  // Fetch categories from API on mount
+  useEffect(() => {
+    let cancelled = false;
+    categoriesAPI.getTree({ active: true }).then((data) => {
+      if (cancelled || !data.categories?.length) return;
+      const { nav, flat } = buildNavCategories(data.categories);
+      setCategories(nav);
+      setFlatCategories(flat);
+    }).catch(() => {/* keep fallback */});
+    return () => { cancelled = true; };
+  }, []);
 
   const desktopSearchRef = useRef<HTMLDivElement>(null);
   const mobileBarSearchRef = useRef<HTMLDivElement>(null);
@@ -386,7 +370,7 @@ export default function VistaprintHeader() {
                 onSelectProduct={handleSelectProduct} onSelectCategory={handleSelectCategory}
                 onClose={closeDropdown} containerRef={desktopSearchRef}
                 inputClass="w-full px-4 py-3 pr-12 border-2 border-theme-border bg-theme-bg-soft dark:bg-[#1E1A14] text-theme-text placeholder-theme-text-muted rounded-lg focus:border-primary focus:outline-none transition-colors text-sm"
-                isMobile={false}
+                isMobile={false} flatCategories={flatCategories}
               />
             </div>
 
@@ -438,7 +422,7 @@ export default function VistaprintHeader() {
               onSelectCategory={(slug) => { handleSelectCategory(slug); dispatch(closeMobileSearch()); }}
               onClose={closeDropdown} containerRef={mobileBarSearchRef}
               inputClass="w-full px-4 py-2.5 border border-theme-border bg-theme-bg-soft dark:bg-[#1E1A14] text-theme-text placeholder-theme-text-muted rounded-lg pr-12 focus:outline-none focus:border-primary transition-colors text-sm"
-              isMobile={true}
+              isMobile={true} flatCategories={flatCategories}
             />
           </div>
 

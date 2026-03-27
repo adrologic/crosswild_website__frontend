@@ -4,9 +4,10 @@ import ProductDetailClient from './ProductDetailClient';
 
 const API_URL = process.env.BACKEND_URL || 'https://crosswild-backend-p5l3.onrender.com';
 
-async function getProduct(id: string) {
+async function getProduct(idOrSlug: string) {
   try {
-    const response = await fetch(`${API_URL}/api/products/${id}`, {
+    // Backend now supports both MongoDB ID and slug lookup
+    const response = await fetch(`${API_URL}/api/products/${encodeURIComponent(idOrSlug)}`, {
       next: { revalidate: 60 },
     });
     if (!response.ok) return null;
@@ -30,6 +31,7 @@ export async function generateMetadata({
   }
   return generateProductMetadata({
     id: product.id,
+    slug: product.slug,
     name: product.name,
     description: product.description || '',
     image: product.image,

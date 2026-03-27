@@ -124,6 +124,7 @@ export async function generatePageMetadata(
 // Generate product metadata
 export async function generateProductMetadata(product: {
   id: string;
+  slug?: string;
   name: string;
   description: string;
   image?: string;
@@ -133,23 +134,36 @@ export async function generateProductMetadata(product: {
     description?: string;
     keywords?: string[];
     ogImage?: string;
+    canonicalUrl?: string;
+    noIndex?: boolean;
+    noFollow?: boolean;
   };
 }): Promise<Metadata> {
   const globalSEO = await getGlobalSEO();
   const siteUrl = globalSEO.siteUrl || defaultSEO.siteUrl;
 
+  // Use slug for URL if available, otherwise fallback to ID
+  const urlPath = product.slug || product.id;
   const title = product.seo?.title || product.name;
   const description = product.seo?.description || product.description.substring(0, 160);
   const image = product.seo?.ogImage || product.image;
   const keywords = product.seo?.keywords || [product.name, product.category, 'custom printing'].filter(Boolean);
+  const canonicalUrl = product.seo?.canonicalUrl || `${siteUrl}/products/${urlPath}`;
 
   return {
     title,
     description,
     keywords: keywords.join(', '),
+    alternates: {
+      canonical: canonicalUrl,
+    },
+    robots: {
+      index: !product.seo?.noIndex,
+      follow: !product.seo?.noFollow,
+    },
     openGraph: {
       type: 'website',
-      url: `${siteUrl}/products/${product.id}`,
+      url: `${siteUrl}/products/${urlPath}`,
       siteName: globalSEO.siteName || defaultSEO.siteName,
       title,
       description,
@@ -174,6 +188,7 @@ export async function generateProductMetadata(product: {
 // Generate blog metadata
 export async function generateBlogMetadata(blog: {
   id: string;
+  slug?: string;
   title: string;
   paragraph: string;
   image?: string;
@@ -184,24 +199,37 @@ export async function generateBlogMetadata(blog: {
     description?: string;
     keywords?: string[];
     ogImage?: string;
+    canonicalUrl?: string;
+    noIndex?: boolean;
+    noFollow?: boolean;
   };
 }): Promise<Metadata> {
   const globalSEO = await getGlobalSEO();
   const siteUrl = globalSEO.siteUrl || defaultSEO.siteUrl;
 
+  // Use slug for URL if available, otherwise fallback to ID
+  const urlPath = blog.slug || blog.id;
   const title = blog.seo?.title || blog.title;
   const description = blog.seo?.description || blog.paragraph.substring(0, 160);
   const image = blog.seo?.ogImage || blog.image;
   const keywords = blog.seo?.keywords || blog.tags || [];
+  const canonicalUrl = blog.seo?.canonicalUrl || `${siteUrl}/blog/${urlPath}`;
 
   return {
     title,
     description,
     keywords: keywords.join(', '),
     authors: blog.author ? [{ name: blog.author.name }] : undefined,
+    alternates: {
+      canonical: canonicalUrl,
+    },
+    robots: {
+      index: !blog.seo?.noIndex,
+      follow: !blog.seo?.noFollow,
+    },
     openGraph: {
       type: 'article',
-      url: `${siteUrl}/blog/${blog.id}`,
+      url: `${siteUrl}/blog/${urlPath}`,
       siteName: globalSEO.siteName || defaultSEO.siteName,
       title,
       description,
@@ -220,6 +248,92 @@ export async function generateBlogMetadata(blog: {
       description,
       images: image ? [image.startsWith('http') ? image : `${siteUrl}${image}`] : undefined,
     },
+  };
+}
+
+// Generate category metadata
+export async function generateCategoryMetadata(category: {
+  id: string;
+  name: string;
+  description?: string;
+  image?: string;
+  seoUrl?: string;
+  seo?: {
+    title?: string;
+    description?: string;
+    keywords?: string[];
+    ogImage?: string;
+    canonicalUrl?: string;
+    noIndex?: boolean;
+    noFollow?: boolean;
+  };
+}): Promise<Metadata> {
+  const globalSEO = await getGlobalSEO();
+  const siteUrl = globalSEO.siteUrl || defaultSEO.siteUrl;
+
+  const urlPath = category.seoUrl || category.id;
+  const title = category.seo?.title || `${category.name} - ${globalSEO.siteName || defaultSEO.siteName}`;
+  const plainDesc = category.description?.replace(/<[^>]*>/g, '').substring(0, 160) || '';
+  const description = category.seo?.description || plainDesc || `Browse ${category.name} at The CrossWild. Premium quality custom printing and merchandise.`;
+  const image = category.seo?.ogImage || category.image;
+  const keywords = category.seo?.keywords || [category.name, 'custom printing', 'The CrossWild'].filter(Boolean);
+  const canonicalUrl = category.seo?.canonicalUrl || `${siteUrl}/categories/${urlPath}`;
+
+  return {
+    title,
+    description,
+    keywords: keywords.join(', '),
+    alternates: {
+      canonical: canonicalUrl,
+    },
+    robots: {
+      index: !category.seo?.noIndex,
+      follow: !category.seo?.noFollow,
+    },
+    openGraph: {
+      type: 'website',
+      url: `${siteUrl}/categories/${urlPath}`,
+      siteName: globalSEO.siteName || defaultSEO.siteName,
+      title,
+      description,
+      images: image ? [
+        {
+          url: image.startsWith('http') ? image : `${siteUrl}${image}`,
+          width: 1200,
+          height: 630,
+          alt: category.name,
+        },
+      ] : undefined,
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title,
+      description,
+      images: image ? [image.startsWith('http') ? image : `${siteUrl}${image}`] : undefined,
+    },
+  };
+}
+
+// Generate category JSON-LD schema
+export function generateCategorySchema(category: any, subcategories: any[], siteUrl: string) {
+  const urlPath = category.seoUrl || category.id;
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'CollectionPage',
+    name: category.name,
+    description: category.seo?.description || category.description?.replace(/<[^>]*>/g, '').substring(0, 300),
+    url: `${siteUrl}/categories/${urlPath}`,
+    image: category.image || undefined,
+    isPartOf: {
+      '@type': 'WebSite',
+      name: 'The CrossWild',
+      url: siteUrl,
+    },
+    hasPart: subcategories.map((sub: any) => ({
+      '@type': 'CollectionPage',
+      name: sub.name,
+      url: `${siteUrl}/categories/${sub.seoUrl || sub.id}`,
+    })),
   };
 }
 
@@ -257,13 +371,15 @@ export function generateOrganizationSchema(globalSEO: any) {
 }
 
 export function generateProductSchema(product: any, siteUrl: string) {
+  const urlPath = product.slug || product.id;
   const schema: any = {
     '@context': 'https://schema.org',
     '@type': 'Product',
     name: product.name,
     description: product.description,
     image: product.image,
-    url: `${siteUrl}/products/${product.id}`,
+    sku: product.sku || undefined,
+    url: `${siteUrl}/products/${urlPath}`,
     brand: {
       '@type': 'Brand',
       name: 'The CrossWild',
@@ -291,13 +407,14 @@ export function generateProductSchema(product: any, siteUrl: string) {
 }
 
 export function generateBlogSchema(blog: any, siteUrl: string) {
+  const urlPath = blog.slug || blog.id;
   return {
     '@context': 'https://schema.org',
     '@type': 'BlogPosting',
     headline: blog.title,
     description: blog.paragraph?.substring(0, 160),
     image: blog.image,
-    url: `${siteUrl}/blog/${blog.id}`,
+    url: `${siteUrl}/blog/${urlPath}`,
     author: {
       '@type': 'Person',
       name: blog.author?.name || 'The CrossWild',

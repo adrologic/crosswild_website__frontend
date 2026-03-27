@@ -375,6 +375,80 @@ export const seoAPI = {
   },
 };
 
+// Categories API
+export interface Category {
+  _id: string;
+  id: string;
+  name: string;
+  icon?: string;
+  parentCategory?: string | { _id: string; id: string; name: string } | null;
+  description?: string;
+  richDescription?: string;
+  description1?: string;
+  image?: string;
+  seoUrl?: string;
+  seo?: {
+    title?: string;
+    description?: string;
+    keywords?: string[];
+    canonicalUrl?: string;
+    ogImage?: string;
+    otherMetaTags?: string;
+    noIndex?: boolean;
+    noFollow?: boolean;
+    structuredData?: any;
+  };
+  isActive?: boolean;
+  subcategories?: Category[];
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+interface CategoriesTreeResponse {
+  success: boolean;
+  categories: Category[];
+}
+
+interface CategoryResponse {
+  success: boolean;
+  category: Category;
+  subcategories: Category[];
+}
+
+export const categoriesAPI = {
+  getAll: async (params?: { active?: boolean; parent?: string; root?: boolean }): Promise<{ categories: Category[] }> => {
+    const queryString = params ? new URLSearchParams(
+      Object.entries(params).reduce((acc, [key, value]) => {
+        if (value !== undefined && value !== null) acc[key] = String(value);
+        return acc;
+      }, {} as Record<string, string>)
+    ).toString() : '';
+
+    const response = await fetch(`${API_URL}/categories${queryString ? `?${queryString}` : ''}`);
+    if (!response.ok) throw new Error('Failed to fetch categories');
+    return response.json();
+  },
+
+  getTree: async (params?: { active?: boolean }): Promise<CategoriesTreeResponse> => {
+    const queryString = params ? new URLSearchParams(
+      Object.entries(params).reduce((acc, [key, value]) => {
+        if (value !== undefined && value !== null) acc[key] = String(value);
+        return acc;
+      }, {} as Record<string, string>)
+    ).toString() : '';
+
+    const response = await fetch(`${API_URL}/categories/tree${queryString ? `?${queryString}` : ''}`);
+    if (!response.ok) throw new Error('Failed to fetch category tree');
+    return response.json();
+  },
+
+  getBySlug: async (slug: string): Promise<CategoryResponse> => {
+    const response = await fetch(`${API_URL}/categories/${slug}`);
+    if (!response.ok) throw new Error('Failed to fetch category');
+    return response.json();
+  },
+};
+
 // Health check
 export const healthCheck = async (): Promise<{ status: string; message: string }> => {
   const response = await fetch(`${API_URL}/health`);

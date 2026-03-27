@@ -32,7 +32,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: route === '' ? 1 : 0.8,
   }));
 
-  // Dynamic product URLs
+  // Dynamic product URLs (use slug if available, otherwise fallback to _id)
   let productRoutes: MetadataRoute.Sitemap = [];
   try {
     const productsRes = await fetch(`${API_URL}/api/products?limit=1000`, {
@@ -42,7 +42,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       const data = await productsRes.json();
       const products = data.products || [];
       productRoutes = products.map((product: any) => ({
-        url: `${baseUrl}/products/${product._id || product.id}`,
+        url: `${baseUrl}/products/${product.slug || product._id || product.id}`,
         lastModified: product.updatedAt ? new Date(product.updatedAt) : new Date(),
         changeFrequency: 'weekly' as const,
         priority: 0.8,
@@ -52,7 +52,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     console.error('Sitemap: Failed to fetch products', error);
   }
 
-  // Dynamic blog URLs
+  // Dynamic blog URLs (use slug if available, otherwise fallback to _id)
   let blogRoutes: MetadataRoute.Sitemap = [];
   try {
     const blogsRes = await fetch(`${API_URL}/api/blogs?limit=1000`, {
@@ -62,7 +62,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       const data = await blogsRes.json();
       const blogs = data.blogs || [];
       blogRoutes = blogs.map((blog: any) => ({
-        url: `${baseUrl}/blog/${blog._id || blog.id}`,
+        url: `${baseUrl}/blog/${blog.slug || blog._id || blog.id}`,
         lastModified: blog.updatedAt ? new Date(blog.updatedAt) : new Date(),
         changeFrequency: 'monthly' as const,
         priority: 0.6,
@@ -72,5 +72,27 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     console.error('Sitemap: Failed to fetch blogs', error);
   }
 
-  return [...staticRoutes, ...productRoutes, ...blogRoutes];
+  // Dynamic category URLs (from API)
+  let categoryRoutes: MetadataRoute.Sitemap = [];
+  try {
+    const categoriesRes = await fetch(`${API_URL}/api/categories?active=true`, {
+      next: { revalidate: 3600 },
+    });
+    if (categoriesRes.ok) {
+      const data = await categoriesRes.json();
+      const categories = data.categories || [];
+      categoryRoutes = categories
+        .filter((cat: any) => cat.seoUrl)
+        .map((cat: any) => ({
+          url: `${baseUrl}/categories/${cat.seoUrl}`,
+          lastModified: cat.updatedAt ? new Date(cat.updatedAt) : new Date(),
+          changeFrequency: 'weekly' as const,
+          priority: 0.7,
+        }));
+    }
+  } catch (error) {
+    console.error('Sitemap: Failed to fetch categories', error);
+  }
+
+  return [...staticRoutes, ...productRoutes, ...blogRoutes, ...categoryRoutes];
 }
