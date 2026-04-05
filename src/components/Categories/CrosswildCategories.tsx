@@ -65,7 +65,7 @@ const categories = [
   },
 ];
 
-export default function VistaprintCategories() {
+export default function CrosswildCategories() {
   return (
     <section className="py-16 bg-gray-50">
       <div className="w-full px-6 lg:px-12">

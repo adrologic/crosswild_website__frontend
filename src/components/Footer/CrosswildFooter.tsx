@@ -5,7 +5,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { Facebook, Twitter, Instagram, Linkedin, Youtube, Mail, Phone, MapPin } from 'lucide-react';
 
-export default function VistaprintFooter() {
+export default function CrosswildFooter() {
   return (
     <footer className="bg-[#111111] dark:bg-[#0E0B08] text-gray-300 dark:text-[#C8B99A]">
       {/* Newsletter Section */}

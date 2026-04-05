@@ -15,6 +15,7 @@ import {
 } from "react-icons/fa";
 import { FiPhoneCall, FiMail } from "react-icons/fi";
 import { useState, useRef } from "react";
+import { FOOTER_LOCATION_ITEMS } from "@/data/locations";
 
 const Footer = () => {
   const [openSection, setOpenSection] = useState(null);
@@ -78,22 +79,15 @@ const Footer = () => {
       id: "locations",
       content: (
         <ul className="space-y-2 text-gray-600 dark:text-gray-300">
-          {[
-            "T-shirt Manufacturing in Jodhpur",
-            "Bags Manufacturing in Jodhpur",
-            "Cap Manufacturer in Jodhpur",
-            "Uniform Makers in Jodhpur",
-            "T-shirt Manufacturing in Kota",
-            "Bags Manufacturing in Kota",
-            "T-shirt Manufacturing in Sikar",
-            "Bags Manufacturing in Sikar",
-            "Bags Manufacturing in Udaipur",
-            "T-shirt Manufacturing in Udaipur",
-            "T-shirt Manufacturing in Indore",
-            "Bags Manufacturing in Indore",
-            "Uniform Manufacturing in Indore",
-          ].map((item) => (
-            <li key={item}>{item}</li>
+          {FOOTER_LOCATION_ITEMS.map((item) => (
+            <li key={item.label}>
+              <Link
+                href={`/locations/${item.citySlug}`}
+                className="hover:text-primary transition"
+              >
+                {item.label}
+              </Link>
+            </li>
           ))}
         </ul>
       ),

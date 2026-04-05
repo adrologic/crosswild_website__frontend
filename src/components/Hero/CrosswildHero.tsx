@@ -4,7 +4,7 @@ import React from 'react';
 import Link from 'next/link';
 import { ArrowRight, Sparkles } from 'lucide-react';
 
-export default function VistaprintHero() {
+export default function CrosswildHero() {
   return (
     <section className="bg-theme-bg">
       {/* Promotional Banner */}

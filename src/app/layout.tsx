@@ -1,7 +1,8 @@
 "use client";
 
-import VistaprintHeader from "@/components/Header/VistaprintHeader";
-import VistaprintFooter from "@/components/Footer/VistaprintFooter";
+import CrosswildHeader from "@/components/Header/CrosswildHeader";
+import CrosswildFooter from "@/components/Footer/CrosswildFooter";
+import LocationsStrip from "@/components/Locations/LocationsStrip";
 import ScrollToTop from "@/components/ScrollToTop";
 import WhatsAppButton from "@/components/WhatsAppButton/whatsAppBotton";
 import CallButton from "@/components/CallButton/callButton";
@@ -29,9 +30,10 @@ export default function RootLayout({
       <body className={`overflow-x-hidden bg-theme-bg text-theme-text transition-colors duration-200 ${inter.className}`}>
         <Providers>
           <SEOHead />
-          <VistaprintHeader />
+          <CrosswildHeader />
           {children}
-          <VistaprintFooter />
+          <LocationsStrip />
+          <CrosswildFooter />
           <ScrollToTop />
           <WhatsAppButton />
           <CallButton />

@@ -1,7 +1,7 @@
 import dynamic from "next/dynamic";
 import { Metadata } from "next";
-import VistaprintHero from "@/components/Hero/VistaprintHero";
-import VistaprintCategories from "@/components/Categories/VistaprintCategories";
+import CrosswildHero from "@/components/Hero/CrosswildHero";
+import CrosswildCategories from "@/components/Categories/CrosswildCategories";
 import TrustSection from "@/components/Features/TrustSection";
 import ScrollUp from "@/components/Common/ScrollUp";
 
@@ -16,7 +16,6 @@ const Process = dynamic(() => import("@/components/Process/Process"));
 const Testimonials = dynamic(() => import("@/components/Testimonials"));
 const Brands = dynamic(() => import("@/components/Brands"));
 const Contact = dynamic(() => import("@/components/Contact"));
-const OfficeLocationsHome = dynamic(() => import("@/components/Locations/OfficeLocationsHome"));
 
 
 
@@ -79,10 +78,10 @@ export default function Home() {
       <ScrollUp />
 
       {/* Hero Section with Promotional Banner */}
-      <VistaprintHero />
+      <CrosswildHero />
 
-      {/* Product Categories - Vistaprint Style */}
-      <VistaprintCategories />
+      {/* Product Categories - Crosswild Style */}
+      <CrosswildCategories />
 
       {/* Explore All Categories Section */}
       <ExploreAllCategories />
@@ -107,9 +106,6 @@ export default function Home() {
 
       {/* Manufacturing Process */}
       <Process />
-
-      {/* Multi-Location Offices */}
-      <OfficeLocationsHome />
 
       {/* Trusted Brands & Clients */}
       <Brands />

@@ -5,7 +5,8 @@ import Link from 'next/link';
 import Image from 'next/image';
 import SafeImage from '@/components/Common/SafeImage';
 import { usePathname, useRouter } from 'next/navigation';
-import { Search, ShoppingCart, Menu, X, ChevronDown, Phone, Mail, Home, MessageCircle, Loader2, Tag } from 'lucide-react';
+import { Search, ShoppingCart, Menu, X, ChevronDown, Phone, Mail, Home, MessageCircle, Loader2, Tag, MapPin } from 'lucide-react';
+import { LOCATIONS, FOOTER_LOCATION_ITEMS } from '@/data/locations';
 import { useAppSelector, useAppDispatch } from '@/store/hooks';
 import { selectTotalItems } from '@/store/slices/cartSlice';
 import {
@@ -211,7 +212,7 @@ function SearchBox({
   );
 }
 
-export default function VistaprintHeader() {
+export default function CrosswildHeader() {
   const pathname = usePathname();
   const router = useRouter();
   const dispatch = useAppDispatch();
@@ -382,6 +383,35 @@ export default function VistaprintHeader() {
                 <Home className="w-5 h-5" /><span className="font-medium">Home</span>
               </Link>
 
+              {/* Locations Button */}
+              <div className="relative"
+                onMouseEnter={() => setActiveDropdown('locations-cta')}
+                onMouseLeave={() => setActiveDropdown(null)}>
+                <button className="flex items-center gap-1.5 px-4 py-2 text-theme-text hover:bg-theme-bg-soft dark:hover:bg-[#26211A] rounded-lg transition-colors">
+                  <MapPin className="w-5 h-5 text-blue-500" />
+                  <span className="font-medium">Locations</span>
+                  <ChevronDown className="w-3.5 h-3.5" />
+                </button>
+                {activeDropdown === 'locations-cta' && (
+                  <div className="absolute top-full right-0 pt-1 z-50">
+                    <div className="bg-theme-bg dark:bg-[#222222] border border-theme-border shadow-lg dark:shadow-[0_8px_24px_rgba(0,0,0,0.4)] rounded-lg min-w-[280px] py-2 max-h-[400px] overflow-y-auto">
+                      {FOOTER_LOCATION_ITEMS.map((item) => (
+                        <Link
+                          key={item.label}
+                          href={`/locations/${item.citySlug}`}
+                          className="flex items-center gap-3 px-4 py-2 hover:bg-theme-bg-soft dark:hover:bg-[#2C2C2C] transition-colors group/item"
+                        >
+                          <MapPin className="w-3.5 h-3.5 text-blue-500 flex-shrink-0" />
+                          <span className="text-sm text-theme-text group-hover/item:text-blue-500 transition-colors">
+                            {item.label}
+                          </span>
+                        </Link>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+
               <button onClick={() => dispatch(openCart())}
                 className="relative flex items-center gap-2 px-4 py-2 text-theme-text hover:bg-theme-bg-soft dark:hover:bg-[#26211A] rounded-lg transition-colors">
                 <ShoppingCart className="w-5 h-5" />
@@ -464,6 +494,7 @@ export default function VistaprintHeader() {
                   isBlogPage ? 'text-primary' : 'text-theme-text-secondary hover:text-primary'
                 }`}>Blog</Link>
               </li>
+
               <li className="ml-auto relative"
                 onMouseEnter={() => setActiveDropdown('custom-cta')}
                 onMouseLeave={() => setActiveDropdown(null)}>
@@ -472,17 +503,19 @@ export default function VistaprintHeader() {
                   <span className="relative">Customize</span>
                 </button>
                 {activeDropdown === 'custom-cta' && (
-                  <div className="absolute top-full right-0 mt-2 bg-theme-bg dark:bg-[#222222] border border-theme-border shadow-lg dark:shadow-[0_8px_24px_rgba(0,0,0,0.4)] rounded-lg min-w-[200px] py-2">
-                    <a href="https://wa.me/919529626262?text=Hello%2C%20I%20want%20to%20create%20a%20custom%20product." target="_blank" rel="noopener noreferrer"
-                      className="flex items-center gap-3 px-4 py-2.5 text-sm text-theme-text-secondary hover:text-green-500 hover:bg-theme-bg-soft dark:hover:bg-[#2C2C2C] transition-colors">
-                      <MessageCircle className="w-4 h-4 text-green-500" />
-                      WhatsApp
-                    </a>
-                    <a href="mailto:info@thecrosswild.com?subject=Custom%20Product%20Inquiry&body=Hello%2C%20I%20want%20to%20create%20a%20custom%20product.%20Please%20share%20the%20details." target="_blank" rel="noopener noreferrer"
-                      className="flex items-center gap-3 px-4 py-2.5 text-sm text-theme-text-secondary hover:text-primary hover:bg-theme-bg-soft dark:hover:bg-[#2C2C2C] transition-colors">
-                      <Mail className="w-4 h-4 text-primary" />
-                      Email Us
-                    </a>
+                  <div className="absolute top-full right-0 pt-1 z-50">
+                    <div className="bg-theme-bg dark:bg-[#222222] border border-theme-border shadow-lg dark:shadow-[0_8px_24px_rgba(0,0,0,0.4)] rounded-lg min-w-[200px] py-2">
+                      <a href="https://wa.me/919529626262?text=Hello%2C%20I%20want%20to%20create%20a%20custom%20product." target="_blank" rel="noopener noreferrer"
+                        className="flex items-center gap-3 px-4 py-2.5 text-sm text-theme-text-secondary hover:text-green-500 hover:bg-theme-bg-soft dark:hover:bg-[#2C2C2C] transition-colors">
+                        <MessageCircle className="w-4 h-4 text-green-500" />
+                        WhatsApp
+                      </a>
+                      <a href="mailto:info@thecrosswild.com?subject=Custom%20Product%20Inquiry&body=Hello%2C%20I%20want%20to%20create%20a%20custom%20product.%20Please%20share%20the%20details." target="_blank" rel="noopener noreferrer"
+                        className="flex items-center gap-3 px-4 py-2.5 text-sm text-theme-text-secondary hover:text-primary hover:bg-theme-bg-soft dark:hover:bg-[#2C2C2C] transition-colors">
+                        <Mail className="w-4 h-4 text-primary" />
+                        Email Us
+                      </a>
+                    </div>
                   </div>
                 )}
               </li>
@@ -535,6 +568,32 @@ export default function VistaprintHeader() {
                 className={`block py-2 font-medium border-t border-theme-border pt-4 transition-colors ${
                   isBlogPage ? 'text-primary' : 'text-theme-text hover:text-primary'
                 }`}>Blog</Link>
+
+              {/* Locations — mobile expandable */}
+              <div className="border-t border-theme-border pt-2">
+                <button
+                  onClick={() => setActiveDropdown(activeDropdown === 'mobile-locations' ? null : 'mobile-locations')}
+                  className="w-full flex items-center justify-between py-2 font-semibold text-theme-text hover:text-blue-500 transition-colors"
+                >
+                  <span className="flex items-center gap-2"><MapPin className="w-4 h-4 text-blue-500" />Locations</span>
+                  <ChevronDown className={`w-4 h-4 transition-transform ${activeDropdown === 'mobile-locations' ? 'rotate-180' : ''}`} />
+                </button>
+                <div className={`overflow-hidden transition-all duration-300 ease-in-out ${
+                  activeDropdown === 'mobile-locations' ? 'max-h-[400px] opacity-100' : 'max-h-0 opacity-0'
+                }`}>
+                  {LOCATIONS.map((loc) => (
+                    <Link
+                      key={loc.slug}
+                      href={`/locations/${loc.slug}`}
+                      onClick={() => dispatch(closeMenu())}
+                      className="flex items-center gap-2 py-1.5 pl-4 text-sm text-theme-text-secondary hover:text-blue-500 transition-colors"
+                    >
+                      <MapPin className="w-3.5 h-3.5 text-blue-400" />
+                      {loc.name}, {loc.state}
+                    </Link>
+                  ))}
+                </div>
+              </div>
             </div>
 
             {/* Custom Product CTA — compact */}

@@ -98,7 +98,7 @@ const ProductDetail = ({ product }) => {
 
         <div className="prose max-w-none">
           <p>
-            A customized Cotton T-shirt from Vistaprint is a great way to
+            A customized Cotton T-shirt from Crosswild is a great way to
             advertise your business or message. With our easy-to-use design
             studio, you can add your logo, images or text.
           </p>
