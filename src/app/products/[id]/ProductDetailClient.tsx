@@ -118,12 +118,6 @@ export default function ProductDetailClient({ id }: { id: string }) {
   // Primary category for breadcrumb
   const primaryCategory = product.productCategories?.[0]?.category || product.category || '';
 
-  // Short description bullet points
-  const shortDescLines = (product.shortDescription || '')
-    .split('\n')
-    .map(l => l.trim())
-    .filter(Boolean);
-
   // Details map (from productType dynamic fields)
   const detailFields = product.productType?.detailFields || [];
   const getDetailLabel = (key: string) => {
@@ -347,25 +341,20 @@ export default function ProductDetailClient({ id }: { id: string }) {
                 </div>
               )}
 
-              {/* Short Description (Bullet Points) */}
-              {shortDescLines.length > 0 && (
-                <div className="space-y-2 max-w-prose">
-                  {shortDescLines.map((line, i) => (
-                    <div key={i} className="flex items-start gap-2.5">
-                      <span className="w-1.5 h-1.5 rounded-full bg-primary mt-2 flex-shrink-0" />
-                      <span className="text-sm text-theme-text-secondary leading-7">
-                        {line.replace(/^[-•]\s*/, '')}
-                      </span>
-                    </div>
-                  ))}
-                </div>
+              {/* Short Description */}
+              {product.shortDescription && (
+                <div
+                  className="rich-text text-sm text-theme-text-secondary leading-7 max-w-prose"
+                  dangerouslySetInnerHTML={{ __html: product.shortDescription }}
+                />
               )}
 
               {/* Description (only if no shortDescription) */}
               {!product.shortDescription && product.description && (
-                <p className="text-sm text-theme-text-secondary leading-7 whitespace-pre-line max-w-prose">
-                  {product.description}
-                </p>
+                <div
+                  className="rich-text text-sm text-theme-text-secondary leading-7 max-w-prose"
+                  dangerouslySetInnerHTML={{ __html: product.description }}
+                />
               )}
 
               {/* ─── CTA Buttons ─── */}
@@ -407,9 +396,10 @@ export default function ProductDetailClient({ id }: { id: string }) {
           <section className="max-w-3xl mx-auto px-5 pb-6">
             <div className="bg-theme-bg-card border border-theme-border rounded-2xl p-6 md:p-8">
               <h2 className="text-lg font-bold text-theme-text mb-4">About This Product</h2>
-              <p className="text-sm text-theme-text-secondary leading-7 whitespace-pre-line max-w-prose">
-                {product.description}
-              </p>
+              <div
+                className="rich-text text-sm text-theme-text-secondary leading-7 max-w-prose"
+                dangerouslySetInnerHTML={{ __html: product.description }}
+              />
             </div>
           </section>
         )}
@@ -497,9 +487,10 @@ export default function ProductDetailClient({ id }: { id: string }) {
                 <h2 className="text-lg font-bold text-theme-text mb-4">
                   {section.title}
                 </h2>
-                <div className="text-sm text-theme-text-secondary leading-7 whitespace-pre-line max-w-prose">
-                  {section.content}
-                </div>
+                <div
+                  className="rich-text text-sm text-theme-text-secondary leading-7 max-w-prose"
+                  dangerouslySetInnerHTML={{ __html: section.content }}
+                />
               </div>
             ))}
           </section>
