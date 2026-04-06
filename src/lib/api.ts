@@ -449,6 +449,65 @@ export const categoriesAPI = {
   },
 };
 
+// Locations API
+export interface LocationProduct {
+  name: string;
+  slug: string;
+  icon: string;
+  link: string;
+  types: string[];
+  description: string;
+}
+
+export interface LocationContact {
+  address: string;
+  phone: string[];
+  email: string;
+  hours: string;
+  mapLink: string;
+}
+
+export interface LocationPage {
+  _id: string;
+  name: string;
+  slug: string;
+  state: string;
+  isHeadquarters?: boolean;
+  isActive?: boolean;
+  tagline?: string;
+  heroHeading?: string;
+  description: string;
+  whyChooseUs?: string[];
+  printingMethods?: string[];
+  fabrics?: string[];
+  partners?: string[];
+  products: LocationProduct[];
+  contact: LocationContact;
+  seo?: {
+    title?: string;
+    description?: string;
+    keywords?: string[];
+    ogImage?: string;
+    canonicalUrl?: string;
+    noIndex?: boolean;
+    noFollow?: boolean;
+  };
+}
+
+export const locationsAPI = {
+  getAll: async (): Promise<{ locations: LocationPage[] }> => {
+    const response = await fetch(`${API_URL}/locations?active=true`);
+    if (!response.ok) throw new Error('Failed to fetch locations');
+    return response.json();
+  },
+
+  getBySlug: async (slug: string): Promise<{ location: LocationPage }> => {
+    const response = await fetch(`${API_URL}/locations/${slug}`);
+    if (!response.ok) throw new Error('Location not found');
+    return response.json();
+  },
+};
+
 // Health check
 export const healthCheck = async (): Promise<{ status: string; message: string }> => {
   const response = await fetch(`${API_URL}/health`);
