@@ -398,7 +398,7 @@ export default function CrosswildHeader() {
                       {FOOTER_LOCATION_ITEMS.map((item) => (
                         <Link
                           key={item.label}
-                          href={`/locations/${item.citySlug}`}
+                          href={`/${item.citySlug}`}
                           className="flex items-center gap-3 px-4 py-2 hover:bg-theme-bg-soft dark:hover:bg-[#2C2C2C] transition-colors group/item"
                         >
                           <MapPin className="w-3.5 h-3.5 text-blue-500 flex-shrink-0" />
@@ -584,12 +584,12 @@ export default function CrosswildHeader() {
                   {LOCATIONS.map((loc) => (
                     <Link
                       key={loc.slug}
-                      href={`/locations/${loc.slug}`}
+                      href={`/${loc.slug}`}
                       onClick={() => dispatch(closeMenu())}
                       className="flex items-center gap-2 py-1.5 pl-4 text-sm text-theme-text-secondary hover:text-blue-500 transition-colors"
                     >
                       <MapPin className="w-3.5 h-3.5 text-blue-400" />
-                      {loc.name}, {loc.state}
+                      {loc.categoryLabel} — {loc.city}
                     </Link>
                   ))}
                 </div>

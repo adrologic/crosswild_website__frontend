@@ -1,6 +1,7 @@
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
 import Link from "next/link";
+import Image from "next/image";
 import dynamic from "next/dynamic";
 import { ArrowRight, MapPin, CheckCircle, Phone, Mail, Clock, ExternalLink, Printer, Layers } from "lucide-react";
 import { LOCATIONS } from "@/data/locations";
@@ -16,6 +17,24 @@ const Brands = dynamic(() => import("@/components/Brands"));
 const Contact = dynamic(() => import("@/components/Contact"));
 
 const API_URL = (process.env.BACKEND_URL || 'https://crosswild-backend-p5l3.onrender.com') + '/api';
+
+const DEFAULT_PRINTING_METHODS = [
+  "Screen Printing",
+  "Digital Printing / DTG",
+  "Embroidery",
+  "Heat Transfer / Vinyl",
+  "Sublimation Printing",
+  "Offset Printing",
+];
+
+const DEFAULT_FABRICS = [
+  "100% Cotton",
+  "Polyester",
+  "Cotton-Poly Blend",
+  "Dry-Fit / Performance",
+  "Fleece",
+  "Premium Pique Cotton",
+];
 
 // Fetch from API, fall back to static data
 async function getLocation(slug: string) {
@@ -66,11 +85,12 @@ export async function generateMetadata({
   const location = await getLocation(slug);
   if (!location) return {};
 
-  const title = location.seo?.title || `${location.heroHeading || location.name} | The CrossWild`;
-  const description = location.seo?.description || location.description;
+  // SEO landing pages use metaTitle / metaDescription fields
+  const title = location.metaTitle || location.seo?.title || `${location.heroHeading || location.name || location.h1} | The CrossWild`;
+  const description = location.metaDescription || location.seo?.description || location.description || location.introContent?.replace(/<[^>]*>/g, '').slice(0, 160);
   const keywords = location.seo?.keywords?.length
     ? location.seo.keywords
-    : location.products.map((p: any) => `${p.name} in ${location.name}`);
+    : (location.products ?? []).map((p: any) => `${p.name} in ${location.name || location.city}`);
 
   return {
     title,
@@ -83,12 +103,20 @@ export async function generateMetadata({
     openGraph: {
       title,
       description,
-      images: [{ url: location.seo?.ogImage || "/images/logo/logo-crosswile.jpg", width: 1200, height: 630 }],
+      images: [{ url: location.seo?.ogImage || location.image || "/images/logo/logo-crosswile.jpg", width: 1200, height: 630 }],
     },
   };
 }
 
 export const revalidate = 60;
+
+// ── Helper: display label for any location type ──────────────────────────────
+function locationLabel(l: any): string {
+  if (l.name && l.state) return `${l.name}, ${l.state}`;
+  if (l.name) return l.name;
+  if (l.city) return l.city;
+  return l.h1 || l.slug;
+}
 
 export default async function LocationPage({
   params,
@@ -102,6 +130,297 @@ export default async function LocationPage({
   const allLocations = await getAllLocations();
   const otherLocations = allLocations.filter((l: any) => l.slug !== slug);
 
+  // ── SEO LANDING PAGE TEMPLATE ────────────────────────────────────────────
+  if (location.h1) {
+    const printingMethods = location.printingMethods?.length ? location.printingMethods : DEFAULT_PRINTING_METHODS;
+    const fabrics = location.fabrics?.length ? location.fabrics : DEFAULT_FABRICS;
+
+    return (
+      <>
+        <ScrollUp />
+
+        {/* ── HERO ── */}
+        <section className="relative w-full overflow-hidden">
+          {location.image ? (
+            <div className="relative h-[380px] md:h-[480px] w-full">
+              <Image
+                src={location.image}
+                alt={location.h1}
+                fill
+                className="object-cover"
+                priority
+              />
+              <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/50 to-black/30" />
+              <div className="absolute inset-0 flex flex-col justify-center px-6 lg:px-12">
+                <div className="max-w-3xl">
+                  <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/10 backdrop-blur-sm text-white rounded-full text-sm font-semibold mb-4">
+                    <MapPin className="w-4 h-4" />
+                    {location.city || location.name || "India"}
+                  </div>
+                  <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-white leading-tight mb-6">
+                    {location.h1}
+                  </h1>
+                  <div className="flex flex-col sm:flex-row gap-4">
+                    <Link
+                      href="/products"
+                      className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-secondary text-white font-semibold rounded-lg hover:bg-secondary-dark transition-all shadow-lg"
+                    >
+                      Explore Products <ArrowRight className="w-5 h-5" />
+                    </Link>
+                    <Link
+                      href="/contact"
+                      className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-white/20 backdrop-blur-sm text-white font-semibold rounded-lg hover:bg-white/30 border border-white/30 transition-all"
+                    >
+                      Get a Free Quote
+                    </Link>
+                  </div>
+                </div>
+              </div>
+            </div>
+          ) : (
+            <div className="bg-gradient-to-r from-primary to-secondary py-20 px-6 lg:px-12">
+              <div className="max-w-3xl">
+                <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/10 text-white rounded-full text-sm font-semibold mb-4">
+                  <MapPin className="w-4 h-4" />
+                  {location.city || location.name || "India"}
+                </div>
+                <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-white leading-tight mb-6">
+                  {location.h1}
+                </h1>
+                <div className="flex flex-col sm:flex-row gap-4">
+                  <Link
+                    href="/products"
+                    className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-white text-primary font-semibold rounded-lg hover:bg-gray-100 transition-all shadow-lg"
+                  >
+                    Explore Products <ArrowRight className="w-5 h-5" />
+                  </Link>
+                  <Link
+                    href="/contact"
+                    className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-white/20 backdrop-blur-sm text-white font-semibold rounded-lg hover:bg-white/30 border border-white/30 transition-all"
+                  >
+                    Get a Free Quote
+                  </Link>
+                </div>
+              </div>
+            </div>
+          )}
+        </section>
+
+        {/* ── INTRO CONTENT (admin-managed HTML) ── */}
+        {location.introContent && (
+          <section className="bg-theme-bg py-14">
+            <div className="w-full px-6 lg:px-12 max-w-4xl mx-auto">
+              <div
+                className="rich-text-lg text-base text-gray-700 dark:text-gray-300"
+                dangerouslySetInnerHTML={{ __html: location.introContent }}
+              />
+            </div>
+          </section>
+        )}
+
+        {/* ── MAIN CONTENT (if separate field) ── */}
+        {location.mainContent && (
+          <section className="bg-theme-bg-soft py-14">
+            <div className="w-full px-6 lg:px-12 max-w-4xl mx-auto">
+              <div
+                className="rich-text-lg text-base text-gray-700 dark:text-gray-300"
+                dangerouslySetInnerHTML={{ __html: location.mainContent }}
+              />
+            </div>
+          </section>
+        )}
+
+        {/* ── PRINTING METHODS ── */}
+        {location.showPrintingMethods && (
+          <section className="bg-theme-bg py-16">
+            <div className="w-full px-6 lg:px-12">
+              <div className="grid lg:grid-cols-2 gap-12 items-start">
+                <div>
+                  <div className="flex items-center gap-3 mb-6">
+                    <div className="w-10 h-10 bg-primary/10 rounded-xl flex items-center justify-center">
+                      <Printer className="w-5 h-5 text-primary" />
+                    </div>
+                    <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Printing Methods</h2>
+                  </div>
+                  <div className="grid grid-cols-1 gap-3">
+                    {printingMethods.map((method: string, i: number) => (
+                      <div key={method} className="flex items-center gap-3 p-3 bg-theme-bg-soft dark:bg-[#1E1E1E] rounded-lg border border-theme-border">
+                        <span className="w-7 h-7 bg-primary text-white text-xs font-bold rounded-full flex items-center justify-center flex-shrink-0">
+                          {i + 1}
+                        </span>
+                        <span className="text-sm font-medium text-gray-700 dark:text-gray-200">{method}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* ── FABRICS ── */}
+                {location.showFabrics && (
+                  <div>
+                    <div className="flex items-center gap-3 mb-6">
+                      <div className="w-10 h-10 bg-secondary/10 rounded-xl flex items-center justify-center">
+                        <Layers className="w-5 h-5 text-secondary" />
+                      </div>
+                      <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Fabric Options</h2>
+                    </div>
+                    <div className="grid grid-cols-2 gap-3">
+                      {fabrics.map((fabric: string) => (
+                        <div key={fabric} className="flex items-center gap-3 p-3 bg-theme-bg-soft dark:bg-[#1E1E1E] rounded-lg border border-theme-border">
+                          <CheckCircle className="w-4 h-4 text-green-500 flex-shrink-0" />
+                          <span className="text-sm font-medium text-gray-700 dark:text-gray-200">{fabric}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+          </section>
+        )}
+
+        {/* ── SIZE CHART ── */}
+        {location.showSizeChart && (
+          <section className="bg-theme-bg-soft py-12">
+            <div className="w-full px-6 lg:px-12 max-w-2xl mx-auto">
+              <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6 text-center">Size Chart</h2>
+              <div className="overflow-x-auto rounded-lg border border-theme-border">
+                <table className="w-full text-sm">
+                  <thead>
+                    <tr className="bg-primary/10 text-primary">
+                      {['S', 'M', 'L', 'XL', 'XXL', '3XL'].map((s) => (
+                        <th key={s} className="py-3 px-4 font-bold text-center">{s}</th>
+                      ))}
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr className="text-gray-600 dark:text-gray-300">
+                      {['36–38"', '38–40"', '40–42"', '42–44"', '44–46"', '46–48"'].map((m) => (
+                        <td key={m} className="py-3 px-4 text-center text-xs border-t border-theme-border">{m}</td>
+                      ))}
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </section>
+        )}
+
+        {/* ── CONTACT CARD ── */}
+        {(location.branchAddress || location.branchPhone) && (
+          <section className="bg-gradient-to-br from-primary/5 to-blue-50 dark:from-primary/10 dark:to-blue-950/20 py-16">
+            <div className="w-full px-6 lg:px-12">
+              <div className="max-w-3xl mx-auto bg-theme-bg dark:bg-[#1E1E1E] rounded-2xl border border-theme-border shadow-lg overflow-hidden">
+                <div className="bg-primary px-8 py-5">
+                  <h2 className="text-xl font-bold text-white flex items-center gap-2">
+                    <MapPin className="w-5 h-5" /> Our Branch — {location.city || location.name}
+                  </h2>
+                </div>
+                <div className="p-8 grid sm:grid-cols-2 gap-6">
+                  {location.branchAddress && (
+                    <div className="flex items-start gap-4">
+                      <div className="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center flex-shrink-0">
+                        <MapPin className="w-5 h-5 text-primary" />
+                      </div>
+                      <div>
+                        <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-1">Address</p>
+                        <p className="text-sm text-gray-700 dark:text-gray-200 leading-relaxed">{location.branchAddress}</p>
+                        {location.mapLink && (
+                          <a href={location.mapLink} target="_blank" rel="noopener noreferrer"
+                            className="inline-flex items-center gap-1 text-xs text-primary font-semibold mt-2 hover:underline">
+                            Get Directions <ExternalLink className="w-3 h-3" />
+                          </a>
+                        )}
+                      </div>
+                    </div>
+                  )}
+
+                  {location.branchPhone && (
+                    <div className="flex items-start gap-4">
+                      <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                        <Phone className="w-5 h-5 text-green-600" />
+                      </div>
+                      <div>
+                        <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-1">Phone</p>
+                        <a href={`tel:${location.branchPhone.replace(/[^+\d]/g, '')}`}
+                          className="block text-sm text-gray-700 dark:text-gray-200 hover:text-primary transition-colors font-medium">
+                          {location.branchPhone}
+                        </a>
+                      </div>
+                    </div>
+                  )}
+
+                  {location.branchHours && (
+                    <div className="flex items-start gap-4">
+                      <div className="w-10 h-10 bg-orange-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                        <Clock className="w-5 h-5 text-orange-600" />
+                      </div>
+                      <div>
+                        <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-1">Working Hours</p>
+                        <p className="text-sm text-gray-700 dark:text-gray-200 font-medium">{location.branchHours}</p>
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                <div className="px-8 pb-8 flex flex-col sm:flex-row gap-3">
+                  {location.branchPhone && (
+                    <a href={`tel:${location.branchPhone.replace(/[^+\d]/g, '')}`}
+                      className="flex-1 inline-flex items-center justify-center gap-2 py-3 bg-green-500 text-white font-semibold rounded-lg hover:bg-green-600 transition-colors">
+                      <Phone className="w-4 h-4" /> Call Now
+                    </a>
+                  )}
+                  <a href="https://wa.me/919529626262?text=Hello%2C%20I%20want%20to%20place%20a%20bulk%20order." target="_blank" rel="noopener noreferrer"
+                    className="flex-1 inline-flex items-center justify-center gap-2 py-3 bg-[#25D366] text-white font-semibold rounded-lg hover:bg-[#1ebe5d] transition-colors">
+                    <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+                    WhatsApp
+                  </a>
+                  <Link href="/contact"
+                    className="flex-1 inline-flex items-center justify-center gap-2 py-3 bg-primary text-white font-semibold rounded-lg hover:bg-primary-dark transition-colors">
+                    <Mail className="w-4 h-4" /> Get Quote
+                  </Link>
+                </div>
+              </div>
+            </div>
+          </section>
+        )}
+
+        {/* ── OTHER LOCATIONS ── */}
+        {otherLocations.length > 0 && (
+          <section className="bg-theme-bg py-10 border-t border-theme-border">
+            <div className="w-full px-6 lg:px-12">
+              <p className="text-sm font-semibold text-theme-text-muted uppercase tracking-wider mb-4">
+                Also Available In
+              </p>
+              <div className="flex flex-wrap gap-3">
+                {otherLocations.map((l: any) => (
+                  <Link
+                    key={l.slug}
+                    href={`/${l.slug}`}
+                    className="inline-flex items-center gap-2 px-4 py-2 bg-theme-bg-soft border border-theme-border rounded-full text-sm font-medium text-theme-text-secondary hover:text-primary hover:border-primary transition-colors"
+                  >
+                    <MapPin className="w-3.5 h-3.5" />
+                    {locationLabel(l)}
+                  </Link>
+                ))}
+              </div>
+            </div>
+          </section>
+        )}
+
+        {/* ── SHARED PAGE SECTIONS ── */}
+        <TrustSection />
+        <PopularProducts />
+        <TrendingProducts />
+        <DealsSection />
+        <Process />
+        <Brands />
+        <Testimonials />
+        <Contact />
+      </>
+    );
+  }
+
+  // ── CITY PAGE TEMPLATE ──────────────────────────────────────────────────
   return (
     <>
       <ScrollUp />
@@ -194,10 +513,10 @@ export default async function LocationPage({
                   Available in {location.name}
                 </p>
                 <div className="grid gap-4 grid-cols-2">
-                  {location.products.map((product: any) => (
+                  {(location.products ?? []).map((product: any) => (
                     <Link
                       key={product.slug}
-                      href={product.link}
+                      href={product.link || '/products'}
                       className="bg-white dark:bg-gray-800 p-5 rounded-xl transform hover:scale-105 transition-all duration-200 cursor-pointer shadow hover:shadow-lg text-center"
                     >
                       <div className="text-4xl mb-2">{product.icon}</div>
@@ -237,7 +556,7 @@ export default async function LocationPage({
           </div>
 
           <div className="grid md:grid-cols-2 gap-8">
-            {location.products.map((product: any) => (
+            {(location.products ?? []).map((product: any) => (
               <div key={product.slug} className="bg-theme-bg dark:bg-[#1E1E1E] rounded-2xl shadow-sm border border-theme-border overflow-hidden hover:shadow-md transition-shadow">
                 <div className="p-6">
                   <div className="flex items-center gap-4 mb-4">
@@ -254,7 +573,7 @@ export default async function LocationPage({
                   <div className="mb-5">
                     <p className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-3">Types Available</p>
                     <div className="flex flex-wrap gap-2">
-                      {product.types.map((type: string) => (
+                      {(product.types ?? []).map((type: string) => (
                         <span key={type} className="inline-flex items-center gap-1 px-3 py-1 bg-primary/10 text-primary text-xs font-medium rounded-full">
                           <CheckCircle className="w-3 h-3" /> {type}
                         </span>
@@ -263,7 +582,7 @@ export default async function LocationPage({
                   </div>
 
                   <Link
-                    href={product.link}
+                    href={product.link || '/products'}
                     className="inline-flex items-center gap-2 px-5 py-2.5 bg-primary text-white text-sm font-semibold rounded-lg hover:bg-primary-dark transition-colors"
                   >
                     View Products <ArrowRight className="w-4 h-4" />
@@ -495,11 +814,11 @@ export default async function LocationPage({
               {otherLocations.map((l: any) => (
                 <Link
                   key={l.slug}
-                  href={`/locations/${l.slug}`}
+                  href={`/${l.slug}`}
                   className="inline-flex items-center gap-2 px-4 py-2 bg-theme-bg-soft border border-theme-border rounded-full text-sm font-medium text-theme-text-secondary hover:text-primary hover:border-primary transition-colors"
                 >
                   <MapPin className="w-3.5 h-3.5" />
-                  {l.name}, {l.state}
+                  {locationLabel(l)}
                 </Link>
               ))}
             </div>

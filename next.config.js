@@ -2,11 +2,30 @@
 const nextConfig = {
   async rewrites() {
     const backendUrl = process.env.BACKEND_URL || 'https://crosswild-backend-p5l3.onrender.com';
+
+    // Location SEO pages — served without /locations/ prefix (matches production URLs)
+    const locationSlugs = [
+      'tshirt-manufacturer-in-jodhpur',
+      'bags-manufacturer-in-Jodhpur',
+      'cap-printing-manufacturer-jodhpur',
+      'uniform-manufacturer-jodhpur',
+      'tshirt-manufacturer-in-indore',
+      'bag-manufacturer-in-indore',
+      'uniform-manufacturer-in-indore',
+      'bags-manufacturing-company-in-udaipur',
+      'tshirt-manufacturer-wholesaler-in-udaipur',
+      'tshirt-manufacturer-wholesaler-in-Kota',
+      'bags-manufacturing-company-in-Kota',
+      'tshirt-manufacturer-wholesaler-in-sikar',
+      'bags-manufacturing-company-in-sikar',
+    ];
+
     return [
-      {
-        source: '/api/:path*',
-        destination: `${backendUrl}/api/:path*`,
-      },
+      { source: '/api/:path*', destination: `${backendUrl}/api/:path*` },
+      ...locationSlugs.map((slug) => ({
+        source: `/${slug}`,
+        destination: `/locations/${slug}`,
+      })),
     ];
   },
   async headers() {
@@ -61,6 +80,10 @@ const nextConfig = {
       {
         protocol: "https",
         hostname: "res.cloudinary.com",
+      },
+      {
+        protocol: "https",
+        hostname: "images.unsplash.com",
       },
     ],
   },

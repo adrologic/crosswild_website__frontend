@@ -82,7 +82,7 @@ const Footer = () => {
           {FOOTER_LOCATION_ITEMS.map((item) => (
             <li key={item.label}>
               <Link
-                href={`/locations/${item.citySlug}`}
+                href={`/${item.citySlug}`}
                 className="hover:text-primary transition"
               >
                 {item.label}

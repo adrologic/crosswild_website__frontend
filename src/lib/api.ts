@@ -469,20 +469,23 @@ export interface LocationContact {
 
 export interface LocationPage {
   _id: string;
-  name: string;
   slug: string;
-  state: string;
-  isHeadquarters?: boolean;
   isActive?: boolean;
+
+  // City page fields
+  name?: string;
+  state?: string;
+  isHeadquarters?: boolean;
   tagline?: string;
   heroHeading?: string;
-  description: string;
+  description?: string;
   whyChooseUs?: string[];
   printingMethods?: string[];
   fabrics?: string[];
   partners?: string[];
-  products: LocationProduct[];
-  contact: LocationContact;
+  products?: LocationProduct[];
+  contact?: LocationContact;
+  image?: string;
   seo?: {
     title?: string;
     description?: string;
@@ -492,6 +495,23 @@ export interface LocationPage {
     noIndex?: boolean;
     noFollow?: boolean;
   };
+
+  // SEO landing page fields
+  h1?: string;
+  introContent?: string;
+  mainContent?: string;
+  metaTitle?: string;
+  metaDescription?: string;
+  city?: string;
+  category?: string;
+  categoryLabel?: string;
+  branchAddress?: string;
+  branchPhone?: string;
+  branchHours?: string;
+  mapLink?: string;
+  showFabrics?: boolean;
+  showPrintingMethods?: boolean;
+  showSizeChart?: boolean;
 }
 
 export const locationsAPI = {
