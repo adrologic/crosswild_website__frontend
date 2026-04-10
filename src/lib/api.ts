@@ -513,6 +513,8 @@ export interface LocationPage {
   showPrintingMethods?: boolean;
   showSizeChart?: boolean;
   mapEmbed?: string;
+  pageImages?: string[];
+  sliderImages?: string[];
 }
 
 export const locationsAPI = {

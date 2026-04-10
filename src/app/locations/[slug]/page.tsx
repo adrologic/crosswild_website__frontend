@@ -2,21 +2,62 @@ import { Metadata } from "next";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
-import dynamic from "next/dynamic";
+import dynamicImport from "next/dynamic";
 import { ArrowRight, MapPin, CheckCircle, Phone, Mail, Clock, ExternalLink, Printer, Layers } from "lucide-react";
 import { LOCATIONS } from "@/data/locations";
 import ScrollUp from "@/components/Common/ScrollUp";
 import TrustSection from "@/components/Features/TrustSection";
+import LocationImageSlider from "@/components/Locations/LocationImageSlider";
 
-const PopularProducts = dynamic(() => import("@/components/Products/PopularProducts"));
-const TrendingProducts = dynamic(() => import("@/components/Products/TrendingProducts"));
-const DealsSection = dynamic(() => import("@/components/Promotions/DealsSection"));
-const Process = dynamic(() => import("@/components/Process/Process"));
-const Testimonials = dynamic(() => import("@/components/Testimonials"));
-const Brands = dynamic(() => import("@/components/Brands"));
-const Contact = dynamic(() => import("@/components/Contact"));
+export const dynamic = 'force-dynamic';
+
+const PopularProducts = dynamicImport(() => import("@/components/Products/PopularProducts"));
+const TrendingProducts = dynamicImport(() => import("@/components/Products/TrendingProducts"));
+const DealsSection = dynamicImport(() => import("@/components/Promotions/DealsSection"));
+const Process = dynamicImport(() => import("@/components/Process/Process"));
+const Testimonials = dynamicImport(() => import("@/components/Testimonials"));
+const Brands = dynamicImport(() => import("@/components/Brands"));
+const Contact = dynamicImport(() => import("@/components/Contact"));
 
 const API_URL = (process.env.BACKEND_URL || 'https://crosswild-backend-p5l3.onrender.com') + '/api';
+
+// Product image sliders per slug
+const STATIC_SLIDER_IMAGES: Record<string, string[]> = {
+  'tshirt-manufacturer-wholesaler-in-udaipur': [
+    '/images/fileBanners/thirtSlider/4.jpg',
+    '/images/fileBanners/thirtSlider/6.jpg',
+    '/images/fileBanners/thirtSlider/IMG_8501.jpg',
+    '/images/fileBanners/thirtSlider/IMG_8508.jpg',
+  ],
+  'tshirt-manufacturer-wholesaler-in-sikar': [
+    '/images/fileBanners/thirtSlider/4.jpg',
+    '/images/fileBanners/thirtSlider/6.jpg',
+    '/images/fileBanners/thirtSlider/IMG_8501.jpg',
+    '/images/fileBanners/thirtSlider/IMG_8508.jpg',
+  ],
+  'tshirt-manufacturer-wholesaler-in-kota': [
+    '/images/fileBanners/thirtSlider/4.jpg',
+    '/images/fileBanners/thirtSlider/6.jpg',
+    '/images/fileBanners/thirtSlider/IMG_8501.jpg',
+    '/images/fileBanners/thirtSlider/IMG_8508.jpg',
+  ],
+};
+
+// Static CTA banner images per slug — used as fallback if pageImages not in DB
+const STATIC_PAGE_IMAGES: Record<string, string[]> = {
+  'tshirt-manufacturer-in-indore': [
+    '/images/fileBanners/indore/tshirt/indor-CTA-1.webp',
+    '/images/fileBanners/indore/tshirt/indor-CTA-2.webp',
+  ],
+  'bag-manufacturer-in-indore': [
+    '/images/fileBanners/indore/bags/Laptop-CTA-banner.webp',
+    '/images/fileBanners/indore/bags/bags-banner-CTA.webp',
+  ],
+  'uniform-manufacturer-in-indore': [
+    '/images/fileBanners/indore/uniform/School-uniform-CTA-banner.webp',
+    '/images/fileBanners/indore/uniform/office-uniform-cta-banner.webp',
+  ],
+};
 
 const DEFAULT_PRINTING_METHODS = [
   "Screen Printing",
@@ -39,7 +80,7 @@ const DEFAULT_FABRICS = [
 // Fetch from API, fall back to static data
 async function getLocation(slug: string) {
   try {
-    const res = await fetch(`${API_URL}/locations/${slug}`, { next: { revalidate: 60 } });
+    const res = await fetch(`${API_URL}/locations/${slug}`, { cache: 'no-store' });
     if (res.ok) {
       const data = await res.json();
       if (data.location) return data.location;
@@ -62,7 +103,7 @@ async function getAllLocationSlugs(): Promise<string[]> {
 
 async function getAllLocations() {
   try {
-    const res = await fetch(`${API_URL}/locations?active=true`, { next: { revalidate: 60 } });
+    const res = await fetch(`${API_URL}/locations?active=true`, { cache: 'no-store' });
     if (res.ok) {
       const data = await res.json();
       if (data.locations?.length) return data.locations;
@@ -134,6 +175,8 @@ export default async function LocationPage({
   if (location.h1) {
     const printingMethods = location.printingMethods?.length ? location.printingMethods : DEFAULT_PRINTING_METHODS;
     const fabrics = location.fabrics?.length ? location.fabrics : DEFAULT_FABRICS;
+    const pageImages: string[] = location.pageImages?.length ? location.pageImages : (STATIC_PAGE_IMAGES[slug] ?? []);
+    const sliderImages: string[] = location.sliderImages?.length ? location.sliderImages : (STATIC_SLIDER_IMAGES[slug] ?? []);
 
     return (
       <>
@@ -220,6 +263,29 @@ export default async function LocationPage({
                       dangerouslySetInnerHTML={{ __html: location.introContent }}
                     />
                   )}
+
+                  {/* Product image slider — mid content */}
+                  {sliderImages.length > 0 && (
+                    <LocationImageSlider images={sliderImages} alt={location.h1} />
+                  )}
+
+                  {/* CTA banner images — mid content */}
+                  {pageImages.length > 0 && (
+                    <div className="my-8 space-y-4">
+                      {pageImages.map((src: string, i: number) => (
+                        <div key={i} className="w-full rounded-xl overflow-hidden shadow-sm">
+                          <Image
+                            src={src}
+                            alt={`${location.h1} — banner ${i + 1}`}
+                            width={800}
+                            height={300}
+                            className="w-full h-auto object-cover"
+                          />
+                        </div>
+                      ))}
+                    </div>
+                  )}
+
                   {location.mainContent && (
                     <div
                       className="rich-text-lg text-base text-gray-700 dark:text-gray-300 mt-8"
