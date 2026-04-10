@@ -512,6 +512,7 @@ export interface LocationPage {
   showFabrics?: boolean;
   showPrintingMethods?: boolean;
   showSizeChart?: boolean;
+  mapEmbed?: string;
 }
 
 export const locationsAPI = {

@@ -219,8 +219,7 @@ const BestSellersAndNewArrivals = () => {
             </>
           )}
 
-          {/* Gradient Overlays */}
-          <div className="hidden md:block absolute left-0 top-0 bottom-0 w-20 bg-gradient-to-r from-gray-50 to-transparent dark:from-gray-900 pointer-events-none z-10"></div>
+          {/* Gradient Overlay - right side only to indicate more items */}
           <div className="hidden md:block absolute right-0 top-0 bottom-0 w-20 bg-gradient-to-l from-gray-50 to-transparent dark:from-gray-900 pointer-events-none z-10"></div>
         </div>
 

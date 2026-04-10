@@ -6,7 +6,7 @@ const nextConfig = {
     // Location SEO pages — served without /locations/ prefix (matches production URLs)
     const locationSlugs = [
       'tshirt-manufacturer-in-jodhpur',
-      'bags-manufacturer-in-Jodhpur',
+      'bags-manufacturer-in-jodhpur',
       'cap-printing-manufacturer-jodhpur',
       'uniform-manufacturer-jodhpur',
       'tshirt-manufacturer-in-indore',
@@ -14,8 +14,8 @@ const nextConfig = {
       'uniform-manufacturer-in-indore',
       'bags-manufacturing-company-in-udaipur',
       'tshirt-manufacturer-wholesaler-in-udaipur',
-      'tshirt-manufacturer-wholesaler-in-Kota',
-      'bags-manufacturing-company-in-Kota',
+      'tshirt-manufacturer-wholesaler-in-kota',
+      'bags-manufacturing-company-in-kota',
       'tshirt-manufacturer-wholesaler-in-sikar',
       'bags-manufacturing-company-in-sikar',
     ];
