@@ -81,7 +81,7 @@ export default function LocationsStrip() {
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
               <Link
-                href="/contact"
+                href="/contact-us"
                 className="inline-flex items-center gap-2 px-8 py-4 bg-white text-purple-600 font-semibold rounded-lg hover:bg-gray-100 transition-colors shadow-lg"
               >
                 <MapPin className="w-5 h-5" />

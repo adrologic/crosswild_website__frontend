@@ -1,42 +1,57 @@
 import { MetadataRoute } from 'next';
 
 const API_URL = process.env.BACKEND_URL || 'https://crosswild-backend-p5l3.onrender.com';
-const baseUrl = 'https://thecrosswild.com';
+const baseUrl = 'https://www.thecrosswild.com';
 
 export const revalidate = 3600; // Refresh every hour
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   // Static routes (existing 18 pages)
   const staticRoutes: MetadataRoute.Sitemap = [
-    '',
-    '/about',
-    '/contact',
-    '/blog',
-    '/products',
-    '/image-gallery',
-    '/our_process',
-    '/t-shirt_manufacturing',
-    '/sweatshirt_manufacturing',
-    '/bag_manufacturing',
-    '/cap_manufacturing',
-    '/mug_manufacturing',
-    '/digital_printing',
-    '/face_masks_ppe_kits',
-    '/sanitizer_infrared_thermometer',
-    '/school_uniform',
-    '/staff_uniform',
-  ].map((route) => ({
+    { route: '',               priority: 1.0, freq: 'daily'   },
+    { route: '/about-us',      priority: 0.8, freq: 'monthly' },
+    { route: '/contact-us',    priority: 0.8, freq: 'monthly' },
+    { route: '/blog',          priority: 0.9, freq: 'weekly'  },
+    { route: '/products',      priority: 0.9, freq: 'daily'   },
+    { route: '/services',      priority: 0.9, freq: 'weekly'  },
+    // Old-site keyword product pages (same URLs as before — preserving rankings)
+    { route: '/product/customize-promotional-t-shirt-manufacturer-in-Jaipur', priority: 0.9, freq: 'weekly' },
+    { route: '/product/school-laptop-bag-manufacturer-in-Jaipur',             priority: 0.9, freq: 'weekly' },
+    { route: '/product/cap-printing-manufacturer-in-jaipur',                  priority: 0.9, freq: 'weekly' },
+    { route: '/product/school-uniform',                                        priority: 0.8, freq: 'weekly' },
+    { route: '/product/staff-uniform-manufacturer',                            priority: 0.8, freq: 'weekly' },
+    { route: '/product/sweatshirt-hoodie-manufacturer-in-Jaipur',             priority: 0.8, freq: 'weekly' },
+    { route: '/product/printing',                                              priority: 0.8, freq: 'weekly' },
+    { route: '/product/mug-printing-in-Jaipur',                               priority: 0.8, freq: 'weekly' },
+    { route: '/image-gallery', priority: 0.7, freq: 'monthly' },
+    { route: '/our_process',   priority: 0.7, freq: 'monthly' },
+    // Location pages — same slugs as old site (preserve rankings)
+    { route: '/tshirt-manufacturer-in-jodhpur',            priority: 0.8, freq: 'weekly' },
+    { route: '/bags-manufacturer-in-jodhpur',              priority: 0.8, freq: 'weekly' },
+    { route: '/cap-printing-manufacturer-jodhpur',         priority: 0.8, freq: 'weekly' },
+    { route: '/uniform-manufacturer-jodhpur',              priority: 0.8, freq: 'weekly' },
+    { route: '/tshirt-manufacturer-in-indore',             priority: 0.8, freq: 'weekly' },
+    { route: '/bag-manufacturer-in-indore',                priority: 0.8, freq: 'weekly' },
+    { route: '/uniform-manufacturer-in-indore',            priority: 0.8, freq: 'weekly' },
+    { route: '/bags-manufacturing-company-in-udaipur',     priority: 0.8, freq: 'weekly' },
+    { route: '/tshirt-manufacturer-wholesaler-in-udaipur', priority: 0.8, freq: 'weekly' },
+    { route: '/tshirt-manufacturer-wholesaler-in-kota',    priority: 0.8, freq: 'weekly' },
+    { route: '/bags-manufacturing-company-in-kota',        priority: 0.8, freq: 'weekly' },
+    { route: '/tshirt-manufacturer-wholesaler-in-sikar',   priority: 0.8, freq: 'weekly' },
+    { route: '/bags-manufacturing-company-in-sikar',       priority: 0.8, freq: 'weekly' },
+  ].map(({ route, priority, freq }) => ({
     url: `${baseUrl}${route}`,
     lastModified: new Date(),
-    changeFrequency: route === '' ? 'daily' : 'weekly',
-    priority: route === '' ? 1 : 0.8,
+    changeFrequency: freq as MetadataRoute.Sitemap[0]['changeFrequency'],
+    priority,
   }));
 
-  // Dynamic product URLs (use slug if available, otherwise fallback to _id)
+  // Dynamic product URLs
   let productRoutes: MetadataRoute.Sitemap = [];
   try {
     const productsRes = await fetch(`${API_URL}/api/products?limit=1000`, {
       next: { revalidate: 3600 },
+      signal: AbortSignal.timeout(8000),
     });
     if (productsRes.ok) {
       const data = await productsRes.json();
@@ -48,15 +63,16 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         priority: 0.8,
       }));
     }
-  } catch (error) {
-    console.error('Sitemap: Failed to fetch products', error);
+  } catch {
+    // Backend unavailable — skip dynamic product routes
   }
 
-  // Dynamic blog URLs (use slug if available, otherwise fallback to _id)
+  // Dynamic blog URLs
   let blogRoutes: MetadataRoute.Sitemap = [];
   try {
     const blogsRes = await fetch(`${API_URL}/api/blogs?limit=1000`, {
       next: { revalidate: 3600 },
+      signal: AbortSignal.timeout(8000),
     });
     if (blogsRes.ok) {
       const data = await blogsRes.json();
@@ -68,15 +84,16 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         priority: 0.6,
       }));
     }
-  } catch (error) {
-    console.error('Sitemap: Failed to fetch blogs', error);
+  } catch {
+    // Backend unavailable — skip dynamic blog routes
   }
 
-  // Dynamic category URLs (from API)
+  // Dynamic category URLs
   let categoryRoutes: MetadataRoute.Sitemap = [];
   try {
     const categoriesRes = await fetch(`${API_URL}/api/categories?active=true`, {
       next: { revalidate: 3600 },
+      signal: AbortSignal.timeout(8000),
     });
     if (categoriesRes.ok) {
       const data = await categoriesRes.json();
@@ -90,8 +107,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
           priority: 0.7,
         }));
     }
-  } catch (error) {
-    console.error('Sitemap: Failed to fetch categories', error);
+  } catch {
+    // Backend unavailable — skip dynamic category routes
   }
 
   return [...staticRoutes, ...productRoutes, ...blogRoutes, ...categoryRoutes];

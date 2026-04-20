@@ -1,5 +1,23 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  reactStrictMode: false,
+  async redirects() {
+    return [
+      // ── Dead old product pages (no equivalent) → /products ──
+      { source: '/product/face-mask-and-ppe-kit-manufacturer-jaipur',            destination: '/products', permanent: true },
+      { source: '/product/sanitizer-and-infrared-thermometer-wholesaler-jaipur', destination: '/products', permanent: true },
+      // ── Page renames ──
+      // /services now has its own page — no redirect needed
+      { source: '/gallery',        destination: '/image-gallery', permanent: true },
+      { source: '/our-process',    destination: '/our_process',   permanent: true },
+      { source: '/why-choose-us',  destination: '/about-us',      permanent: true },
+      // ── Case-sensitivity fixes (old site used uppercase letters in slugs) ──
+      { source: '/bags-manufacturer-in-Jodhpur',              destination: '/bags-manufacturer-in-jodhpur',              permanent: true },
+      { source: '/tshirt-manufacturer-wholesaler-in-Kota',    destination: '/tshirt-manufacturer-wholesaler-in-kota',    permanent: true },
+      { source: '/bags-manufacturing-company-in-Kota',        destination: '/bags-manufacturing-company-in-kota',        permanent: true },
+    ];
+  },
+
   async rewrites() {
     const backendUrl = process.env.BACKEND_URL || 'https://crosswild-backend-p5l3.onrender.com';
 
@@ -84,6 +102,14 @@ const nextConfig = {
       {
         protocol: "https",
         hostname: "images.unsplash.com",
+      },
+      {
+        protocol: "https",
+        hostname: "www.thecrosswild.com",
+      },
+      {
+        protocol: "https",
+        hostname: "thecrosswild.com",
       },
     ],
   },

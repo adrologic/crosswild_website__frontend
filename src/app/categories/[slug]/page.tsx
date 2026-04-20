@@ -2,6 +2,7 @@ import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import { generateCategoryMetadata, generateCategorySchema, generateBreadcrumbSchema, getGlobalSEO } from '@/lib/seo';
+import { getCategoryUrl, getSubCategoryUrl } from '@/lib/categoryUrls';
 import { ChevronRight, Grid3x3, ArrowRight } from 'lucide-react';
 
 const API_URL = (process.env.BACKEND_URL || 'https://crosswild-backend-p5l3.onrender.com') + '/api';
@@ -10,6 +11,7 @@ async function getCategory(slug: string) {
   try {
     const res = await fetch(`${API_URL}/categories/${slug}`, {
       next: { revalidate: 60 },
+      signal: AbortSignal.timeout(5000),
     });
     if (!res.ok) return null;
     const data = await res.json();
@@ -23,6 +25,7 @@ async function getCategoryProducts(categoryId: string) {
   try {
     const res = await fetch(`${API_URL}/products?category=${categoryId}&limit=50`, {
       next: { revalidate: 60 },
+      signal: AbortSignal.timeout(5000),
     });
     if (!res.ok) return [];
     const data = await res.json();
@@ -152,7 +155,7 @@ export default async function CategoryPage({
                 {subcategories.map((sub: any) => (
                   <Link
                     key={sub._id || sub.id}
-                    href={`/products?category=${category.id}&sub=${sub.id}`}
+                    href={getSubCategoryUrl(category.id, sub.id)}
                     className="group bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-4 hover:shadow-lg hover:border-primary/30 transition-all duration-200"
                   >
                     {sub.image ? (
@@ -236,7 +239,7 @@ export default async function CategoryPage({
           {/* View all products CTA */}
           <div className="text-center py-8">
             <Link
-              href={`/products?category=${category.id}`}
+              href={getCategoryUrl(category.id)}
               className="inline-flex items-center gap-2 px-6 py-3 bg-primary text-white rounded-xl font-medium hover:bg-primary/90 transition-colors shadow-md hover:shadow-lg"
             >
               View All {category.name}

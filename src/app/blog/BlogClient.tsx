@@ -46,6 +46,8 @@ const BlogClient = () => {
     return matchesSearch && matchesTag;
   });
 
+  const stripHtml = (html: string) => html?.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim() || '';
+
   // Format date
   const formatDate = (dateString: string) => {
     if (!dateString) return '';
@@ -224,7 +226,7 @@ const BlogClient = () => {
                         {filteredBlogs[0].title}
                       </h2>
                       <p className="text-gray-600 dark:text-gray-400 mb-6 line-clamp-3">
-                        {filteredBlogs[0].paragraph}
+                        {stripHtml(filteredBlogs[0].paragraph)}
                       </p>
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-3">
@@ -265,7 +267,7 @@ const BlogClient = () => {
                 {(searchQuery || selectedTag ? filteredBlogs : filteredBlogs.slice(1)).map((blog) => (
                   <Link
                     key={blog.id}
-                    href={`/blog/${blog.id}`}
+                    href={`/blog/${blog.slug || blog.id}`}
                     className="group bg-white dark:bg-gray-800 rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2"
                   >
                     {/* Image */}
@@ -322,7 +324,7 @@ const BlogClient = () => {
 
                       {/* Excerpt */}
                       <p className="text-gray-600 dark:text-gray-400 mb-4 line-clamp-2">
-                        {blog.paragraph}
+                        {stripHtml(blog.paragraph)}
                       </p>
 
                       {/* Author */}

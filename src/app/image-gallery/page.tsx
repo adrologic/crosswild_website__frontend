@@ -1,15 +1,17 @@
 import type { Metadata } from 'next';
 import Breadcrumb from "@/components/Common/Breadcrumb";
 import Gallery from "@/components/Gallary/ImageGallary";
+import { generatePageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
-  title: 'Image Gallery | Showcase of Our Custom Designs and Work',
-  description: 'Explore our image gallery featuring high-quality photos of custom t-shirts, visiting cards, caps, and manufacturing samples. See our work and get inspired!',
-  // Add a canonical URL to prevent duplicate content issues
-  alternates: {
-    canonical: 'https://yourwebsite.com/image-gallery',
-  },
-};
+export async function generateMetadata(): Promise<Metadata> {
+  return generatePageMetadata('/image-gallery', {
+    title: 'Gallery - Custom Printing & Manufacturing Portfolio | The Cross Wild',
+    description: 'View The Cross Wild\'s portfolio of custom T-shirts, bags, caps, promotional products, and uniforms. See real work from our Jaipur manufacturing facility serving clients across India.',
+    keywords: ['custom printing gallery', 'promotional products portfolio', 't-shirt printing samples', 'The Cross Wild gallery', 'custom manufacturing Jaipur'],
+  });
+}
+
+export const revalidate = 60;
 
 const ImageGallery = () => {
   return (

@@ -70,12 +70,12 @@ export default function CrosswildFooter() {
             <h4 className="text-white font-bold text-lg mb-4">Products</h4>
             <ul className="space-y-2">
               <li><Link href="/products?category=cards" className="hover:text-primary transition-colors">Business Cards</Link></li>
-              <li><Link href="/products?category=tshirts" className="hover:text-primary transition-colors">T-Shirts</Link></li>
-              <li><Link href="/products?category=sweatshirts" className="hover:text-primary transition-colors">Sweatshirts</Link></li>
-              <li><Link href="/products?category=bags" className="hover:text-primary transition-colors">Bags & Totes</Link></li>
-              <li><Link href="/products?category=caps" className="hover:text-primary transition-colors">Caps & Hats</Link></li>
-              <li><Link href="/products?category=mugs" className="hover:text-primary transition-colors">Mugs</Link></li>
-              <li><Link href="/products?category=uniforms" className="hover:text-primary transition-colors">Uniforms</Link></li>
+              <li><Link href="/product/customize-promotional-t-shirt-manufacturer-in-Jaipur" className="hover:text-primary transition-colors">T-Shirts</Link></li>
+              <li><Link href="/product/sweatshirt-hoodie-manufacturer-in-Jaipur" className="hover:text-primary transition-colors">Sweatshirts</Link></li>
+              <li><Link href="/product/school-laptop-bag-manufacturer-in-Jaipur" className="hover:text-primary transition-colors">Bags & Totes</Link></li>
+              <li><Link href="/product/cap-printing-manufacturer-in-jaipur" className="hover:text-primary transition-colors">Caps & Hats</Link></li>
+              <li><Link href="/product/mug-printing-in-Jaipur" className="hover:text-primary transition-colors">Mugs</Link></li>
+              <li><Link href="/product/school-uniform" className="hover:text-primary transition-colors">Uniforms</Link></li>
               <li><Link href="/products" className="hover:text-primary transition-colors font-semibold">View All</Link></li>
             </ul>
           </div>
@@ -84,11 +84,11 @@ export default function CrosswildFooter() {
           <div>
             <h4 className="text-white font-bold text-lg mb-4">Company</h4>
             <ul className="space-y-2">
-              <li><Link href="/about" className="hover:text-primary transition-colors">About Us</Link></li>
+              <li><Link href="/about-us" className="hover:text-primary transition-colors">About Us</Link></li>
               <li><Link href="/our_process" className="hover:text-primary transition-colors">How It Works</Link></li>
               <li><Link href="/blog" className="hover:text-primary transition-colors">Blog</Link></li>
               <li><Link href="/image-gallery" className="hover:text-primary transition-colors">Gallery</Link></li>
-              <li><Link href="/contact" className="hover:text-primary transition-colors">Contact Us</Link></li>
+              <li><Link href="/contact-us" className="hover:text-primary transition-colors">Contact Us</Link></li>
               <li><Link href="#" className="hover:text-primary transition-colors">Careers</Link></li>
             </ul>
           </div>

@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { productsAPI, type Product } from '@/lib/api';
+import { getCategoryUrl, getSubCategoryUrl } from '@/lib/categoryUrls';
 import SafeImage from '@/components/Common/SafeImage';
 import Link from 'next/link';
 import {
@@ -181,7 +182,7 @@ export default function ProductDetailClient({ id }: { id: string }) {
                 <>
                   <ChevronRight className="w-3.5 h-3.5 text-theme-text-muted opacity-40" />
                   <Link
-                    href={`/products?category=${primaryCategory}`}
+                    href={getCategoryUrl(primaryCategory)}
                     className="text-theme-text-muted hover:text-primary transition-colors"
                   >
                     {getCategoryName(primaryCategory)}
@@ -261,7 +262,7 @@ export default function ProductDetailClient({ id }: { id: string }) {
                   {product.productCategories!.map(pc => (
                     <span key={pc.category} className="contents">
                       <Link
-                        href={`/products?category=${pc.category}`}
+                        href={getCategoryUrl(pc.category)}
                         className="px-3 py-1 bg-primary/10 text-primary text-xs font-medium rounded-full hover:bg-primary/20 transition-colors"
                       >
                         {getCategoryName(pc.category)}
@@ -269,7 +270,7 @@ export default function ProductDetailClient({ id }: { id: string }) {
                       {pc.subcategories && pc.subcategories.length > 0 && pc.subcategories.map(sub => (
                         <Link
                           key={`${pc.category}-${sub}`}
-                          href={`/products?category=${pc.category}&sub=${sub}`}
+                          href={getSubCategoryUrl(pc.category, sub)}
                           className="px-3 py-1 bg-theme-bg-card border border-theme-border text-theme-text-secondary text-xs font-medium rounded-full hover:border-primary hover:text-primary transition-colors"
                         >
                           {formatSubcategory(sub)}

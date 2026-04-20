@@ -45,13 +45,13 @@ export default function NotFound() {
           <h3 className="text-lg font-semibold mb-4">Quick Links</h3>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             <Link
-              href="/about"
+              href="/about-us"
               className="text-gray-600 dark:text-gray-400 hover:text-primary transition-colors"
             >
               About Us
             </Link>
             <Link
-              href="/contact"
+              href="/contact-us"
               className="text-gray-600 dark:text-gray-400 hover:text-primary transition-colors"
             >
               Contact
@@ -73,7 +73,7 @@ export default function NotFound() {
 
         {/* Help Text */}
         <p className="mt-8 text-sm text-gray-500 dark:text-gray-400">
-          Need help? <Link href="/contact" className="text-primary hover:underline">Contact our support team</Link>
+          Need help? <Link href="/contact-us" className="text-primary hover:underline">Contact our support team</Link>
         </p>
       </div>
     </div>

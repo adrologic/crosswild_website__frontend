@@ -11,7 +11,7 @@ const deals = [
     description: 'Orders above 100 pieces',
     icon: TrendingUp,
     color: 'from-blue-500 to-blue-600',
-    link: '/products?category=tshirts',
+    link: '/product/customize-promotional-t-shirt-manufacturer-in-Jaipur',
   },
   {
     title: 'Flash Sale',
@@ -19,7 +19,7 @@ const deals = [
     description: 'Limited time offer',
     icon: Zap,
     color: 'from-orange-500 to-red-500',
-    link: '/products?category=mugs',
+    link: '/product/mug-printing-in-Jaipur',
     badge: 'Ending Soon',
   },
   {
@@ -113,7 +113,7 @@ export default function DealsSection() {
               Call Us Now
             </a>
             <Link
-              href="/contact"
+              href="/contact-us"
               className="inline-flex items-center justify-center gap-2 px-8 py-4 border-2 border-white text-white font-semibold rounded-lg hover:bg-white/10 transition-colors"
             >
               Request Callback

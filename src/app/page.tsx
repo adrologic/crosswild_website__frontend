@@ -1,9 +1,12 @@
 import dynamic from "next/dynamic";
 import { Metadata } from "next";
+import { generatePageMetadata } from "@/lib/seo";
+import { getPageContent } from "@/lib/content";
 import CrosswildHero from "@/components/Hero/CrosswildHero";
 import CrosswildCategories from "@/components/Categories/CrosswildCategories";
 import TrustSection from "@/components/Features/TrustSection";
 import ScrollUp from "@/components/Common/ScrollUp";
+import HomeBrandContent from "@/components/Home/HomeBrandContent";
 
 // Below-the-fold components — lazy loaded for faster initial page render
 const ExploreAllCategories = dynamic(() => import("@/components/Categories/ExploreAllCategories"));
@@ -19,66 +22,25 @@ const Contact = dynamic(() => import("@/components/Contact"));
 
 
 
-export const metadata: Metadata = {
-  title: "The CrossWild - Custom T-Shirts, Uniforms & Corporate Merchandise | Premium Printing Services",
-  description: "Leading manufacturer of custom t-shirts, corporate uniforms, promotional merchandise, and personalized products. Premium printing, bulk orders, and custom branding solutions for businesses across India.",
-  keywords: [
-    "custom t-shirts India",
-    "corporate uniforms manufacturer",
-    "promotional merchandise",
-    "bulk t-shirt printing",
-    "custom merchandise",
-    "corporate gifting",
-    "branded apparel",
-    "school uniforms",
-    "staff uniforms",
-    "promotional products",
-  ],
-  authors: [{ name: "The CrossWild" }],
-  creator: "The CrossWild",
-  publisher: "The CrossWild",
-  openGraph: {
-    type: "website",
-    locale: "en_IN",
-    url: "https://thecrosswild.com/",
-    title: "The CrossWild - Custom T-Shirts & Corporate Merchandise",
-    description: "Premium custom printing services for t-shirts, uniforms, and promotional merchandise. Trusted by leading brands across India.",
-    siteName: "The CrossWild",
-    images: [
-      {
-        url: "/images/logo/logo-crosswile.jpg",
-        width: 1200,
-        height: 630,
-        alt: "The CrossWild - Custom Printing Services",
-      },
-    ],
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "The CrossWild - Custom T-Shirts & Corporate Merchandise",
-    description: "Premium custom printing services for t-shirts, uniforms, and promotional merchandise.",
-    images: ["/images/logo/logo-crosswile.jpg"],
-  },
-  robots: {
-    index: true,
-    follow: true,
-    googleBot: {
-      index: true,
-      follow: true,
-      'max-video-preview': -1,
-      'max-image-preview': 'large',
-      'max-snippet': -1,
-    },
-  },
-};
+export async function generateMetadata(): Promise<Metadata> {
+  return generatePageMetadata('/', {
+    title: 'Manufacturers of Custom T-shirts, Bags & Caps in Jaipur, India | The Cross Wild',
+    description: 'The Cross Wild is India\'s trusted custom T-shirt, bags, and caps manufacturer in Jaipur since 2016. Bulk printing, corporate promotional products & uniforms. Prices from ₹70/piece. Fast delivery across India.',
+    keywords: ['custom t-shirt manufacturer Jaipur', 'bags manufacturer Jaipur', 'cap printing manufacturer Jaipur', 'bulk t-shirt printing India', 'promotional products manufacturer', 'corporate merchandise India', 'The Cross Wild'],
+  });
+}
 
-export default function Home() {
+export const revalidate = 60;
+
+export default async function Home() {
+  const content = await getPageContent('home');
+
   return (
     <>
       <ScrollUp />
 
       {/* Hero Section with Promotional Banner */}
-      <CrosswildHero />
+      <CrosswildHero content={content?.hero} />
 
       {/* Product Categories - Crosswild Style */}
       <CrosswildCategories />
@@ -101,8 +63,11 @@ export default function Home() {
       {/* Deals & Promotions Section */}
       <DealsSection />
 
+      {/* Brand Content — Intro, Capabilities, Why Choose, Product Highlights */}
+      <HomeBrandContent />
+
       {/* Trust & Features Section */}
-      <TrustSection />
+      <TrustSection content={content?.trust} />
 
       {/* Manufacturing Process */}
       <Process />

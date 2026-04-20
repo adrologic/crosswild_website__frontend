@@ -4,12 +4,23 @@ const API_URL = (process.env.BACKEND_URL || 'https://crosswild-backend-p5l3.onre
 
 // Default SEO values (fallback if API fails)
 const defaultSEO = {
-  siteName: 'The CrossWild',
-  siteUrl: 'https://thecrosswild.com',
-  defaultTitle: 'The CrossWild - Custom Printing & Promotional Merchandise',
-  titleTemplate: '%s | The CrossWild',
-  defaultDescription: 'Premium custom printing services for T-shirts, caps, bags, mugs, and promotional merchandise. Quality printing with fast delivery across India.',
-  defaultKeywords: ['custom printing', 'promotional merchandise', 't-shirt printing', 'corporate gifts'],
+  siteName: 'The Cross Wild',
+  siteUrl: 'https://www.thecrosswild.com',
+  defaultTitle: 'Manufacturers of Custom T-shirts, Bags & Caps in Jaipur, India | The Cross Wild',
+  titleTemplate: '%s | The Cross Wild',
+  defaultDescription: 'The Cross Wild is India\'s trusted custom T-shirt, bags, and caps manufacturer in Jaipur since 2016. Bulk printing, corporate promotional products, and uniforms. Prices from ₹70/piece. Fast delivery across India.',
+  defaultKeywords: [
+    'custom t-shirt manufacturer Jaipur',
+    'promotional t-shirt printing India',
+    'bags manufacturer Jaipur',
+    'cap printing manufacturer Jaipur',
+    'bulk t-shirt printing',
+    'corporate promotional products',
+    'custom uniform manufacturer',
+    'mug printing Jaipur',
+    'promotional merchandise India',
+    'The Cross Wild',
+  ],
   defaultOgImage: '/images/og-default.jpg',
 };
 
@@ -17,13 +28,13 @@ const defaultSEO = {
 export async function getGlobalSEO() {
   try {
     const response = await fetch(`${API_URL}/seo/global`, {
-      next: { revalidate: 60 }, // Revalidate every 60 seconds
+      next: { revalidate: 60 },
+      signal: AbortSignal.timeout(5000),
     });
     if (!response.ok) return defaultSEO;
     const data = await response.json();
     return data.settings || defaultSEO;
-  } catch (error) {
-    console.error('Failed to fetch global SEO:', error);
+  } catch {
     return defaultSEO;
   }
 }
@@ -33,12 +44,12 @@ export async function getPageSEO(path: string) {
   try {
     const response = await fetch(`${API_URL}/seo/pages/${encodeURIComponent(path)}`, {
       next: { revalidate: 60 },
+      signal: AbortSignal.timeout(5000),
     });
     if (!response.ok) return null;
     const data = await response.json();
     return data.page;
-  } catch (error) {
-    console.error('Failed to fetch page SEO:', error);
+  } catch {
     return null;
   }
 }
@@ -57,12 +68,12 @@ export async function generatePageMetadata(
   const globalSEO = await getGlobalSEO();
   const pageSEO = await getPageSEO(path);
 
-  // Merge: custom data > page SEO > global defaults
-  const title = customData?.title || pageSEO?.title || globalSEO.defaultTitle;
-  const description = customData?.description || pageSEO?.description || globalSEO.defaultDescription;
-  const keywords = customData?.keywords || pageSEO?.keywords || globalSEO.defaultKeywords || [];
-  const ogImage = customData?.image || pageSEO?.ogImage || globalSEO.defaultOgImage;
-  const noIndex = customData?.noIndex || pageSEO?.noIndex || false;
+  // Merge: page SEO (admin-controlled) > custom data fallback > global defaults
+  const title = pageSEO?.title || customData?.title || globalSEO.defaultTitle;
+  const description = pageSEO?.description || customData?.description || globalSEO.defaultDescription;
+  const keywords = pageSEO?.keywords?.length ? pageSEO.keywords : (customData?.keywords || globalSEO.defaultKeywords || []);
+  const ogImage = pageSEO?.ogImage || customData?.image || globalSEO.defaultOgImage;
+  const noIndex = pageSEO?.noIndex ?? customData?.noIndex ?? false;
 
   const siteUrl = globalSEO.siteUrl || defaultSEO.siteUrl;
   const canonicalUrl = pageSEO?.canonicalUrl || `${siteUrl}${path}`;

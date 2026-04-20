@@ -14,6 +14,7 @@ import {
   openCart, toggleMenu, closeMenu, toggleMobileSearch, closeMobileSearch,
 } from '@/store/slices/uiSlice';
 import { productsAPI, categoriesAPI, Product } from '@/lib/api';
+import { getCategoryUrl, getSubCategoryUrl } from '@/lib/categoryUrls';
 import CartDrawer from '@/components/Cart/CartDrawer';
 import ThemeToggle from '@/components/ThemeToggle/ThemeToggle';
 
@@ -40,10 +41,10 @@ const FALLBACK_CATEGORIES: NavCategory[] = [
     { name: 'Sports Caps', link: '/products?category=caps&sub=sports-caps' },
   ]},
   { name: 'More', slug: '', items: [
-    { name: 'Sweatshirts & Hoodies', link: '/products?category=sweatshirts' },
+    { name: 'Sweatshirts & Hoodies', link: '/product/sweatshirt-hoodie-manufacturer-in-Jaipur' },
     { name: 'Lower & Shorts', link: '/products?category=lowers' },
-    { name: 'Uniforms', link: '/products?category=uniforms' },
-    { name: 'Printing & Embroidery', link: '/products?category=printing' },
+    { name: 'Uniforms', link: '/product/school-uniform' },
+    { name: 'Printing & Embroidery', link: '/product/printing' },
     { name: 'Apron', link: '/products?category=apron' },
     { name: 'Chef Coat', link: '/products?category=chef-coat' },
     { name: 'Raincoats', link: '/products?category=raincoats' },
@@ -79,7 +80,7 @@ function buildNavCategories(tree: any[]): { nav: NavCategory[]; flat: FlatCatego
         slug: cat.id,
         items: subs.map((sub: any) => ({
           name: sub.name,
-          link: `/products?category=${cat.id}&sub=${sub.id}`,
+          link: getSubCategoryUrl(cat.id, sub.id),
         })),
       });
       // Also add subcategories to flat list
@@ -87,7 +88,7 @@ function buildNavCategories(tree: any[]): { nav: NavCategory[]; flat: FlatCatego
         flat.push({ name: sub.name, slug: sub.id });
       }
     } else {
-      standaloneCats.push({ name: cat.name, link: `/products?category=${cat.id}` });
+      standaloneCats.push({ name: cat.name, link: getCategoryUrl(cat.id) });
     }
   }
 
@@ -317,7 +318,7 @@ export default function CrosswildHeader() {
     setShowDropdown(false);
     setSearchQuery('');
     dispatch(closeMobileSearch());
-    router.push(`/products?category=${slug}`);
+    router.push(getCategoryUrl(slug));
   }, [dispatch, router]);
 
   const closeDropdown = useCallback(() => setShowDropdown(false), []);
@@ -344,9 +345,12 @@ export default function CrosswildHeader() {
             </a>
           </div>
           <div className="flex items-center gap-4">
+            <Link href="/services" className="hover:text-white/80 dark:hover:text-[#F5A623] transition-colors">Services</Link>
             <Link href="/our_process" className="hover:text-white/80 dark:hover:text-[#F5A623] transition-colors">How It Works</Link>
-            <Link href="/about" className="hover:text-white/80 dark:hover:text-[#F5A623] transition-colors">About Us</Link>
-            <Link href="/contact" className="hover:text-white/80 dark:hover:text-[#F5A623] transition-colors">Contact</Link>
+            <Link href="/about-us" className="hover:text-white/80 dark:hover:text-[#F5A623] transition-colors">About Us</Link>
+            <Link href="/contact-us" className="hover:text-white/80 dark:hover:text-[#F5A623] transition-colors">Contact Us</Link>
+            <Link href="/blog" className="hover:text-white/80 dark:hover:text-[#F5A623] transition-colors">Blog</Link>
+            <Link href="/image-gallery" className="hover:text-white/80 dark:hover:text-[#F5A623] transition-colors">Gallery</Link>
           </div>
         </div>
       </div>
@@ -469,7 +473,7 @@ export default function CrosswildHeader() {
                   onMouseEnter={() => setActiveDropdown(category.name)}
                   onMouseLeave={() => setActiveDropdown(null)}>
                   {category.slug ? (
-                    <Link href={`/products?category=${category.slug}`} className="flex items-center gap-1 text-sm font-medium text-theme-text-secondary hover:text-primary transition-colors py-2">
+                    <Link href={getCategoryUrl(category.slug)} className="flex items-center gap-1 text-sm font-medium text-theme-text-secondary hover:text-primary transition-colors py-2">
                       {category.name}<ChevronDown className="w-4 h-4" />
                     </Link>
                   ) : (
@@ -489,12 +493,6 @@ export default function CrosswildHeader() {
                   )}
                 </li>
               ))}
-              <li>
-                <Link href="/blog" className={`text-sm font-medium transition-colors ${
-                  isBlogPage ? 'text-primary' : 'text-theme-text-secondary hover:text-primary'
-                }`}>Blog</Link>
-              </li>
-
               <li className="ml-auto relative"
                 onMouseEnter={() => setActiveDropdown('custom-cta')}
                 onMouseLeave={() => setActiveDropdown(null)}>
@@ -548,7 +546,7 @@ export default function CrosswildHeader() {
                       isExpanded ? 'max-h-[500px] opacity-100' : 'max-h-0 opacity-0'
                     }`}>
                       {category.slug && (
-                        <Link href={`/products?category=${category.slug}`} onClick={() => dispatch(closeMenu())}
+                        <Link href={getCategoryUrl(category.slug)} onClick={() => dispatch(closeMenu())}
                           className="block py-1.5 pl-4 text-sm font-semibold text-primary hover:text-primary-dark transition-colors">
                           View All {category.name}
                         </Link>
@@ -564,10 +562,36 @@ export default function CrosswildHeader() {
                 );
               })}
 
+
+              <Link href="/services" onClick={() => dispatch(closeMenu())}
+                className={`block py-2 font-medium border-t border-theme-border pt-2 transition-colors ${
+                  pathname === '/services' ? 'text-primary' : 'text-theme-text hover:text-primary'
+                }`}>Services</Link>
+
+              <Link href="/our_process" onClick={() => dispatch(closeMenu())}
+                className={`block py-2 font-medium border-t border-theme-border pt-2 transition-colors ${
+                  pathname === '/our_process' ? 'text-primary' : 'text-theme-text hover:text-primary'
+                }`}>How It Works</Link>
+
+              <Link href="/about-us" onClick={() => dispatch(closeMenu())}
+                className={`block py-2 font-medium border-t border-theme-border pt-2 transition-colors ${
+                  pathname === '/about-us' ? 'text-primary' : 'text-theme-text hover:text-primary'
+                }`}>About Us</Link>
+
+              <Link href="/contact-us" onClick={() => dispatch(closeMenu())}
+                className={`block py-2 font-medium border-t border-theme-border pt-2 transition-colors ${
+                  pathname === '/contact-us' ? 'text-primary' : 'text-theme-text hover:text-primary'
+                }`}>Contact Us</Link>
+
               <Link href="/blog" onClick={() => dispatch(closeMenu())}
-                className={`block py-2 font-medium border-t border-theme-border pt-4 transition-colors ${
+                className={`block py-2 font-medium border-t border-theme-border pt-2 transition-colors ${
                   isBlogPage ? 'text-primary' : 'text-theme-text hover:text-primary'
                 }`}>Blog</Link>
+
+              <Link href="/image-gallery" onClick={() => dispatch(closeMenu())}
+                className={`block py-2 font-medium border-t border-theme-border pt-2 transition-colors ${
+                  pathname === '/image-gallery' ? 'text-primary' : 'text-theme-text hover:text-primary'
+                }`}>Gallery</Link>
 
               {/* Locations — mobile expandable */}
               <div className="border-t border-theme-border pt-2">
