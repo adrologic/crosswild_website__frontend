@@ -62,6 +62,7 @@ interface Product {
 interface Blog {
   _id: string;
   id: string; // For compatibility with frontend
+  slug?: string;
   title: string;
   paragraph: string; // Blog content
   image: string;
