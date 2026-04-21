@@ -45,14 +45,14 @@ export default function CrosswildHero({ content }: Props) {
     <section className="bg-theme-bg">
 
       {/* ── TOP: Full-width image slider ── */}
-      <div className="relative w-full h-[380px] sm:h-[500px] md:h-[620px] lg:h-[750px] overflow-hidden">
+      <div className="relative w-full aspect-video sm:aspect-auto sm:h-[500px] md:h-[620px] lg:h-[750px] overflow-hidden bg-gray-900">
         {slides.map((slide, idx) => (
           <Image
             key={idx}
             src={slide.src}
             alt={slide.alt}
             fill
-            className={`object-cover transition-opacity duration-700 ${idx === current ? 'opacity-100' : 'opacity-0'}`}
+            className={`object-contain sm:object-cover transition-opacity duration-700 ${idx === current ? 'opacity-100' : 'opacity-0'}`}
             priority={idx === 0}
           />
         ))}
