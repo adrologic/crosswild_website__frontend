@@ -136,12 +136,12 @@ export default function OurProcess() {
 
           {/* ===== Custom Navigation Arrows ===== */}
           <div className="absolute left-0 top-1/2 transform -translate-y-1/2 z-10">
-            <button className="custom-swiper-button-prev bg-indigo-600 text-white w-10 h-10 rounded-full flex items-center justify-center shadow-md hover:bg-indigo-700 transition">
+            <button aria-label="Previous slide" className="custom-swiper-button-prev bg-indigo-600 text-white w-10 h-10 rounded-full flex items-center justify-center shadow-md hover:bg-indigo-700 transition">
               <ChevronLeft className="w-5 h-5" />
             </button>
           </div>
           <div className="absolute right-0 top-1/2 transform -translate-y-1/2 z-10">
-            <button className="custom-swiper-button-next bg-indigo-600 text-white w-10 h-10 rounded-full flex items-center justify-center shadow-md hover:bg-indigo-700 transition">
+            <button aria-label="Next slide" className="custom-swiper-button-next bg-indigo-600 text-white w-10 h-10 rounded-full flex items-center justify-center shadow-md hover:bg-indigo-700 transition">
               <ChevronRight className="w-5 h-5" />
             </button>
           </div>

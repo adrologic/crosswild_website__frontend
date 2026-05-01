@@ -137,6 +137,9 @@ export default async function OurNetworkSection() {
                     alt={`${city.city}`}
                     width={72}
                     height={72}
+                    quality={60}
+                    sizes="72px"
+                    loading="lazy"
                     className="w-full h-full object-cover"
                   />
                 </div>

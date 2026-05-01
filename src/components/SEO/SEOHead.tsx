@@ -95,14 +95,14 @@ export default function SEOHead({
   return (
     <>
 
-      {/* Google Analytics */}
+      {/* Google Analytics — lazyOnload defers GA until after window.load */}
       {globalSEO?.googleAnalyticsId && (
         <>
           <Script
             src={`https://www.googletagmanager.com/gtag/js?id=${globalSEO.googleAnalyticsId}`}
-            strategy="afterInteractive"
+            strategy="lazyOnload"
           />
-          <Script id="google-analytics" strategy="afterInteractive">
+          <Script id="google-analytics" strategy="lazyOnload">
             {`
               window.dataLayer = window.dataLayer || [];
               function gtag(){dataLayer.push(arguments);}
@@ -113,18 +113,16 @@ export default function SEOHead({
         </>
       )}
 
-      {/* Google Tag Manager */}
-      {globalSEO?.googleTagManagerId && (
-        <Script id="google-tag-manager" strategy="afterInteractive">
-          {`
-            (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-            new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-            j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-            'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-            })(window,document,'script','dataLayer','${globalSEO.googleTagManagerId}');
-          `}
-        </Script>
-      )}
+      {/* Google Tag Manager — falls back to GTM-MFGN4PGT if admin hasn't set one. lazyOnload defers GTM until after window.load */}
+      <Script id="google-tag-manager" strategy="lazyOnload">
+        {`
+          (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+          new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+          j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+          'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+          })(window,document,'script','dataLayer','${globalSEO?.googleTagManagerId || 'GTM-MFGN4PGT'}');
+        `}
+      </Script>
 
       {/* Facebook Pixel */}
       {globalSEO?.facebookPixelId && (

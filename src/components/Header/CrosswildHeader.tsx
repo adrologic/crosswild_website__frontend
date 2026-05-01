@@ -138,6 +138,7 @@ function SearchBox({
         />
         <button
           onClick={onSubmit}
+          aria-label="Search"
           className="absolute right-2 top-1/2 -translate-y-1/2 p-2 bg-primary text-white rounded-md hover:bg-primary-dark transition-colors"
         >
           {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Search className="w-4 h-4" />}
@@ -254,10 +255,20 @@ export default function CrosswildHeader() {
   const isProductsPage = pathname === '/products' || pathname.startsWith('/products?');
   const isBlogPage = pathname === '/blog' || pathname.startsWith('/blog/');
 
-  // Scroll listener
+  // Scroll listener — passive + rAF-throttled, deduped to avoid re-renders
   useEffect(() => {
-    const handleScroll = () => setIsScrolled(window.scrollY > 20);
-    window.addEventListener('scroll', handleScroll);
+    let ticking = false;
+    const handleScroll = () => {
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(() => {
+        const next = window.scrollY > 20;
+        setIsScrolled((prev) => (prev === next ? prev : next));
+        ticking = false;
+      });
+    };
+    handleScroll();
+    window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
@@ -433,11 +444,15 @@ export default function CrosswildHeader() {
             {/* Mobile: Search + Theme + Menu */}
             <div className="lg:hidden flex items-center gap-1">
               <button onClick={() => dispatch(toggleMobileSearch())}
+                aria-label={isMobileSearchOpen ? "Close search" : "Open search"}
+                aria-expanded={isMobileSearchOpen}
                 className="p-2 text-theme-text hover:bg-theme-bg-soft dark:hover:bg-[#26211A] rounded-lg transition-colors">
                 {isMobileSearchOpen ? <X className="w-5 h-5" /> : <Search className="w-5 h-5" />}
               </button>
               <ThemeToggle />
               <button onClick={() => dispatch(toggleMenu())}
+                aria-label={isMenuOpen ? "Close menu" : "Open menu"}
+                aria-expanded={isMenuOpen}
                 className="p-2 text-theme-text hover:bg-theme-bg-soft dark:hover:bg-[#26211A] rounded-lg transition-colors">
                 {isMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
               </button>

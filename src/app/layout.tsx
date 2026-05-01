@@ -2,9 +2,7 @@ import type { Metadata } from "next";
 import CrosswildHeader from "@/components/Header/CrosswildHeader";
 import CrosswildFooter from "@/components/Footer/CrosswildFooter";
 import LocationsStrip from "@/components/Locations/LocationsStrip";
-import ScrollToTop from "@/components/ScrollToTop";
-import WhatsAppButton from "@/components/WhatsAppButton/whatsAppBotton";
-import CallButton from "@/components/CallButton/callButton";
+import DeferredWidgets from "@/components/DeferredWidgets";
 import SEOHead from "@/components/SEO/SEOHead";
 import { Inter } from "next/font/google";
 import "../styles/index.css";
@@ -15,7 +13,12 @@ export const metadata: Metadata = {
   metadataBase: new URL("https://www.thecrosswild.com"),
 };
 
-const inter = Inter({ subsets: ["latin"] });
+const inter = Inter({
+  subsets: ["latin"],
+  display: "swap",
+  preload: true,
+  adjustFontFallback: true,
+});
 
 async function getSchemas() {
   try {
@@ -40,9 +43,6 @@ export default async function RootLayout({
   const contact = globalSEO.contactInfo || {};
   const lb    = schemas?.localBusiness || {};
   const faqItems: { question: string; answer: string }[] = schemas?.faqItems || [];
-
-  const gtmId = globalSEO.googleTagManagerId || 'GTM-MFGN4PGT';
-  const gaId  = globalSEO.googleAnalyticsId;
 
   const organizationSchema = {
     "@context": "https://schema.org",
@@ -102,22 +102,11 @@ export default async function RootLayout({
         <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
         <meta name="theme-color" content="#2563EB" />
 
-        {/* Google Tag Manager */}
-        {gtmId && (
-          <script
-            dangerouslySetInnerHTML={{
-              __html: `(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);})(window,document,'script','dataLayer','${gtmId}');`,
-            }}
-          />
-        )}
-
-        {/* Google Analytics (GA4) */}
-        {gaId && (
-          <>
-            <script async src={`https://www.googletagmanager.com/gtag/js?id=${gaId}`} />
-            <script dangerouslySetInnerHTML={{ __html: `window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','${gaId}');` }} />
-          </>
-        )}
+        {/* Resource hints — speed up the critical path by warming connections to known origins */}
+        <link rel="preconnect" href="https://www.thecrosswild.com" crossOrigin="anonymous" />
+        <link rel="dns-prefetch" href="https://www.thecrosswild.com" />
+        <link rel="preconnect" href="https://crosswild-backend-p5l3.onrender.com" crossOrigin="anonymous" />
+        <link rel="dns-prefetch" href="https://crosswild-backend-p5l3.onrender.com" />
 
         {/* Organization Schema — dynamic from admin */}
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationSchema) }} />
@@ -169,15 +158,14 @@ export default async function RootLayout({
         )}
       </head>
       <body className={`overflow-x-hidden bg-theme-bg text-theme-text transition-colors duration-200 ${inter.className}`}>
+        {/* GTM / GA / Facebook Pixel are loaded inside <SEOHead /> using next/script with lazyOnload — see SEOHead.tsx */}
         <Providers>
           <SEOHead />
           <CrosswildHeader />
           {children}
           <LocationsStrip />
           <CrosswildFooter />
-          <ScrollToTop />
-          <WhatsAppButton />
-          <CallButton />
+          <DeferredWidgets />
         </Providers>
       </body>
     </html>

@@ -128,15 +128,17 @@ export default function PopularProducts() {
                     href={getWhatsAppLink(product)}
                     target="_blank"
                     rel="noopener noreferrer"
+                    aria-label={`Inquire about ${product.name} on WhatsApp`}
                     className="flex items-center justify-center px-3 py-2 bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-200 rounded-xl transition-colors"
                   >
-                    <MessageCircle className="w-4 h-4" />
+                    <MessageCircle className="w-4 h-4" aria-hidden="true" />
                   </a>
                   <a
                     href={getEmailLink(product)}
+                    aria-label={`Email inquiry about ${product.name}`}
                     className="flex items-center justify-center px-3 py-2 bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-200 rounded-xl transition-colors"
                   >
-                    <Mail className="w-4 h-4" />
+                    <Mail className="w-4 h-4" aria-hidden="true" />
                   </a>
                 </div>
               </div>
