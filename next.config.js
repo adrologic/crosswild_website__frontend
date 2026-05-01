@@ -3,9 +3,6 @@ const nextConfig = {
   reactStrictMode: false,
   async redirects() {
     return [
-      // ── Dead old product pages (no equivalent) → /products ──
-      { source: '/product/face-mask-and-ppe-kit-manufacturer-jaipur',            destination: '/products', permanent: true },
-      { source: '/product/sanitizer-and-infrared-thermometer-wholesaler-jaipur', destination: '/products', permanent: true },
       // ── Page renames ──
       // /services now has its own page — no redirect needed
       { source: '/gallery',        destination: '/image-gallery', permanent: true },

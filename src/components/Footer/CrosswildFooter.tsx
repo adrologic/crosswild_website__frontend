@@ -74,11 +74,11 @@ export default function CrosswildFooter() {
               <li><Link href="/product/school-laptop-bag-manufacturer-in-Jaipur" className="hover:text-primary transition-colors">Bag Manufacturer</Link></li>
               <li><Link href="/product/cap-printing-manufacturer-in-jaipur" className="hover:text-primary transition-colors">Cap Manufacturer</Link></li>
               <li><Link href="/product/mug-printing-in-Jaipur" className="hover:text-primary transition-colors">Mug Printing</Link></li>
-              <li><Link href="/product/digital-printing-in-jaipur" className="hover:text-primary transition-colors">Digital Printing</Link></li>
-              <li><Link href="/product/face-masks-ppe-kits" className="hover:text-primary transition-colors">Face Masks &amp; PPE Kits</Link></li>
-              <li><Link href="/product/sanitizer-infrared-thermometer" className="hover:text-primary transition-colors">Sanitizer &amp; Infrared Thermometer</Link></li>
+              <li><Link href="/product/printing" className="hover:text-primary transition-colors">Digital Printing</Link></li>
+              <li><Link href="/product/face-mask-and-ppe-kit-manufacturer-jaipur" className="hover:text-primary transition-colors">Face Masks &amp; PPE Kits</Link></li>
+              <li><Link href="/product/sanitizer-and-infrared-thermometer-wholesaler-jaipur" className="hover:text-primary transition-colors">Sanitizer &amp; Infrared Thermometer</Link></li>
               <li><Link href="/product/school-uniform" className="hover:text-primary transition-colors">School Uniform</Link></li>
-              <li><Link href="/product/staff-uniform" className="hover:text-primary transition-colors">Staff Uniform</Link></li>
+              <li><Link href="/product/staff-uniform-manufacturer" className="hover:text-primary transition-colors">Staff Uniform</Link></li>
             </ul>
           </div>
 
