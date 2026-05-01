@@ -32,11 +32,28 @@ interface Props { content?: HeroContent }
 export default function CrosswildHero({ content }: Props) {
   const slides: Slide[] = content?.slides?.length ? content.slides : DEFAULT_SLIDES;
   const [current, setCurrent] = useState(0);
+  // Defer rendering slides 2..N until after the LCP slide has painted, so they
+  // don't compete with slide 0 for bandwidth in the critical path.
+  const [showAllSlides, setShowAllSlides] = useState(false);
 
   useEffect(() => {
+    type IdleWindow = Window & {
+      requestIdleCallback?: (cb: () => void, opts?: { timeout: number }) => number;
+    };
+    const w = window as IdleWindow;
+    if (typeof w.requestIdleCallback === 'function') {
+      w.requestIdleCallback(() => setShowAllSlides(true), { timeout: 2000 });
+    } else {
+      const t = setTimeout(() => setShowAllSlides(true), 1500);
+      return () => clearTimeout(t);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (!showAllSlides || slides.length < 2) return;
     const timer = setInterval(() => setCurrent((p) => (p + 1) % slides.length), 4000);
     return () => clearInterval(timer);
-  }, [slides.length]);
+  }, [slides.length, showAllSlides]);
 
   const prev = () => setCurrent((c) => (c - 1 + slides.length) % slides.length);
   const next = () => setCurrent((c) => (c + 1) % slides.length);
@@ -46,16 +63,21 @@ export default function CrosswildHero({ content }: Props) {
 
       {/* ── TOP: Full-width image slider ── */}
       <div className="relative w-full aspect-video sm:aspect-auto sm:h-[500px] md:h-[620px] lg:h-[750px] overflow-hidden bg-gray-900">
-        {slides.map((slide, idx) => (
-          <Image
-            key={idx}
-            src={slide.src}
-            alt={slide.alt}
-            fill
-            className={`object-contain sm:object-cover transition-opacity duration-700 ${idx === current ? 'opacity-100' : 'opacity-0'}`}
-            priority={idx === 0}
-          />
-        ))}
+        {slides.map((slide, idx) => {
+          if (idx !== 0 && !showAllSlides) return null;
+          return (
+            <Image
+              key={idx}
+              src={slide.src}
+              alt={slide.alt}
+              fill
+              sizes="100vw"
+              className={`object-contain sm:object-cover transition-opacity duration-700 ${idx === current ? 'opacity-100' : 'opacity-0'}`}
+              priority={idx === 0}
+              fetchPriority={idx === 0 ? 'high' : 'auto'}
+            />
+          );
+        })}
 
         {/* Prev / Next */}
         <button
