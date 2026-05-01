@@ -11,7 +11,7 @@ async function getCategory(slug: string) {
   try {
     const res = await fetch(`${API_URL}/categories/${slug}`, {
       next: { revalidate: 60 },
-      signal: AbortSignal.timeout(5000),
+      signal: AbortSignal.timeout(1500),
     });
     if (!res.ok) return null;
     const data = await res.json();
@@ -25,7 +25,7 @@ async function getCategoryProducts(categoryId: string) {
   try {
     const res = await fetch(`${API_URL}/products?category=${categoryId}&limit=50`, {
       next: { revalidate: 60 },
-      signal: AbortSignal.timeout(5000),
+      signal: AbortSignal.timeout(1500),
     });
     if (!res.ok) return [];
     const data = await res.json();

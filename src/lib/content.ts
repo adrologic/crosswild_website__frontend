@@ -6,8 +6,11 @@ const API_URL =
 export async function getPageContent(pageSlug: string): Promise<Record<string, any>> {
   try {
     const res = await fetch(`${API_URL}/content/${pageSlug}`, {
-      next: { revalidate: 60 },
-      signal: AbortSignal.timeout(5000),
+      // 1h cache — page content rarely changes between admin saves.
+      next: { revalidate: 3600 },
+      // Tight timeout — each page renders with hardcoded fallbacks if backend is slow,
+      // so blocking SSR longer than this would directly hurt FCP/Speed Index.
+      signal: AbortSignal.timeout(1500),
     });
     if (!res.ok) return {};
     const data = await res.json();
@@ -20,8 +23,8 @@ export async function getPageContent(pageSlug: string): Promise<Record<string, a
 export async function getSection(pageSlug: string, sectionKey: string): Promise<any> {
   try {
     const res = await fetch(`${API_URL}/content/${pageSlug}/${sectionKey}`, {
-      next: { revalidate: 60 },
-      signal: AbortSignal.timeout(5000),
+      next: { revalidate: 3600 },
+      signal: AbortSignal.timeout(1500),
     });
     if (!res.ok) return null;
     const data = await res.json();

@@ -46,7 +46,7 @@ export async function getPageSEO(path: string) {
   try {
     const response = await fetch(`${API_URL}/seo/pages/${encodeURIComponent(path)}`, {
       next: { revalidate: 60 },
-      signal: AbortSignal.timeout(5000),
+      signal: AbortSignal.timeout(1500),
     });
     if (!response.ok) return null;
     const data = await response.json();

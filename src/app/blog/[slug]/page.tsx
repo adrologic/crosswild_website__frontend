@@ -9,7 +9,7 @@ async function getBlog(idOrSlug: string) {
   try {
     const response = await fetch(`${API_URL}/api/blogs/${encodeURIComponent(idOrSlug)}`, {
       next: { revalidate: 60 },
-      signal: AbortSignal.timeout(5000),
+      signal: AbortSignal.timeout(1500),
     });
     if (!response.ok) return null;
     const data = await response.json();
