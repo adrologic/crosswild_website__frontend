@@ -1,15 +1,23 @@
 import AboutSectionOne from "@/components/About/AboutSectionOne";
 import AboutSectionTwo from "@/components/About/AboutSectionTwo";
-import Breadcrumb from "@/components/Common/Breadcrumb";
+import PageBanner from "@/components/Common/PageBanner";
 import { Metadata } from "next";
 import { generatePageMetadata } from "@/lib/seo";
 import { getPageContent } from "@/lib/content";
 
 export async function generateMetadata(): Promise<Metadata> {
   return generatePageMetadata('/about-us', {
-    title: 'About Us - The Cross Wild | Custom Printing Manufacturer Since 2016',
-    description: 'The Cross Wild is Jaipur\'s leading custom T-shirt, bag, and cap manufacturer since 2016. Trusted by 500+ businesses across India for quality promotional products, corporate uniforms, and bulk printing.',
-    keywords: ['about The Cross Wild', 'custom t-shirt manufacturer Jaipur', 'promotional products company India', 'corporate printing manufacturer since 2016'],
+    title: 'About Us - The Cross Wild',
+    description: "Since 2016, The CrossWild has been a trusted name in custom manufacturing and printing. Specializing in t-shirts, bags, caps, and more, we offer high-quality, affordable promotional products tailored to your needs. Proudly Indian-made, with fast delivery and exceptional customer service.",
+    keywords: [
+      'about The Cross Wild',
+      'custom t-shirt manufacturer Jaipur',
+      'bags manufacturer Jaipur',
+      'cap printing manufacturer Jaipur',
+      'promotional products company India',
+      'custom printing manufacturer since 2016',
+      'The CrossWild',
+    ],
   });
 }
 
@@ -17,12 +25,15 @@ export const revalidate = 60;
 
 export default async function AboutPage() {
   const content = await getPageContent('about-us');
+  const banner = content?.banner;
 
   return (
     <>
-      <Breadcrumb
-        pageName="About Page"
-        description={content?.intro?.paragraph?.slice(0, 120) || "Our trusted one-stop destination for premium custom manufacturing and printing since 2016."}
+      <PageBanner
+        title={banner?.title || 'About Us'}
+        subtitle={banner?.subtitle}
+        bannerImage={banner?.image || null}
+        breadcrumbs={[{ label: 'Home', href: '/' }, { label: 'About Us' }]}
       />
       <AboutSectionOne content={content?.intro} />
       <AboutSectionTwo

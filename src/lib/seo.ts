@@ -98,7 +98,7 @@ export async function generatePageMetadata(
     },
     openGraph: {
       type: 'website',
-      locale: 'en_US',
+      locale: 'en_IN',
       url: `${siteUrl}${path}`,
       siteName: globalSEO.siteName || defaultSEO.siteName,
       title: pageSEO?.ogTitle || title,

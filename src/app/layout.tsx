@@ -130,6 +130,39 @@ export default async function RootLayout({
           <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }} />
         )}
 
+        {/* Person Schema — Director */}
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "Person",
+          "name": "Mahendra Choudhary",
+          "jobTitle": "Director",
+          "worksFor": { "@type": "Organization", "name": "The Cross Wild" },
+        }) }} />
+
+        {/* Geographic meta tags */}
+        <meta name="geo.region" content="IN-RJ" />
+        <meta name="geo.placename" content="Jaipur" />
+        <meta name="geo.position" content="26.8517696;75.8062041" />
+        <meta name="ICBM" content="26.8517696, 75.8062041" />
+
+        {/* Language & author */}
+        <meta name="language" content="English" />
+        <meta name="author" content="Mahendra Choudhary" />
+
+        {/* Search bot directives */}
+        <meta name="googlebot" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
+        <meta name="bingbot" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
+
+        {/* Business contact Open Graph */}
+        <meta property="business:contact_data:street_address" content="D-8, Near World Trade Park, Malviya Nagar" />
+        <meta property="business:contact_data:locality" content="Jaipur" />
+        <meta property="business:contact_data:region" content="Rajasthan" />
+        <meta property="business:contact_data:postal_code" content="302017" />
+        <meta property="business:contact_data:country_name" content="India" />
+        <meta property="business:contact_data:email" content="orders@thecrosswild.com" />
+        <meta property="business:contact_data:phone_number" content="+91-9529626262" />
+        <meta property="business:contact_data:website" content="https://www.thecrosswild.com/" />
+
         {/* Custom head scripts from admin */}
         {globalSEO.customHeadScripts && (
           <div dangerouslySetInnerHTML={{ __html: globalSEO.customHeadScripts }} />
