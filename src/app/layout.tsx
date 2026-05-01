@@ -102,10 +102,8 @@ export default async function RootLayout({
         <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
         <meta name="theme-color" content="#2563EB" />
 
-        {/* Resource hints — speed up the critical path by warming connections to known origins */}
-        <link rel="preconnect" href="https://www.thecrosswild.com" crossOrigin="anonymous" />
+        {/* DNS prefetch only — preconnect was flagged as unused on pages that don't hit these origins during initial render. dns-prefetch is essentially free even when unused. */}
         <link rel="dns-prefetch" href="https://www.thecrosswild.com" />
-        <link rel="preconnect" href="https://crosswild-backend-p5l3.onrender.com" crossOrigin="anonymous" />
         <link rel="dns-prefetch" href="https://crosswild-backend-p5l3.onrender.com" />
 
         {/* Organization Schema — dynamic from admin */}
