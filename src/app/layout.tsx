@@ -23,7 +23,12 @@ const inter = Inter({
 async function getSchemas() {
   try {
     const API_URL = (process.env.BACKEND_URL || 'https://crosswild-backend-p5l3.onrender.com') + '/api';
-    const res = await fetch(`${API_URL}/seo/schemas`, { next: { revalidate: 300 } });
+    const res = await fetch(`${API_URL}/seo/schemas`, {
+      // 1h cache — schemas (LocalBusiness, FAQ) rarely change.
+      next: { revalidate: 3600 },
+      // Tight timeout — render with null schemas (defaults take over) if backend is slow.
+      signal: AbortSignal.timeout(1500),
+    });
     if (!res.ok) return null;
     return res.json();
   } catch {
