@@ -101,7 +101,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       categoryRoutes = categories
         .filter((cat: any) => cat.seoUrl)
         .map((cat: any) => ({
-          url: `${baseUrl}/categories/${cat.seoUrl}`,
+          url: `${baseUrl}/category/${cat.seoUrl}`,
           lastModified: cat.updatedAt ? new Date(cat.updatedAt) : new Date(),
           changeFrequency: 'weekly' as const,
           priority: 0.7,

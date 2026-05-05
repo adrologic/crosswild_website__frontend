@@ -59,7 +59,7 @@ async function getCityCards(): Promise<CityCard[]> {
   try {
     const res = await fetch(`${API_URL}/locations?active=true`, {
       next: { revalidate: 60 },
-      signal: AbortSignal.timeout(1500),
+      signal: AbortSignal.timeout(3000),
     });
     if (res.ok) {
       const data = await res.json();

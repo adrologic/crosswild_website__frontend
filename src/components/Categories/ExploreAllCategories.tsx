@@ -3,6 +3,7 @@
 import React from 'react';
 import Link from 'next/link';
 import { productCategories } from '@/data/products';
+import { getCategoryUrl } from '@/lib/categoryUrls';
 import { ArrowRight, Sparkles } from 'lucide-react';
 
 export default function ExploreAllCategories() {
@@ -31,7 +32,7 @@ export default function ExploreAllCategories() {
           {categories.map((category) => (
             <Link
               key={category.id}
-              href={`/products?category=${category.id}`}
+              href={getCategoryUrl(category.id)}
               className="group relative bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-900 rounded-2xl p-6 hover:shadow-2xl transition-all duration-300 overflow-hidden border-2 border-transparent hover:border-primary"
             >
               {/* Background Pattern */}

@@ -28,7 +28,7 @@ const deals = [
     description: 'New customers only',
     icon: Tag,
     color: 'from-green-500 to-green-600',
-    link: '/products?category=cards',
+    link: '/products',
   },
 ];
 

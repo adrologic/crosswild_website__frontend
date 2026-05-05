@@ -9,7 +9,7 @@ async function getProduct(idOrSlug: string) {
     // Backend now supports both MongoDB ID and slug lookup
     const response = await fetch(`${API_URL}/api/products/${encodeURIComponent(idOrSlug)}`, {
       next: { revalidate: 60 },
-      signal: AbortSignal.timeout(1500),
+      signal: AbortSignal.timeout(3000),
     });
     if (!response.ok) return null;
     const data = await response.json();

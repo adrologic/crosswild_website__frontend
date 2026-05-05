@@ -270,7 +270,7 @@ export default function ProductDetailClient({ id }: { id: string }) {
                       {pc.subcategories && pc.subcategories.length > 0 && pc.subcategories.map(sub => (
                         <Link
                           key={`${pc.category}-${sub}`}
-                          href={getSubCategoryUrl(pc.category, sub)}
+                          href={getSubCategoryUrl(sub)}
                           className="px-3 py-1 bg-theme-bg-card border border-theme-border text-theme-text-secondary text-xs font-medium rounded-full hover:border-primary hover:text-primary transition-colors"
                         >
                           {formatSubcategory(sub)}

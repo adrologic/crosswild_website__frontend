@@ -27,7 +27,7 @@ async function getSchemas() {
       // 1h cache — schemas (LocalBusiness, FAQ) rarely change.
       next: { revalidate: 3600 },
       // Tight timeout — render with null schemas (defaults take over) if backend is slow.
-      signal: AbortSignal.timeout(1500),
+      signal: AbortSignal.timeout(3000),
     });
     if (!res.ok) return null;
     return res.json();

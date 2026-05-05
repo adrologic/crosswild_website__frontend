@@ -39,7 +39,7 @@ const categories = [
     title: 'Lower & Shorts',
     description: 'Comfortable active wear',
     image: '🩳',
-    link: '/products?category=lowers',
+    link: '/category/lowers',
     color: 'from-blue-400 to-blue-600',
   },
   {
@@ -60,7 +60,7 @@ const categories = [
     title: 'Apron & Chef Coat',
     description: 'Kitchen & hospitality wear',
     image: '🧑‍🍳',
-    link: '/products?category=apron',
+    link: '/category/apron',
     color: 'from-pink-400 to-pink-600',
   },
 ];

@@ -133,6 +133,7 @@ export const productsAPI = {
   // Get all products with filters
   getAll: async (params?: {
     category?: string;
+    sub?: string;
     bestSeller?: boolean;
     newArrival?: boolean;
     featured?: boolean;

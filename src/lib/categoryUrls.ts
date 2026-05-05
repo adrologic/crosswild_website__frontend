@@ -1,5 +1,5 @@
-// Maps category slug → keyword-rich SEO URL (matching old site URL structure)
-// Falls back to /products?category=slug for categories without a dedicated page
+// Top-level categories with dedicated keyword-rich SEO landing pages.
+// These take precedence over the generic /category/<slug> route.
 const CATEGORY_URL_MAP: Record<string, string> = {
   tshirts:     '/product/customize-promotional-t-shirt-manufacturer-in-Jaipur',
   bags:        '/product/school-laptop-bag-manufacturer-in-Jaipur',
@@ -10,11 +10,15 @@ const CATEGORY_URL_MAP: Record<string, string> = {
   mugs:        '/product/mug-printing-in-Jaipur',
 };
 
+// Clean URL for a category — top-level categories with a dedicated SEO
+// landing page get that page; everything else uses /category/<slug>.
 export function getCategoryUrl(slug: string): string {
-  return CATEGORY_URL_MAP[slug] || `/products?category=${slug}`;
+  return CATEGORY_URL_MAP[slug] || `/category/${slug}`;
 }
 
-// For sub-category links always keep query param format
-export function getSubCategoryUrl(categorySlug: string, subSlug: string): string {
-  return `/products?category=${categorySlug}&sub=${subSlug}`;
+// Sub-category URL — flat path, parent slug is intentionally omitted so
+// URLs stay short (e.g. /category/cotton-t-shirts). Sub-category slugs are
+// expected to be globally unique; pass the seoUrl when available.
+export function getSubCategoryUrl(subSlug: string): string {
+  return `/category/${subSlug}`;
 }

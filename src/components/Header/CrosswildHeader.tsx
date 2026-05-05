@@ -26,28 +26,28 @@ interface FlatCategory { name: string; slug: string }
 // Fallback hardcoded categories (used until API loads)
 const FALLBACK_CATEGORIES: NavCategory[] = [
   { name: 'T-Shirts', slug: 'tshirts', items: [
-    { name: 'Dry Fit T-Shirts', link: '/products?category=tshirts&sub=dry-fit-tshirts' },
-    { name: 'Cotton T-Shirts', link: '/products?category=tshirts&sub=cotton-tshirts' },
-    { name: 'Polyester T-Shirts', link: '/products?category=tshirts&sub=polyester-tshirts' },
-    { name: 'Sports Jersey', link: '/products?category=tshirts&sub=sports-jersey' },
+    { name: 'Dry Fit T-Shirts', link: getSubCategoryUrl('dry-fit-tshirts') },
+    { name: 'Cotton T-Shirts', link: getSubCategoryUrl('cotton-tshirts') },
+    { name: 'Polyester T-Shirts', link: getSubCategoryUrl('polyester-tshirts') },
+    { name: 'Sports Jersey', link: getSubCategoryUrl('sports-jersey') },
   ]},
   { name: 'Bags', slug: 'bags', items: [
-    { name: 'School Bags', link: '/products?category=bags&sub=school-bags' },
-    { name: 'Laptop Bags', link: '/products?category=bags&sub=laptop-bags' },
-    { name: 'Office Bags', link: '/products?category=bags&sub=office-bags' },
+    { name: 'School Bags', link: getSubCategoryUrl('school-bags') },
+    { name: 'Laptop Bags', link: getSubCategoryUrl('laptop-bags') },
+    { name: 'Office Bags', link: getSubCategoryUrl('office-bags') },
   ]},
   { name: 'Caps', slug: 'caps', items: [
-    { name: 'Cotton Caps', link: '/products?category=caps&sub=cotton-caps' },
-    { name: 'Sports Caps', link: '/products?category=caps&sub=sports-caps' },
+    { name: 'Cotton Caps', link: getSubCategoryUrl('cotton-caps') },
+    { name: 'Sports Caps', link: getSubCategoryUrl('sports-caps') },
   ]},
   { name: 'More', slug: '', items: [
-    { name: 'Sweatshirts & Hoodies', link: '/product/sweatshirt-hoodie-manufacturer-in-Jaipur' },
-    { name: 'Lower & Shorts', link: '/products?category=lowers' },
-    { name: 'Uniforms', link: '/product/school-uniform' },
-    { name: 'Printing & Embroidery', link: '/product/printing' },
-    { name: 'Apron', link: '/products?category=apron' },
-    { name: 'Chef Coat', link: '/products?category=chef-coat' },
-    { name: 'Raincoats', link: '/products?category=raincoats' },
+    { name: 'Sweatshirts & Hoodies', link: getCategoryUrl('sweatshirts') },
+    { name: 'Lower & Shorts', link: getCategoryUrl('lowers') },
+    { name: 'Uniforms', link: getCategoryUrl('uniforms') },
+    { name: 'Printing & Embroidery', link: getCategoryUrl('printing') },
+    { name: 'Apron', link: getCategoryUrl('apron') },
+    { name: 'Chef Coat', link: getCategoryUrl('chef-coat') },
+    { name: 'Raincoats', link: getCategoryUrl('raincoats') },
   ]},
 ];
 
@@ -80,7 +80,7 @@ function buildNavCategories(tree: any[]): { nav: NavCategory[]; flat: FlatCatego
         slug: cat.id,
         items: subs.map((sub: any) => ({
           name: sub.name,
-          link: getSubCategoryUrl(cat.id, sub.id),
+          link: getSubCategoryUrl(sub.seoUrl || sub.id),
         })),
       });
       // Also add subcategories to flat list

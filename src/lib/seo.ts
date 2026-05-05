@@ -31,7 +31,7 @@ export async function getGlobalSEO() {
       // 1h cache — global SEO settings rarely change. Worst-case stale data is a non-issue compared to FCP cost.
       next: { revalidate: 3600 },
       // Tight timeout — fall back to defaults if backend is slow/cold rather than block FCP.
-      signal: AbortSignal.timeout(1500),
+      signal: AbortSignal.timeout(3000),
     });
     if (!response.ok) return defaultSEO;
     const data = await response.json();
@@ -46,7 +46,7 @@ export async function getPageSEO(path: string) {
   try {
     const response = await fetch(`${API_URL}/seo/pages/${encodeURIComponent(path)}`, {
       next: { revalidate: 60 },
-      signal: AbortSignal.timeout(1500),
+      signal: AbortSignal.timeout(3000),
     });
     if (!response.ok) return null;
     const data = await response.json();
@@ -290,7 +290,7 @@ export async function generateCategoryMetadata(category: {
   const description = category.seo?.description || plainDesc || `Browse ${category.name} at The CrossWild. Premium quality custom printing and merchandise.`;
   const image = category.seo?.ogImage || category.image;
   const keywords = category.seo?.keywords || [category.name, 'custom printing', 'The CrossWild'].filter(Boolean);
-  const canonicalUrl = category.seo?.canonicalUrl || `${siteUrl}/categories/${urlPath}`;
+  const canonicalUrl = category.seo?.canonicalUrl || `${siteUrl}/category/${urlPath}`;
 
   return {
     title,
@@ -305,7 +305,7 @@ export async function generateCategoryMetadata(category: {
     },
     openGraph: {
       type: 'website',
-      url: `${siteUrl}/categories/${urlPath}`,
+      url: `${siteUrl}/category/${urlPath}`,
       siteName: globalSEO.siteName || defaultSEO.siteName,
       title,
       description,
@@ -335,7 +335,7 @@ export function generateCategorySchema(category: any, subcategories: any[], site
     '@type': 'CollectionPage',
     name: category.name,
     description: category.seo?.description || category.description?.replace(/<[^>]*>/g, '').substring(0, 300),
-    url: `${siteUrl}/categories/${urlPath}`,
+    url: `${siteUrl}/category/${urlPath}`,
     image: category.image || undefined,
     isPartOf: {
       '@type': 'WebSite',
@@ -345,7 +345,7 @@ export function generateCategorySchema(category: any, subcategories: any[], site
     hasPart: subcategories.map((sub: any) => ({
       '@type': 'CollectionPage',
       name: sub.name,
-      url: `${siteUrl}/categories/${sub.seoUrl || sub.id}`,
+      url: `${siteUrl}/category/${sub.seoUrl || sub.id}`,
     })),
   };
 }

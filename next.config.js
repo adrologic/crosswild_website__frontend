@@ -12,6 +12,11 @@ const nextConfig = {
       { source: '/bags-manufacturer-in-Jodhpur',              destination: '/bags-manufacturer-in-jodhpur',              permanent: true },
       { source: '/tshirt-manufacturer-wholesaler-in-Kota',    destination: '/tshirt-manufacturer-wholesaler-in-kota',    permanent: true },
       { source: '/bags-manufacturing-company-in-Kota',        destination: '/bags-manufacturing-company-in-kota',        permanent: true },
+      // ── Clean URL migration ──
+      // Old plural /categories/<slug> → new singular /category/<slug>
+      // Legacy /products?category=X&sub=Y is handled in src/middleware.ts so
+      // the orphan query string gets stripped instead of carried over.
+      { source: '/categories/:slug',  destination: '/category/:slug', permanent: true },
     ];
   },
 
