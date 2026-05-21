@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { MapPin, Phone, Mail, Clock } from "lucide-react";
+import { submitContact } from "@/lib/cms";
 
 const DEFAULT_OFFICES = [
   { title: "Corporate Office", city: "Jaipur", address: "D-8, Near World Trade Park, D-Block, Malviya Nagar, Jaipur, Rajasthan 302017", phone: ["+91-9571815050", "+91-9529626262"], hours: "Mon–Sat: 9:00 AM – 6:00 PM" },
@@ -22,14 +23,31 @@ const Contact = ({ content }: Props) => {
   const formHeading = content?.formHeading || "Send Us a Message";
   const [formData, setFormData] = useState({ name: "", email: "", phone: "", message: "" });
   const [submitted, setSubmitted] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState("");
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setSubmitted(true);
+    if (submitting) return;
+    setSubmitting(true);
+    setError("");
+    const result = await submitContact({
+      name: formData.name,
+      email: formData.email,
+      phone: formData.phone,
+      message: formData.message,
+      source: "contact-page",
+    });
+    setSubmitting(false);
+    if (result.success) {
+      setSubmitted(true);
+    } else {
+      setError(result.message || "Failed to send. Please try again.");
+    }
   };
 
   return (
@@ -86,6 +104,9 @@ const Contact = ({ content }: Props) => {
                 </div>
               ) : (
                 <form onSubmit={handleSubmit}>
+                  {error && (
+                    <div className="mb-6 p-3 bg-red-50 text-red-700 rounded">{error}</div>
+                  )}
                   <div className="-mx-4 flex flex-wrap">
                     <div className="w-full px-4 md:w-1/2">
                       <div className="mb-8">
@@ -153,9 +174,10 @@ const Contact = ({ content }: Props) => {
                     <div className="w-full px-4">
                       <button
                         type="submit"
-                        className="rounded-xs bg-primary px-9 py-4 text-base font-medium text-white shadow-submit duration-300 hover:bg-primary/90 dark:shadow-submit-dark"
+                        disabled={submitting}
+                        className="rounded-xs bg-primary px-9 py-4 text-base font-medium text-white shadow-submit duration-300 hover:bg-primary/90 dark:shadow-submit-dark disabled:opacity-60 disabled:cursor-not-allowed"
                       >
-                        Submit
+                        {submitting ? 'Sending...' : 'Submit'}
                       </button>
                     </div>
                   </div>

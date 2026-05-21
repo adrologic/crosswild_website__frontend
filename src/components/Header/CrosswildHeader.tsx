@@ -15,6 +15,7 @@ import {
 } from '@/store/slices/uiSlice';
 import { productsAPI, categoriesAPI, Product } from '@/lib/api';
 import { getCategoryUrl, getSubCategoryUrl } from '@/lib/categoryUrls';
+import { getSiteSettings, type SiteSettings } from '@/lib/cms';
 import CartDrawer from '@/components/Cart/CartDrawer';
 import ThemeToggle from '@/components/ThemeToggle/ThemeToggle';
 
@@ -236,6 +237,9 @@ export default function CrosswildHeader() {
   const [categories, setCategories] = useState<NavCategory[]>(FALLBACK_CATEGORIES);
   const [flatCategories, setFlatCategories] = useState<FlatCategory[]>(FALLBACK_FLAT);
 
+  // CMS-driven site settings (logo, top bar, ticker, customize CTA URLs)
+  const [siteSettings, setSiteSettings] = useState<SiteSettings | null>(null);
+
   // Fetch categories from API on mount
   useEffect(() => {
     let cancelled = false;
@@ -245,8 +249,32 @@ export default function CrosswildHeader() {
       setCategories(nav);
       setFlatCategories(flat);
     }).catch(() => {/* keep fallback */});
+    getSiteSettings().then((s) => { if (!cancelled) setSiteSettings(s); });
     return () => { cancelled = true; };
   }, []);
+
+  const header = siteSettings?.header;
+  const topBarPhone = header?.topBarPhone || '+91-9529626262';
+  const topBarEmail = header?.topBarEmail || 'orders@thecrosswild.com';
+  const topBarLinks = header?.topBarLinks?.length ? header.topBarLinks : [
+    { label: 'Services', href: '/services' },
+    { label: 'How It Works', href: '/our_process' },
+    { label: 'About Us', href: '/about-us' },
+    { label: 'Contact Us', href: '/contact-us' },
+    { label: 'Blog', href: '/blog' },
+    { label: 'Gallery', href: '/image-gallery' },
+  ];
+  const logoSrc = header?.logo || '/images/logo/logo-crosswile.jpg';
+  const logoAlt = header?.logoAlt || 'The CrossWild';
+  const customizeCTA = header?.customizeCTA;
+  const promoTicker = header?.promoTicker?.length ? header.promoTicker : [
+    '🎉 Get 20% OFF on Bulk Orders! BULK20',
+    '🚚 Free Delivery on Orders Above ₹999',
+    '👕 Custom T-Shirts Starting ₹199',
+    '🏆 Premium Quality Printing & Merchandise',
+    '📦 Pan India Fast Delivery',
+    '✨ Uniforms, Gifts & Promotional Items',
+  ];
 
   const desktopSearchRef = useRef<HTMLDivElement>(null);
   const mobileBarSearchRef = useRef<HTMLDivElement>(null);
@@ -348,20 +376,17 @@ export default function CrosswildHeader() {
       <div className="bg-primary-800 dark:bg-[#1E1A14] text-white dark:text-[#C8B99A] text-sm py-2 hidden lg:block">
         <div className="w-full px-6 lg:px-12 flex items-center justify-between">
           <div className="flex items-center gap-6">
-            <a href="tel:+919876543210" className="flex items-center gap-2 hover:text-white/80 dark:hover:text-[#F5A623] transition-colors">
-              <Phone className="w-4 h-4" /><span>+91 98765 43210</span>
+            <a href={`tel:${topBarPhone.replace(/[^+\d]/g, '')}`} className="flex items-center gap-2 hover:text-white/80 dark:hover:text-[#F5A623] transition-colors">
+              <Phone className="w-4 h-4" /><span>{topBarPhone}</span>
             </a>
-            <a href="mailto:info@thecrosswild.com" className="flex items-center gap-2 hover:text-white/80 dark:hover:text-[#F5A623] transition-colors">
-              <Mail className="w-4 h-4" /><span>info@thecrosswild.com</span>
+            <a href={`mailto:${topBarEmail}`} className="flex items-center gap-2 hover:text-white/80 dark:hover:text-[#F5A623] transition-colors">
+              <Mail className="w-4 h-4" /><span>{topBarEmail}</span>
             </a>
           </div>
           <div className="flex items-center gap-4">
-            <Link href="/services" className="hover:text-white/80 dark:hover:text-[#F5A623] transition-colors">Services</Link>
-            <Link href="/our_process" className="hover:text-white/80 dark:hover:text-[#F5A623] transition-colors">How It Works</Link>
-            <Link href="/about-us" className="hover:text-white/80 dark:hover:text-[#F5A623] transition-colors">About Us</Link>
-            <Link href="/contact-us" className="hover:text-white/80 dark:hover:text-[#F5A623] transition-colors">Contact Us</Link>
-            <Link href="/blog" className="hover:text-white/80 dark:hover:text-[#F5A623] transition-colors">Blog</Link>
-            <Link href="/image-gallery" className="hover:text-white/80 dark:hover:text-[#F5A623] transition-colors">Gallery</Link>
+            {topBarLinks.map((l) => (
+              <Link key={l.href} href={l.href || '#'} className="hover:text-white/80 dark:hover:text-[#F5A623] transition-colors">{l.label}</Link>
+            ))}
           </div>
         </div>
       </div>
@@ -374,7 +399,7 @@ export default function CrosswildHeader() {
           <div className="flex items-center justify-between h-20">
             {/* Logo */}
             <Link href="/" className="flex items-center gap-2 flex-shrink-0">
-              <Image src="/images/logo/logo-crosswile.jpg" alt="The CrossWild"
+              <Image src={logoSrc} alt={logoAlt}
                 width={160} height={50} className="h-12 w-auto dark:brightness-90" priority />
             </Link>
 
@@ -518,12 +543,12 @@ export default function CrosswildHeader() {
                 {activeDropdown === 'custom-cta' && (
                   <div className="absolute top-full right-0 pt-1 z-50">
                     <div className="bg-theme-bg dark:bg-[#222222] border border-theme-border shadow-lg dark:shadow-[0_8px_24px_rgba(0,0,0,0.4)] rounded-lg min-w-[200px] py-2">
-                      <a href="https://wa.me/919529626262?text=Hello%2C%20I%20want%20to%20create%20a%20custom%20product." target="_blank" rel="noopener noreferrer"
+                      <a href={customizeCTA?.whatsappUrl || 'https://wa.me/919529626262?text=Hello%2C%20I%20want%20to%20create%20a%20custom%20product.'} target="_blank" rel="noopener noreferrer"
                         className="flex items-center gap-3 px-4 py-2.5 text-sm text-theme-text-secondary hover:text-green-500 hover:bg-theme-bg-soft dark:hover:bg-[#2C2C2C] transition-colors">
                         <MessageCircle className="w-4 h-4 text-green-500" />
                         WhatsApp
                       </a>
-                      <a href="mailto:info@thecrosswild.com?subject=Custom%20Product%20Inquiry&body=Hello%2C%20I%20want%20to%20create%20a%20custom%20product.%20Please%20share%20the%20details." target="_blank" rel="noopener noreferrer"
+                      <a href={customizeCTA?.emailMailto || 'mailto:orders@thecrosswild.com?subject=Custom%20Product%20Inquiry'} target="_blank" rel="noopener noreferrer"
                         className="flex items-center gap-3 px-4 py-2.5 text-sm text-theme-text-secondary hover:text-primary hover:bg-theme-bg-soft dark:hover:bg-[#2C2C2C] transition-colors">
                         <Mail className="w-4 h-4 text-primary" />
                         Email Us
@@ -683,18 +708,12 @@ export default function CrosswildHeader() {
             <div className="flex animate-scroll pause-animation whitespace-nowrap" style={{ animationDuration: '12s' }}>
               {[0, 1].map((i) => (
                 <span key={i} className="flex items-center gap-6 text-white text-xs font-semibold px-6">
-                  <span className="flex items-center gap-2">🎉 <span>Get 20% OFF on Bulk Orders!</span> <span className="bg-white/20 px-2 py-0.5 rounded font-bold">BULK20</span></span>
-                  <span className="opacity-40">•</span>
-                  <span className="flex items-center gap-2">🚚 Free Delivery on Orders Above ₹999</span>
-                  <span className="opacity-40">•</span>
-                  <span className="flex items-center gap-2">👕 Custom T-Shirts Starting ₹199</span>
-                  <span className="opacity-40">•</span>
-                  <span className="flex items-center gap-2">🏆 Premium Quality Printing &amp; Merchandise</span>
-                  <span className="opacity-40">•</span>
-                  <span className="flex items-center gap-2">📦 Pan India Fast Delivery</span>
-                  <span className="opacity-40">•</span>
-                  <span className="flex items-center gap-2">✨ Uniforms, Gifts &amp; Promotional Items</span>
-                  <span className="opacity-40">•</span>
+                  {promoTicker.map((msg, idx) => (
+                    <React.Fragment key={idx}>
+                      <span className="flex items-center gap-2">{msg}</span>
+                      <span className="opacity-40">•</span>
+                    </React.Fragment>
+                  ))}
                 </span>
               ))}
             </div>

@@ -1,42 +1,41 @@
 "use client";
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { Tag, Clock, TrendingUp, Zap } from 'lucide-react';
+import { getDeals, getSiteSettings, type Deal } from '@/lib/cms';
 
-const deals = [
-  {
-    title: 'Bulk Order Special',
-    discount: '20% OFF',
-    description: 'Orders above 100 pieces',
-    icon: TrendingUp,
-    color: 'from-blue-500 to-blue-600',
-    link: '/product/customize-promotional-t-shirt-manufacturer-in-Jaipur',
-  },
-  {
-    title: 'Flash Sale',
-    discount: '15% OFF',
-    description: 'Limited time offer',
-    icon: Zap,
-    color: 'from-orange-500 to-red-500',
-    link: '/product/mug-printing-in-Jaipur',
-    badge: 'Ending Soon',
-  },
-  {
-    title: 'First Order',
-    discount: '10% OFF',
-    description: 'New customers only',
-    icon: Tag,
-    color: 'from-green-500 to-green-600',
-    link: '/products',
-  },
+const COLORS = [
+  'from-blue-500 to-blue-600',
+  'from-orange-500 to-red-500',
+  'from-green-500 to-green-600',
+  'from-purple-500 to-purple-600',
+];
+const ICONS = [TrendingUp, Zap, Tag];
+
+const FALLBACK: Deal[] = [
+  { _id: '1', title: 'Bulk Order Special', discountLabel: '20% OFF', description: 'Orders above 100 pieces', link: '/product/customize-promotional-t-shirt-manufacturer-in-Jaipur' },
+  { _id: '2', title: 'Flash Sale', discountLabel: '15% OFF', description: 'Limited time offer', badge: 'Ending Soon', link: '/product/mug-printing-in-Jaipur' },
+  { _id: '3', title: 'First Order', discountLabel: '10% OFF', description: 'New customers only', link: '/products' },
 ];
 
 export default function DealsSection() {
+  const [deals, setDeals] = useState<Deal[]>(FALLBACK);
+  const [callPhone, setCallPhone] = useState('+91-9529626262');
+
+  useEffect(() => {
+    getDeals().then((d) => { if (d.length) setDeals(d); });
+    getSiteSettings().then((s) => {
+      const p = s?.contact?.primaryPhone || s?.floatingButtons?.call?.phone;
+      if (p) setCallPhone(p);
+    });
+  }, []);
+
+  const telHref = `tel:${callPhone.replace(/[^+\d]/g, '')}`;
+
   return (
     <section className="py-12 bg-theme-bg overflow-hidden">
       <div className="w-full px-6 lg:px-12">
-        {/* Section Header */}
         <div className="text-center mb-8">
           <div className="inline-flex items-center gap-2 bg-red-100 text-red-700 px-4 py-2 rounded-full font-semibold mb-4">
             <Clock className="w-4 h-4" />
@@ -47,54 +46,40 @@ export default function DealsSection() {
           </h2>
         </div>
 
-        {/* Deals Grid */}
         <div className="grid md:grid-cols-3 gap-6">
-          {deals.map((deal, idx) => (
-            <Link
-              key={idx}
-              href={deal.link}
-              className="group relative bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden border-2 border-gray-100 hover:border-transparent"
-            >
-              {/* Gradient Background */}
-              <div className={`absolute inset-0 bg-gradient-to-br ${deal.color} opacity-90 group-hover:opacity-100 transition-opacity`}></div>
-
-              {/* Content */}
-              <div className="relative z-10 p-8 text-white">
-                {/* Badge */}
-                {deal.badge && (
-                  <div className="absolute top-4 right-4 bg-yellow-400 text-yellow-900 text-xs font-bold px-3 py-1 rounded-full animate-pulse">
-                    {deal.badge}
+          {deals.map((deal, idx) => {
+            const Icon = ICONS[idx % ICONS.length];
+            const color = COLORS[idx % COLORS.length];
+            return (
+              <Link
+                key={deal._id}
+                href={deal.link || '#'}
+                className="group relative bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden border-2 border-gray-100 hover:border-transparent"
+              >
+                <div className={`absolute inset-0 bg-gradient-to-br ${color} opacity-90 group-hover:opacity-100 transition-opacity`}></div>
+                <div className="relative z-10 p-8 text-white">
+                  {deal.badge && (
+                    <div className="absolute top-4 right-4 bg-yellow-400 text-yellow-900 text-xs font-bold px-3 py-1 rounded-full animate-pulse">
+                      {deal.badge}
+                    </div>
+                  )}
+                  <Icon className="w-12 h-12 mb-4 opacity-80" />
+                  <h3 className="text-xl font-bold mb-2">{deal.title}</h3>
+                  <div className="text-4xl font-black mb-2">{deal.discountLabel}</div>
+                  <p className="text-white/90 mb-6">{deal.description}</p>
+                  <div className="inline-flex items-center gap-2 bg-white/20 hover:bg-white/30 px-4 py-2 rounded-lg backdrop-blur-sm transition-colors">
+                    <span className="font-semibold">Claim Now</span>
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                    </svg>
                   </div>
-                )}
-
-                {/* Icon */}
-                <deal.icon className="w-12 h-12 mb-4 opacity-80" />
-
-                {/* Title */}
-                <h3 className="text-xl font-bold mb-2">{deal.title}</h3>
-
-                {/* Discount */}
-                <div className="text-4xl font-black mb-2">{deal.discount}</div>
-
-                {/* Description */}
-                <p className="text-white/90 mb-6">{deal.description}</p>
-
-                {/* CTA */}
-                <div className="inline-flex items-center gap-2 bg-white/20 hover:bg-white/30 px-4 py-2 rounded-lg backdrop-blur-sm transition-colors">
-                  <span className="font-semibold">Claim Now</span>
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                  </svg>
                 </div>
-              </div>
-
-              {/* Decorative Circle */}
-              <div className="absolute -right-8 -bottom-8 w-32 h-32 bg-white/10 rounded-full blur-xl"></div>
-            </Link>
-          ))}
+                <div className="absolute -right-8 -bottom-8 w-32 h-32 bg-white/10 rounded-full blur-xl"></div>
+              </Link>
+            );
+          })}
         </div>
 
-        {/* Bottom Banner */}
         <div className="mt-12 bg-gradient-to-r from-purple-500 to-pink-500 rounded-2xl p-8 md:p-12 text-white text-center">
           <h3 className="text-2xl md:text-3xl font-bold mb-4">
             Need Help Choosing? Talk to Our Experts!
@@ -104,7 +89,7 @@ export default function DealsSection() {
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <a
-              href="tel:+919876543210"
+              href={telHref}
               className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-white text-purple-600 font-semibold rounded-lg hover:bg-gray-100 transition-colors"
             >
               <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">

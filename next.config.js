@@ -7,7 +7,8 @@ const nextConfig = {
       // /services now has its own page — no redirect needed
       { source: '/gallery',        destination: '/image-gallery', permanent: true },
       { source: '/our-process',    destination: '/our_process',   permanent: true },
-      { source: '/why-choose-us',  destination: '/about-us',      permanent: true },
+      // Typo fix: old URL was /desclaimer — now /disclaimer (308 permanent redirect)
+      { source: '/desclaimer',     destination: '/disclaimer',    permanent: true },
       // ── Case-sensitivity fixes (old site used uppercase letters in slugs) ──
       { source: '/bags-manufacturer-in-Jodhpur',              destination: '/bags-manufacturer-in-jodhpur',              permanent: true },
       { source: '/tshirt-manufacturer-wholesaler-in-Kota',    destination: '/tshirt-manufacturer-wholesaler-in-kota',    permanent: true },

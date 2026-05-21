@@ -1,17 +1,31 @@
 "use client";
 
-import { Brand } from "@/types/brand";
+import { useEffect, useState } from 'react';
 import Image from "next/image";
-import brandsData from "./brandsData";
+import { getBrands, getSiteSettings, type Brand, type StatItem } from '@/lib/cms';
 
-const Brands = () => {
-  // Duplicate the brands array for seamless infinite scroll
-  const duplicatedBrands = [...brandsData, ...brandsData];
+const DEFAULT_STATS: StatItem[] = [
+  { label: 'Happy Clients', value: '5000+' },
+  { label: 'Orders Delivered', value: '50K+' },
+  { label: 'Satisfaction Rate', value: '99%' },
+  { label: 'Support Available', value: '24/7' },
+];
+
+export default function Brands() {
+  const [brands, setBrands] = useState<Brand[]>([]);
+  const [stats, setStats] = useState<StatItem[]>(DEFAULT_STATS);
+
+  useEffect(() => {
+    getBrands().then(setBrands);
+    getSiteSettings().then((s) => { if (s?.stats?.length) setStats(s.stats); });
+  }, []);
+
+  // Duplicate for seamless infinite scroll
+  const duplicatedBrands = [...brands, ...brands];
 
   return (
     <section className="py-12 bg-theme-bg-soft overflow-hidden">
       <div className="w-full px-6 lg:px-12">
-        {/* Heading */}
         <div className="text-center mb-8">
           <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
             Trusted by Leading Brands
@@ -21,73 +35,53 @@ const Brands = () => {
           </p>
         </div>
 
-        {/* Scrolling Marquee Container */}
-        <div className="relative">
-          {/* Gradient Overlays for fade effect */}
-          <div className="absolute left-0 top-0 bottom-0 w-20 bg-gradient-to-r from-theme-bg-soft to-transparent z-10 pointer-events-none"></div>
-          <div className="absolute right-0 top-0 bottom-0 w-20 bg-gradient-to-l from-theme-bg-soft to-transparent z-10 pointer-events-none"></div>
-
-          {/* Infinite Scroll Wrapper */}
-          <div className="flex overflow-hidden">
-            <div className="flex animate-scroll hover:pause-animation">
-              {duplicatedBrands.map((brand, index) => (
-                <SingleBrand key={`${brand.id}-${index}`} brand={brand} />
-              ))}
+        {brands.length > 0 && (
+          <div className="relative">
+            <div className="absolute left-0 top-0 bottom-0 w-20 bg-gradient-to-r from-theme-bg-soft to-transparent z-10 pointer-events-none"></div>
+            <div className="absolute right-0 top-0 bottom-0 w-20 bg-gradient-to-l from-theme-bg-soft to-transparent z-10 pointer-events-none"></div>
+            <div className="flex overflow-hidden">
+              <div className="flex animate-scroll hover:pause-animation">
+                {duplicatedBrands.map((brand, index) => (
+                  <SingleBrand key={`${brand._id}-${index}`} brand={brand} />
+                ))}
+              </div>
             </div>
           </div>
-        </div>
+        )}
 
         {/* Stats Section */}
         <div className="mt-12 grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
-          <div>
-            <div className="text-3xl font-bold text-primary">5000+</div>
-            <div className="text-sm text-gray-600 dark:text-gray-400 mt-1">Happy Clients</div>
-          </div>
-          <div>
-            <div className="text-3xl font-bold text-primary">50K+</div>
-            <div className="text-sm text-gray-600 dark:text-gray-400 mt-1">Orders Delivered</div>
-          </div>
-          <div>
-            <div className="text-3xl font-bold text-primary">99%</div>
-            <div className="text-sm text-gray-600 dark:text-gray-400 mt-1">Satisfaction Rate</div>
-          </div>
-          <div>
-            <div className="text-3xl font-bold text-primary">24/7</div>
-            <div className="text-sm text-gray-600 dark:text-gray-400 mt-1">Support Available</div>
-          </div>
+          {stats.map((s) => (
+            <div key={s.label}>
+              <div className="text-3xl font-bold text-primary">{s.value}</div>
+              <div className="text-sm text-gray-600 dark:text-gray-400 mt-1">{s.label}</div>
+            </div>
+          ))}
         </div>
       </div>
     </section>
   );
-};
+}
 
-export default Brands;
-
-const SingleBrand = ({ brand }: { brand: Brand }) => {
-  const { href, image, imageLight, name } = brand;
-
+function SingleBrand({ brand }: { brand: Brand }) {
   return (
     <div className="flex-shrink-0 mx-8 transition-transform hover:scale-110">
       <a
-        href={href}
+        href={brand.websiteUrl || '#'}
         target="_blank"
         rel="nofollow noreferrer"
         className="relative block h-16 w-32 opacity-60 transition hover:opacity-100 dark:opacity-50 dark:hover:opacity-100"
       >
-        {/* Light and dark mode logo */}
-        <Image
-          src={imageLight}
-          alt={name}
-          fill
-          className="hidden dark:block object-contain"
-        />
-        <Image
-          src={image}
-          alt={name}
-          fill
-          className="block dark:hidden object-contain"
-        />
+        {brand.logoImage && (
+          <Image
+            src={brand.logoImage}
+            alt={brand.name}
+            fill
+            className="object-contain"
+            unoptimized
+          />
+        )}
       </a>
     </div>
   );
-};
+}
