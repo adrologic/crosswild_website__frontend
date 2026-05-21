@@ -8,7 +8,7 @@ import ServiceContentSections, { type ContentSection } from '@/components/Common
 
 const SLUG = 'school-laptop-bag-manufacturer-in-Jaipur';
 const CANONICAL = `https://www.thecrosswild.com/product/${SLUG}`;
-const BANNER_FALLBACK = 'https://www.thecrosswild.com/upload/category/1cf6d53e65f3078d8a0cfba336955713.jpg';
+const BANNER_FALLBACK = 'https://res.cloudinary.com/djvsjbzez/image/upload/v1779366792/crosswild/category/migrated/1cf6d53e65f3078d8a0cfba336955713.jpg';
 
 const BAG_TYPES = [
   ['School/College Bag', 'Coaching Bags'],
@@ -21,49 +21,49 @@ const BAG_TYPES = [
 const PRODUCTS = [
   {
     name: 'Bag Pack',
-    image: 'https://www.thecrosswild.com/products_image/a9605470f8ab81052d979aaf10cbfcd1.jpg',
+    image: 'https://res.cloudinary.com/djvsjbzez/image/upload/v1779366765/crosswild/products/migrated/a9605470f8ab81052d979aaf10cbfcd1.jpg',
     description: 'Backpacks are perfect for those times when you\'ve got the world to carry on your back, literally. Indeed, backpacks are your all-time friend, especially when you can\'t just organise the load properly. We have a huge variety of backpacks in different sizes, colour, and fabric, with which you can blow someone else\'s mind. The bags are durable and stylish at the same time, giving you the much-required relief in carrying things.',
   },
   {
     name: 'School Bag',
-    image: 'https://www.thecrosswild.com/products_image/7ce7854d3bdabdb70d535cc6635b8a1e.jpg',
+    image: 'https://res.cloudinary.com/djvsjbzez/image/upload/v1779366760/crosswild/products/migrated/7ce7854d3bdabdb70d535cc6635b8a1e.jpg',
     description: 'Bright, colourful, and functional; the CrossWild offer school bags for boys and girls of all ages. Choose from the collection of school bags with name, custom prints, designs and patterns.',
     features: ['Attractive backpack', 'Fine raw-Material', 'Separate space for notebook and books.'],
   },
   {
     name: 'Laptop Bag',
-    image: 'https://www.thecrosswild.com/products_image/909a8a47ec773aab30a62f4842e7ece6.jpg',
+    image: 'https://res.cloudinary.com/djvsjbzez/image/upload/v1779366765/crosswild/products/migrated/909a8a47ec773aab30a62f4842e7ece6.jpg',
     description: 'In Jaipur, Crosswild is one of the top Laptop Bag manufacturers providing Laptop bags in various shapes and sizes. The bags come with an easy-to-carry, durable strap with multiple folds. Designed to protect your laptop tablet, we have the most stylish and affordable options for you.',
   },
   {
     name: 'Food Delivery Bags',
-    image: 'https://www.thecrosswild.com/products_image/64967665b8a0a42eeff038a1a4da662b.jpg',
+    image: 'https://res.cloudinary.com/djvsjbzez/image/upload/v1779366757/crosswild/products/migrated/64967665b8a0a42eeff038a1a4da662b.jpg',
     description: 'We help provide you with consistency. When you want to keep food, grocery, and e-commerce packages safe during delivery, there\'s really no other option. Invest in a quality delivery bag from The Cross Wild - A Bags manufacturer and make sure every customer can appreciate the delicious, safe, fresh packages with every order.',
   },
   {
     name: 'eCommerce Delivery Bags',
-    image: 'https://www.thecrosswild.com/products_image/9ce74d413be46ea047b680b65e5c7aa6.jpg',
+    image: 'https://res.cloudinary.com/djvsjbzez/image/upload/v1779366765/crosswild/products/migrated/9ce74d413be46ea047b680b65e5c7aa6.jpg',
     description: 'We manufacture premium quality Ecommerce Delivery Bags, our products are quality tested. We build quality and robustness.',
     features: ['Our bags are waterproof.', 'Velcro strips to secure the flap.', 'Two-way industrial zippers and reinforced stitching.', 'Removable silver reflective lining.', 'Hardboard internal dividers.'],
   },
   {
     name: 'Office Bag',
-    image: 'https://www.thecrosswild.com/products_image/592988b5cab7ffe3bee30ea74ab70a76.jpg',
+    image: 'https://res.cloudinary.com/djvsjbzez/image/upload/v1779366757/crosswild/products/migrated/592988b5cab7ffe3bee30ea74ab70a76.jpg',
     description: 'Set a professional image by carrying a stylish office bag to the office. The Cross Wild offers an endless array of office bags with multiple zip closures to keep important items and documents organized. We also customize the bags as per the demands of our customers.',
   },
   {
     name: 'Travel Bag',
-    image: 'https://www.thecrosswild.com/products_image/0b8beb77484360b93d7dbc3b66271df8.jpg',
+    image: 'https://res.cloudinary.com/djvsjbzez/image/upload/v1779366750/crosswild/products/migrated/0b8beb77484360b93d7dbc3b66271df8.jpg',
     description: 'From practical backpacks for your daily commute to wheeled backpacks for traveling, we have something for every need and occasion. Besides, you can also get your colleagues and customers to carry your logo with custom travel bags.',
   },
   {
     name: 'Corporate Bags',
-    image: 'https://www.thecrosswild.com/products_image/434c37ef79b102bd5c2e64df74df0828.jpg',
+    image: 'https://res.cloudinary.com/djvsjbzez/image/upload/v1779366755/crosswild/products/migrated/434c37ef79b102bd5c2e64df74df0828.jpg',
     description: 'The Crosswild has also recently become a top corporate bag manufacturer in Jaipur. Designed to offer better personalization, the corporate bags are available at highly competitive prices. We also have ready stock of bags in the city, get it when you need it.',
   },
   {
     name: 'Gym Bag',
-    image: 'https://www.thecrosswild.com/products_image/3512feaa31d0cd1cfe05786b57553eca.jpg',
+    image: 'https://res.cloudinary.com/djvsjbzez/image/upload/v1779366753/crosswild/products/migrated/3512feaa31d0cd1cfe05786b57553eca.jpg',
     description: 'Highly practical and suitable for gym and trips, our gym bags gives you and your brand the right exposure. We boast of ourselves as the leading gym bag manufacturer in Jaipur for providing the highest quality, durable gym bags.',
   },
 ];
@@ -125,7 +125,7 @@ export default async function BagManufacturerJaipur() {
         '@context': 'https://schema.org', '@type': 'Service',
         name: 'Food Delivery, School, Office Bags Manufacturer in Jaipur',
         description: DEFAULT_SEO.description,
-        provider: { '@type': 'Organization', name: 'The CrossWild', url: 'https://www.thecrosswild.com', logo: 'https://www.thecrosswild.com/assets/front/images/logo.jpg' },
+        provider: { '@type': 'Organization', name: 'The CrossWild', url: 'https://www.thecrosswild.com', logo: 'https://res.cloudinary.com/djvsjbzez/image/upload/v1779366749/crosswild/seo/migrated/logo.jpg' },
         areaServed: { '@type': 'City', name: 'Jaipur' },
         serviceType: 'Bags Manufacturing', category: 'Apparel Manufacturing',
         offers: { '@type': 'Offer', availability: 'https://schema.org/PreOrder', priceCurrency: 'INR', url: CANONICAL },

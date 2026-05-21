@@ -8,29 +8,29 @@ import ServiceContentSections, { type ContentSection } from '@/components/Common
 
 const SLUG = 'cap-printing-manufacturer-in-jaipur';
 const CANONICAL = `https://www.thecrosswild.com/product/${SLUG}`;
-const BANNER_FALLBACK = 'https://www.thecrosswild.com/upload/category/a1770d345abcda021af21af6ba5638e2.jpg';
+const BANNER_FALLBACK = 'https://res.cloudinary.com/djvsjbzez/image/upload/v1779366792/crosswild/category/migrated/a1770d345abcda021af21af6ba5638e2.jpg';
 
 const PRODUCTS = [
   {
     name: 'Corporate Cap',
-    image: 'https://www.thecrosswild.com/products_image/3a24a9801ed1dbdd1b4bf5d5d911eda2.jpg',
+    image: 'https://res.cloudinary.com/djvsjbzez/image/upload/v1779366753/crosswild/products/migrated/3a24a9801ed1dbdd1b4bf5d5d911eda2.jpg',
     description: 'We are Manufacturer & Suppliers of the Customize Corporate Cap in Jaipur. The Crosswild have a wide collection of Corporate Cap in different colours, sizes and price. Our Professional Team can design Customized Corporate Cap according to your requirement.',
     features: ['Best-Quality', 'Premium Customization', 'Minimum Price', 'Adjustable self-material strap'],
   },
   {
     name: 'Sports Cap',
-    image: 'https://www.thecrosswild.com/products_image/ac448874f5641fe053e423a219cd4ce0.jpg',
+    image: 'https://res.cloudinary.com/djvsjbzez/image/upload/v1779366768/crosswild/products/migrated/ac448874f5641fe053e423a219cd4ce0.jpg',
     description: 'We are manufacturer and suppliers of the Sports Cap in Jaipur. The Crosswild offer a wide range of Sports Cap with various designs, patterns and colour combination. Our Sports Cap are known for their long lasting and cost effective features. Design your Brand Logo, Team Name on the Cap. We customized the Sports Cap according to your requirement.',
     features: ['Best-Quality', 'Premium Customization', 'Minimum Price', 'Adjustable self-material strap'],
   },
   {
     name: 'Tourist Cap',
-    image: 'https://www.thecrosswild.com/products_image/cd1ffc6104e185ecb2dfefd56ee0eb66.jpg',
+    image: 'https://res.cloudinary.com/djvsjbzez/image/upload/v1779366768/crosswild/products/migrated/cd1ffc6104e185ecb2dfefd56ee0eb66.jpg',
     description: 'we are counted as a leading Manufacturer Tourist Cap in Jaipur. we have a huge collection of Tourist Cap with variety patterns, size and colour combination. Our designs and manufacturer high-quality Tourist Cap are delivered at the best affordable price. We customize the Tourist Cap with your current requirement.',
   },
   {
     name: 'Plain Cap',
-    image: 'https://www.thecrosswild.com/products_image/eacd5a023684aca00f9c8450c970c904.jpg',
+    image: 'https://res.cloudinary.com/djvsjbzez/image/upload/v1779366771/crosswild/products/migrated/eacd5a023684aca00f9c8450c970c904.jpg',
     description: 'The Crosswild manufacturer of highly fashionable Plain Cap in Jaipur. Our Caps are high on demand, due to their best quality. These Plain Cap help to keep you dry during playing and exercise as well as jogging. We have a wide collection of Plain Cap with different colours, patterns and size. We can provide Plain Cap according to your requirement.',
   },
 ];
@@ -116,7 +116,7 @@ export default async function CapManufacturerJaipur() {
         '@context': 'https://schema.org', '@type': 'Service',
         name: 'Caps Printing, Manufacturer in Jaipur',
         description: DEFAULT_SEO.description,
-        provider: { '@type': 'Organization', name: 'The CrossWild', url: 'https://www.thecrosswild.com', logo: 'https://www.thecrosswild.com/assets/front/images/logo.jpg' },
+        provider: { '@type': 'Organization', name: 'The CrossWild', url: 'https://www.thecrosswild.com', logo: 'https://res.cloudinary.com/djvsjbzez/image/upload/v1779366749/crosswild/seo/migrated/logo.jpg' },
         areaServed: { '@type': 'City', name: 'Jaipur' },
         serviceType: 'Caps Manufacturing', category: 'Apparel Manufacturing',
         offers: { '@type': 'Offer', availability: 'https://schema.org/PreOrder', priceCurrency: 'INR', url: CANONICAL },

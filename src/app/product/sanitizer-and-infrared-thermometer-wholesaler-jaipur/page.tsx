@@ -8,17 +8,17 @@ import ServiceContentSections, { type ContentSection } from '@/components/Common
 
 const SLUG = 'sanitizer-and-infrared-thermometer-wholesaler-jaipur';
 const CANONICAL = `https://www.thecrosswild.com/product/${SLUG}`;
-const BANNER_FALLBACK = 'https://www.thecrosswild.com/upload/category/8b29d382d7a8727aaa07a5c7755ec46b.jpg';
+const BANNER_FALLBACK = 'https://res.cloudinary.com/djvsjbzez/image/upload/v1779366791/crosswild/category/migrated/8b29d382d7a8727aaa07a5c7755ec46b.jpg';
 
 const PRODUCTS = [
   {
     name: 'Infrared Thermometer',
-    image: 'https://www.thecrosswild.com/products_image/5da4f9acc5fc11aa068ceffe79add3b8.jpg',
+    image: 'https://res.cloudinary.com/djvsjbzez/image/upload/v1779366758/crosswild/products/migrated/5da4f9acc5fc11aa068ceffe79add3b8.jpg',
     description: 'Infrared Thermometer is the only best way to check the temperature of all people entering into the premises and keep your place free from the risk of spread of Covid-19.',
   },
   {
     name: 'Hand Sanitizer',
-    image: 'https://www.thecrosswild.com/products_image/1110ab722cc416528eb7515635a9cc10.jpg',
+    image: 'https://res.cloudinary.com/djvsjbzez/image/upload/v1779366750/crosswild/products/migrated/1110ab722cc416528eb7515635a9cc10.jpg',
     description: 'Alcohol-based hand sanitizers available in 50 ml, 100 ml, 200 ml, 500 ml and 1 Liter packages — ideal for offices, hospitals, retail outlets, and bulk gifting.',
   },
 ];
@@ -90,7 +90,7 @@ export default async function SanitizerThermometerJaipur() {
         '@context': 'https://schema.org', '@type': 'Service',
         name: 'Hand Sanitizer & Infrared Thermometer Wholesaler Jaipur',
         description: DEFAULT_SEO.description,
-        provider: { '@type': 'Organization', name: 'The CrossWild', url: 'https://www.thecrosswild.com', logo: 'https://www.thecrosswild.com/assets/front/images/logo.jpg' },
+        provider: { '@type': 'Organization', name: 'The CrossWild', url: 'https://www.thecrosswild.com', logo: 'https://res.cloudinary.com/djvsjbzez/image/upload/v1779366749/crosswild/seo/migrated/logo.jpg' },
         areaServed: { '@type': 'City', name: 'Jaipur' },
         serviceType: 'Sanitizer & Infrared Thermometer Wholesale', category: 'Healthcare Products',
         offers: { '@type': 'Offer', availability: 'https://schema.org/PreOrder', priceCurrency: 'INR', url: CANONICAL },

@@ -8,32 +8,32 @@ import ServiceContentSections, { type ContentSection } from '@/components/Common
 
 const SLUG = 'customize-promotional-t-shirt-manufacturer-in-Jaipur';
 const CANONICAL = `https://www.thecrosswild.com/product/${SLUG}`;
-const BANNER_FALLBACK = 'https://www.thecrosswild.com/upload/category/ed3730d3c937c8abfc9cb55772e0de8a.jpg';
+const BANNER_FALLBACK = 'https://res.cloudinary.com/djvsjbzez/image/upload/v1779366795/crosswild/category/migrated/ed3730d3c937c8abfc9cb55772e0de8a.jpg';
 
 const PRODUCTS = [
   {
     name: 'Polo T-Shirt',
-    image: 'https://www.thecrosswild.com/products_image/0c06d108827197660b14472a650fc036.jpg',
+    image: 'https://res.cloudinary.com/djvsjbzez/image/upload/v1779366749/crosswild/products/migrated/0c06d108827197660b14472a650fc036.jpg',
     description: 'The Cross Wild manufactures high quality Polo T-shirts in various styles, colors and sizes as per the requirements of the clients. We guarantee that your custom polo shirt will be completed on time every time.',
   },
   {
     name: 'Round Neck T-shirt',
-    image: 'https://www.thecrosswild.com/products_image/29789ee9122312588a1facf5f9bdc7dd.jpg',
+    image: 'https://res.cloudinary.com/djvsjbzez/image/upload/v1779366753/crosswild/products/migrated/29789ee9122312588a1facf5f9bdc7dd.jpg',
     description: 'Round neck t-shirts are perfect for both men and women. These t-shirts are comfortable and softer than you can imagine. The round neck looks even better with a custom design on it. Book one for yourself or your loved ones today!',
   },
   {
     name: 'Customised T-shirt',
-    image: 'https://www.thecrosswild.com/products_image/68b8fbc7dfab9d830a9e38d62f2502ac.jpg',
+    image: 'https://res.cloudinary.com/djvsjbzez/image/upload/v1779366757/crosswild/products/migrated/68b8fbc7dfab9d830a9e38d62f2502ac.jpg',
     description: 'Customized products are the best creative gifts for lovely people and workplace employee. Custom printing offers more choices of products which can.',
   },
   {
     name: 'Dry Fit Sports T-shirt',
-    image: 'https://www.thecrosswild.com/products_image/f5528e5386c99cd334f4dab763edbd92.jpg',
+    image: 'https://res.cloudinary.com/djvsjbzez/image/upload/v1779366774/crosswild/products/migrated/f5528e5386c99cd334f4dab763edbd92.jpg',
     description: 'Get the best quality Drift T-shirts & promotional t-shirts for events & sports from best T-shirt manufacturers in Jaipur. Polyester T-shirts that come with various knit types will suit an array of design and prints on it. Due to its less water retaining properties and skin fit aesthetics, Drift T-shirts make more sense for sports & marathon events.',
   },
   {
     name: 'Promotional T-shirt',
-    image: 'https://www.thecrosswild.com/products_image/eb0859ce28338b9620490c7a94eb31b1.jpg',
+    image: 'https://res.cloudinary.com/djvsjbzez/image/upload/v1779366771/crosswild/products/migrated/eb0859ce28338b9620490c7a94eb31b1.jpg',
     description: 'The Cross Wild provide the Promotional T-shirt In Jaipur. We provide you with the most fashionable and attractive design in a T-shirt. All our t-shirts are intended for cooling friends who take the utmost care in selecting the best designs to wear. Give a Fresh & Elegant Look Through the Day and did not shrink a bit.',
     features: ['Soft Sleeves', 'Perfect fitting on the body', 'Umbro Design', '100% Cotton'],
   },
@@ -108,7 +108,7 @@ export default async function TShirtManufacturerJaipur() {
         '@context': 'https://schema.org', '@type': 'Service',
         name: 'T-shirt Printing & Manufacturer in Jaipur',
         description: DEFAULT_SEO.description,
-        provider: { '@type': 'Organization', name: 'The CrossWild', url: 'https://www.thecrosswild.com', logo: 'https://www.thecrosswild.com/assets/front/images/logo.jpg' },
+        provider: { '@type': 'Organization', name: 'The CrossWild', url: 'https://www.thecrosswild.com', logo: 'https://res.cloudinary.com/djvsjbzez/image/upload/v1779366749/crosswild/seo/migrated/logo.jpg' },
         areaServed: { '@type': 'City', name: 'Jaipur' },
         serviceType: 'T-shirt Manufacturing', category: 'Apparel Manufacturing',
         offers: { '@type': 'Offer', availability: 'https://schema.org/PreOrder', priceCurrency: 'INR', url: CANONICAL },

@@ -8,27 +8,27 @@ import ServiceContentSections, { type ContentSection } from '@/components/Common
 
 const SLUG = 'sweatshirt-hoodie-manufacturer-in-Jaipur';
 const CANONICAL = `https://www.thecrosswild.com/product/${SLUG}`;
-const BANNER_FALLBACK = 'https://www.thecrosswild.com/upload/category/6475bbd0fc62eef7a6bb1b793933e830.jpg';
+const BANNER_FALLBACK = 'https://res.cloudinary.com/djvsjbzez/image/upload/v1779366792/crosswild/category/migrated/6475bbd0fc62eef7a6bb1b793933e830.jpg';
 
 const PRODUCTS = [
   {
     name: 'Sweatshirt',
-    image: 'https://www.thecrosswild.com/products_image/564e4a74f39c30ede3ea2f262debe4a4.jpg',
+    image: 'https://res.cloudinary.com/djvsjbzez/image/upload/v1779366755/crosswild/products/migrated/564e4a74f39c30ede3ea2f262debe4a4.jpg',
     description: 'We are Men Sweatshirt Wholesalers, Suppliers and Manufacturing Company in Jaipur, India. Our company manufacture Sweatshirt for Men in various styles, designs, colours, prints, embroidery and sizes.\n\nWe are Sweatshirt export company, offering an exotic collection of Men Sweatshirt that are manufactured using only best quality fabrics that add exceptionally comfortable feel.',
   },
   {
     name: 'Hoodies',
-    image: 'https://www.thecrosswild.com/products_image/98475159d591ffdc68f5ed05821be0e9.jpg',
+    image: 'https://res.cloudinary.com/djvsjbzez/image/upload/v1779366765/crosswild/products/migrated/98475159d591ffdc68f5ed05821be0e9.jpg',
     description: 'We are the manufacture of different types of Hoodies.',
   },
   {
     name: 'Sweaters',
-    image: 'https://www.thecrosswild.com/products_image/ec96c104e6f55f8814b9071a92156210.jpg',
+    image: 'https://res.cloudinary.com/djvsjbzez/image/upload/v1779366771/crosswild/products/migrated/ec96c104e6f55f8814b9071a92156210.jpg',
     description: 'We manufacturer the stylish and fashionable Sweaters.',
   },
   {
     name: 'Tracksuit',
-    image: 'https://www.thecrosswild.com/products_image/5e582bc24b0af8858daeaa4c41d4febf.jpg',
+    image: 'https://res.cloudinary.com/djvsjbzez/image/upload/v1779366757/crosswild/products/migrated/5e582bc24b0af8858daeaa4c41d4febf.jpg',
     description: 'We are manufacturer of wide variety of Tracksuits with stylish and trend fashion designs and prints.',
   },
 ];
@@ -95,7 +95,7 @@ export default async function SweatshirtManufacturerJaipur() {
         '@context': 'https://schema.org', '@type': 'Service',
         name: 'Sweatshirt Hoodie Manufacturer in Jaipur, India',
         description: DEFAULT_SEO.description,
-        provider: { '@type': 'Organization', name: 'The CrossWild', url: 'https://www.thecrosswild.com', logo: 'https://www.thecrosswild.com/assets/front/images/logo.jpg' },
+        provider: { '@type': 'Organization', name: 'The CrossWild', url: 'https://www.thecrosswild.com', logo: 'https://res.cloudinary.com/djvsjbzez/image/upload/v1779366749/crosswild/seo/migrated/logo.jpg' },
         areaServed: { '@type': 'City', name: 'Jaipur' },
         serviceType: 'Sweatshirt Manufacturing', category: 'Apparel Manufacturing',
         offers: { '@type': 'Offer', availability: 'https://schema.org/PreOrder', priceCurrency: 'INR', url: CANONICAL },

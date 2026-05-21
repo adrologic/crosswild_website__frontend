@@ -8,27 +8,27 @@ import ServiceContentSections, { type ContentSection } from '@/components/Common
 
 const SLUG = 'printing';
 const CANONICAL = `https://www.thecrosswild.com/product/${SLUG}`;
-const BANNER_FALLBACK = 'https://www.thecrosswild.com/upload/category/a1829511fa2ebde94dbdd9c7699e550c.jpg';
+const BANNER_FALLBACK = 'https://res.cloudinary.com/djvsjbzez/image/upload/v1779366795/crosswild/category/migrated/a1829511fa2ebde94dbdd9c7699e550c.jpg';
 
 const PRODUCTS = [
   {
     name: 'Digital Printing',
-    image: 'https://www.thecrosswild.com/products_image/eb85bc3c535700dfb594d1d6751244ac.jpg',
+    image: 'https://res.cloudinary.com/djvsjbzez/image/upload/v1779366771/crosswild/products/migrated/eb85bc3c535700dfb594d1d6751244ac.jpg',
     description: 'The Cross Wild is the Best Manufacturer of Digital Printing in Jaipur. We provide the best quality t-shirts, bags, mugs, and sweatshirts with Custom Digital Printing. Our Team will take. Contact us if you want to buy and get a free quote for bulk orders.',
   },
   {
     name: 'Screen Printing',
-    image: 'https://www.thecrosswild.com/products_image/a34823c6ca08d69011b704e0e9551548.jpg',
+    image: 'https://res.cloudinary.com/djvsjbzez/image/upload/v1779366765/crosswild/products/migrated/a34823c6ca08d69011b704e0e9551548.jpg',
     description: 'The Crosswild is the best manufacturer of Screen Printing in Jaipur. We perform premium quality screen printing services on T-shirts, Mugs, Hoodies, and other promotional products. Contact us to get a free quote.',
   },
   {
     name: 'Sublimation Printing',
-    image: 'https://www.thecrosswild.com/products_image/4c2c70e121e7476fa095c187b6ab2a2e.jpg',
+    image: 'https://res.cloudinary.com/djvsjbzez/image/upload/v1779366755/crosswild/products/migrated/4c2c70e121e7476fa095c187b6ab2a2e.jpg',
     description: 'Sublimation Printing - This printing technology is used for printing on various media. One such carrier is a cloth. The most common dye-sublimation printing on T-shirts, shirts, and sweatshirts. Such clothes can be washed, ironed, and even bleached. Sublimation printing on fabric is a transfer image that is printed on fabric on a wide printer, in which the image is bright, saturated, and stable.',
   },
   {
     name: 'Rubber Printing',
-    image: 'https://www.thecrosswild.com/products_image/68ee7632b4a386af593eafa8458d17b8.jpg',
+    image: 'https://res.cloudinary.com/djvsjbzez/image/upload/v1779366760/crosswild/products/migrated/68ee7632b4a386af593eafa8458d17b8.jpg',
     description: 'Rubber Printing - We are a professional manufacturer of rubber printing squeegee blades, we export our squeegee for more than 7 years.',
   },
 ];
@@ -90,7 +90,7 @@ export default async function DigitalPrintingJaipur() {
         '@context': 'https://schema.org', '@type': 'Service',
         name: 'Digital, Rubber, Screen Printing Services in Jaipur, India',
         description: DEFAULT_SEO.description,
-        provider: { '@type': 'Organization', name: 'The CrossWild', url: 'https://www.thecrosswild.com', logo: 'https://www.thecrosswild.com/assets/front/images/logo.jpg' },
+        provider: { '@type': 'Organization', name: 'The CrossWild', url: 'https://www.thecrosswild.com', logo: 'https://res.cloudinary.com/djvsjbzez/image/upload/v1779366749/crosswild/seo/migrated/logo.jpg' },
         areaServed: { '@type': 'City', name: 'Jaipur' },
         serviceType: 'Printing', category: 'Apparel Manufacturing',
         offers: { '@type': 'Offer', availability: 'https://schema.org/PreOrder', priceCurrency: 'INR', url: CANONICAL },

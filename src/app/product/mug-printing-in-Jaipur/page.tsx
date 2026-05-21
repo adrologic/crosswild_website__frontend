@@ -8,32 +8,32 @@ import ServiceContentSections, { type ContentSection } from '@/components/Common
 
 const SLUG = 'mug-printing-in-Jaipur';
 const CANONICAL = `https://www.thecrosswild.com/product/${SLUG}`;
-const BANNER_FALLBACK = 'https://www.thecrosswild.com/upload/category/b1510016f57c92271cac5515176a700e.jpg';
+const BANNER_FALLBACK = 'https://res.cloudinary.com/djvsjbzez/image/upload/v1779366795/crosswild/category/migrated/b1510016f57c92271cac5515176a700e.jpg';
 
 const PRODUCTS = [
   {
     name: 'Promotional Mug',
-    image: 'https://www.thecrosswild.com/products_image/f59a0b7a5ea4504fa3b3bb09f753af1a.jpg',
+    image: 'https://res.cloudinary.com/djvsjbzez/image/upload/v1779366774/crosswild/products/migrated/f59a0b7a5ea4504fa3b3bb09f753af1a.jpg',
     description: 'Promote your Brand with every sip with The Cross Wild Promotional Mug. We are the manufacturer of the Customize Promotional Mug in Jaipur. The Cross Wild have a variety of promotional mug in different designs, shape, and rate. Our qualified team can make Customized Promotional mugs according to clients\' needs.',
   },
   {
     name: 'Printed/Customised Mug',
-    image: 'https://www.thecrosswild.com/products_image/cf74faf07125a982b5aaf25d33a9f9c9.jpg',
+    image: 'https://res.cloudinary.com/djvsjbzez/image/upload/v1779366768/crosswild/products/migrated/cf74faf07125a982b5aaf25d33a9f9c9.jpg',
     description: 'We are a manufacturer and supplier of Printed and Customized Mugs in Jaipur. The Crosswild offer a wide range of Printed and Customized Mug with various designs, patterns, and color combination. Design your Picture, Brand Logo, and Name on the Mug. We design and customize Mug according to your requirement.',
   },
   {
     name: 'Coffee Mug',
-    image: 'https://www.thecrosswild.com/products_image/83cde8baeac2b07d58ccbc805f16ee53.jpg',
+    image: 'https://res.cloudinary.com/djvsjbzez/image/upload/v1779366762/crosswild/products/migrated/83cde8baeac2b07d58ccbc805f16ee53.jpg',
     description: 'The Crosswild are manufacturer of customized coffee mugs in Jaipur. We have many varieties of coffee mugs with separate style patterns, sizes, and color combinations. our features service and high-quality we are delivered customize coffee at the best price. we customize the coffee cup to your needs.',
   },
   {
     name: 'Corporate Mug',
-    image: 'https://www.thecrosswild.com/products_image/bdff08bbc4cc26f26aa9ff8f1918ef0d.jpg',
+    image: 'https://res.cloudinary.com/djvsjbzez/image/upload/v1779366768/crosswild/products/migrated/bdff08bbc4cc26f26aa9ff8f1918ef0d.jpg',
     description: 'We are the leading all types of mug manufacturers in Jaipur, India. We make a premium quality ceramic mug. If you want to make your corporate mugs in bulk quantities then you can contact us and get free quotes.',
   },
   {
     name: 'Plain Mug',
-    image: 'https://www.thecrosswild.com/products_image/7f1647eee1a016d84f75ad7c00c4cc64.jpg',
+    image: 'https://res.cloudinary.com/djvsjbzez/image/upload/v1779366762/crosswild/products/migrated/7f1647eee1a016d84f75ad7c00c4cc64.jpg',
     description: 'Enjoy a cup of your favorite morning brew with one of our Customize Plain mugs. The Crosswild is the best manufacturer and supplier of Customize Plain Mug in Jaipur. Contact us if you want to buy and get a free quote for bulk orders.',
   },
 ];
@@ -108,7 +108,7 @@ export default async function MugPrintingJaipur() {
         '@context': 'https://schema.org', '@type': 'Service',
         name: 'Mugs Printing in Jaipur',
         description: DEFAULT_SEO.description,
-        provider: { '@type': 'Organization', name: 'The CrossWild', url: 'https://www.thecrosswild.com', logo: 'https://www.thecrosswild.com/assets/front/images/logo.jpg' },
+        provider: { '@type': 'Organization', name: 'The CrossWild', url: 'https://www.thecrosswild.com', logo: 'https://res.cloudinary.com/djvsjbzez/image/upload/v1779366749/crosswild/seo/migrated/logo.jpg' },
         areaServed: { '@type': 'City', name: 'Jaipur' },
         serviceType: 'Mugs Printing', category: 'Mug Manufacturing',
         offers: { '@type': 'Offer', availability: 'https://schema.org/PreOrder', priceCurrency: 'INR', url: CANONICAL },

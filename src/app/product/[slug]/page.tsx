@@ -45,10 +45,10 @@ const PRODUCTS: Record<string, ProductConfig> = {
       'Pan-India delivery from ' + 'our Jaipur facility',
     ],
     types: [
-      { label: 'Polo T-Shirt',        img: 'https://www.thecrosswild.com/products_image/0c06d108827197660b14472a650fc036.jpg' },
-      { label: 'Round Neck T-Shirt',  img: 'https://www.thecrosswild.com/products_image/29789ee9122312588a1facf5f9bdc7dd.jpg' },
-      { label: 'Dry-Fit Sports',      img: 'https://www.thecrosswild.com/products_image/f5528e5386c99cd334f4dab763edbd92.jpg' },
-      { label: 'Customised T-Shirt',  img: 'https://www.thecrosswild.com/products_image/68b8fbc7dfab9d830a9e38d62f2502ac.jpg' },
+      { label: 'Polo T-Shirt',        img: 'https://res.cloudinary.com/djvsjbzez/image/upload/v1779366749/crosswild/products/migrated/0c06d108827197660b14472a650fc036.jpg' },
+      { label: 'Round Neck T-Shirt',  img: 'https://res.cloudinary.com/djvsjbzez/image/upload/v1779366753/crosswild/products/migrated/29789ee9122312588a1facf5f9bdc7dd.jpg' },
+      { label: 'Dry-Fit Sports',      img: 'https://res.cloudinary.com/djvsjbzez/image/upload/v1779366774/crosswild/products/migrated/f5528e5386c99cd334f4dab763edbd92.jpg' },
+      { label: 'Customised T-Shirt',  img: 'https://res.cloudinary.com/djvsjbzez/image/upload/v1779366757/crosswild/products/migrated/68b8fbc7dfab9d830a9e38d62f2502ac.jpg' },
     ],
     benefits: [
       'Elegant and classic color range',
@@ -82,10 +82,10 @@ const PRODUCTS: Record<string, ProductConfig> = {
       'Bulk manufacturing from our Jaipur plant',
     ],
     types: [
-      { label: 'School Bag',       img: 'https://www.thecrosswild.com/products_image/7ce7854d3bdabdb70d535cc6635b8a1e.jpg' },
-      { label: 'Laptop Bag',       img: 'https://www.thecrosswild.com/products_image/909a8a47ec773aab30a62f4842e7ece6.jpg' },
-      { label: 'Food Delivery Bag',img: 'https://www.thecrosswild.com/products_image/64967665b8a0a42eeff038a1a4da662b.jpg' },
-      { label: 'Corporate Bag',    img: 'https://www.thecrosswild.com/products_image/434c37ef79b102bd5c2e64df74df0828.jpg' },
+      { label: 'School Bag',       img: 'https://res.cloudinary.com/djvsjbzez/image/upload/v1779366760/crosswild/products/migrated/7ce7854d3bdabdb70d535cc6635b8a1e.jpg' },
+      { label: 'Laptop Bag',       img: 'https://res.cloudinary.com/djvsjbzez/image/upload/v1779366765/crosswild/products/migrated/909a8a47ec773aab30a62f4842e7ece6.jpg' },
+      { label: 'Food Delivery Bag',img: 'https://res.cloudinary.com/djvsjbzez/image/upload/v1779366757/crosswild/products/migrated/64967665b8a0a42eeff038a1a4da662b.jpg' },
+      { label: 'Corporate Bag',    img: 'https://res.cloudinary.com/djvsjbzez/image/upload/v1779366755/crosswild/products/migrated/434c37ef79b102bd5c2e64df74df0828.jpg' },
     ],
     benefits: [
       'Durable and stylish designs',
@@ -119,10 +119,10 @@ const PRODUCTS: Record<string, ProductConfig> = {
       'Bulk orders welcome',
     ],
     types: [
-      { label: 'Corporate Cap', img: 'https://www.thecrosswild.com/products_image/3a24a9801ed1dbdd1b4bf5d5d911eda2.jpg' },
-      { label: 'Sports Cap',    img: 'https://www.thecrosswild.com/products_image/ac448874f5641fe053e423a219cd4ce0.jpg' },
-      { label: 'Tourist Cap',   img: 'https://www.thecrosswild.com/products_image/cd1ffc6104e185ecb2dfefd56ee0eb66.jpg' },
-      { label: 'Plain Cap',     img: 'https://www.thecrosswild.com/products_image/eacd5a023684aca00f9c8450c970c904.jpg' },
+      { label: 'Corporate Cap', img: 'https://res.cloudinary.com/djvsjbzez/image/upload/v1779366753/crosswild/products/migrated/3a24a9801ed1dbdd1b4bf5d5d911eda2.jpg' },
+      { label: 'Sports Cap',    img: 'https://res.cloudinary.com/djvsjbzez/image/upload/v1779366768/crosswild/products/migrated/ac448874f5641fe053e423a219cd4ce0.jpg' },
+      { label: 'Tourist Cap',   img: 'https://res.cloudinary.com/djvsjbzez/image/upload/v1779366768/crosswild/products/migrated/cd1ffc6104e185ecb2dfefd56ee0eb66.jpg' },
+      { label: 'Plain Cap',     img: 'https://res.cloudinary.com/djvsjbzez/image/upload/v1779366771/crosswild/products/migrated/eacd5a023684aca00f9c8450c970c904.jpg' },
     ],
     benefits: [
       'Best-quality premium customization',
@@ -155,10 +155,10 @@ const PRODUCTS: Record<string, ProductConfig> = {
       'Bulk manufacturing — schools & corporates',
     ],
     types: [
-      { label: 'Girls Uniform',   img: 'https://www.thecrosswild.com/products_image/6f037be3dce207d89d5cdafd83cd28ce.jpg' },
-      { label: 'Boys Uniform',    img: 'https://www.thecrosswild.com/products_image/ebe8c56622667e5d29c12316b2f7e8b1.jpg' },
-      { label: 'Sports Uniform',  img: 'https://www.thecrosswild.com/products_image/7a6ba77b5a3ca04de4ef9479825461d1.jpg' },
-      { label: 'Teacher Uniform', img: 'https://www.thecrosswild.com/products_image/8ea195c9b0a741b7d76d1979a679dbc8.jpg' },
+      { label: 'Girls Uniform',   img: 'https://res.cloudinary.com/djvsjbzez/image/upload/v1779366760/crosswild/products/migrated/6f037be3dce207d89d5cdafd83cd28ce.jpg' },
+      { label: 'Boys Uniform',    img: 'https://res.cloudinary.com/djvsjbzez/image/upload/v1779366772/crosswild/products/migrated/ebe8c56622667e5d29c12316b2f7e8b1.jpg' },
+      { label: 'Sports Uniform',  img: 'https://res.cloudinary.com/djvsjbzez/image/upload/v1779366760/crosswild/products/migrated/7a6ba77b5a3ca04de4ef9479825461d1.jpg' },
+      { label: 'Teacher Uniform', img: 'https://res.cloudinary.com/djvsjbzez/image/upload/v1779366762/crosswild/products/migrated/8ea195c9b0a741b7d76d1979a679dbc8.jpg' },
     ],
     benefits: [
       'Comfortable and durable polyester-cotton blend',
@@ -191,10 +191,10 @@ const PRODUCTS: Record<string, ProductConfig> = {
       'Bulk orders with consistent quality',
     ],
     types: [
-      { label: 'Office Uniform',    img: 'https://www.thecrosswild.com/products_image/8ea195c9b0a741b7d76d1979a679dbc8.jpg' },
-      { label: 'Industrial Uniform',img: 'https://www.thecrosswild.com/products_image/ebe8c56622667e5d29c12316b2f7e8b1.jpg' },
-      { label: 'Hotel Uniform',     img: 'https://www.thecrosswild.com/products_image/6f037be3dce207d89d5cdafd83cd28ce.jpg' },
-      { label: 'Sports Uniform',    img: 'https://www.thecrosswild.com/products_image/7a6ba77b5a3ca04de4ef9479825461d1.jpg' },
+      { label: 'Office Uniform',    img: 'https://res.cloudinary.com/djvsjbzez/image/upload/v1779366762/crosswild/products/migrated/8ea195c9b0a741b7d76d1979a679dbc8.jpg' },
+      { label: 'Industrial Uniform',img: 'https://res.cloudinary.com/djvsjbzez/image/upload/v1779366772/crosswild/products/migrated/ebe8c56622667e5d29c12316b2f7e8b1.jpg' },
+      { label: 'Hotel Uniform',     img: 'https://res.cloudinary.com/djvsjbzez/image/upload/v1779366760/crosswild/products/migrated/6f037be3dce207d89d5cdafd83cd28ce.jpg' },
+      { label: 'Sports Uniform',    img: 'https://res.cloudinary.com/djvsjbzez/image/upload/v1779366760/crosswild/products/migrated/7a6ba77b5a3ca04de4ef9479825461d1.jpg' },
     ],
     benefits: [
       'Professional and polished appearance',
@@ -227,10 +227,10 @@ const PRODUCTS: Record<string, ProductConfig> = {
       'Quick delivery on bulk orders',
     ],
     types: [
-      { label: 'Sweatshirt', img: 'https://www.thecrosswild.com/products_image/564e4a74f39c30ede3ea2f262debe4a4.jpg' },
-      { label: 'Hoodies',    img: 'https://www.thecrosswild.com/products_image/98475159d591ffdc68f5ed05821be0e9.jpg' },
-      { label: 'Sweaters',   img: 'https://www.thecrosswild.com/products_image/ec96c104e6f55f8814b9071a92156210.jpg' },
-      { label: 'Tracksuit',  img: 'https://www.thecrosswild.com/products_image/5e582bc24b0af8858daeaa4c41d4febf.jpg' },
+      { label: 'Sweatshirt', img: 'https://res.cloudinary.com/djvsjbzez/image/upload/v1779366755/crosswild/products/migrated/564e4a74f39c30ede3ea2f262debe4a4.jpg' },
+      { label: 'Hoodies',    img: 'https://res.cloudinary.com/djvsjbzez/image/upload/v1779366765/crosswild/products/migrated/98475159d591ffdc68f5ed05821be0e9.jpg' },
+      { label: 'Sweaters',   img: 'https://res.cloudinary.com/djvsjbzez/image/upload/v1779366771/crosswild/products/migrated/ec96c104e6f55f8814b9071a92156210.jpg' },
+      { label: 'Tracksuit',  img: 'https://res.cloudinary.com/djvsjbzez/image/upload/v1779366757/crosswild/products/migrated/5e582bc24b0af8858daeaa4c41d4febf.jpg' },
     ],
     benefits: [
       'Premium quality soft fabric',
@@ -263,10 +263,10 @@ const PRODUCTS: Record<string, ProductConfig> = {
       'Printing on T-shirts, bags, caps, mugs',
     ],
     types: [
-      { label: 'Digital Printing',     img: 'https://www.thecrosswild.com/products_image/eb85bc3c535700dfb594d1d6751244ac.jpg' },
-      { label: 'Screen Printing',      img: 'https://www.thecrosswild.com/products_image/a34823c6ca08d69011b704e0e9551548.jpg' },
-      { label: 'Sublimation Printing', img: 'https://www.thecrosswild.com/products_image/4c2c70e121e7476fa095c187b6ab2a2e.jpg' },
-      { label: 'Rubber Printing',      img: 'https://www.thecrosswild.com/products_image/68ee7632b4a386af593eafa8458d17b8.jpg' },
+      { label: 'Digital Printing',     img: 'https://res.cloudinary.com/djvsjbzez/image/upload/v1779366771/crosswild/products/migrated/eb85bc3c535700dfb594d1d6751244ac.jpg' },
+      { label: 'Screen Printing',      img: 'https://res.cloudinary.com/djvsjbzez/image/upload/v1779366765/crosswild/products/migrated/a34823c6ca08d69011b704e0e9551548.jpg' },
+      { label: 'Sublimation Printing', img: 'https://res.cloudinary.com/djvsjbzez/image/upload/v1779366755/crosswild/products/migrated/4c2c70e121e7476fa095c187b6ab2a2e.jpg' },
+      { label: 'Rubber Printing',      img: 'https://res.cloudinary.com/djvsjbzez/image/upload/v1779366760/crosswild/products/migrated/68ee7632b4a386af593eafa8458d17b8.jpg' },
     ],
     benefits: [
       'Bright and durable prints',
@@ -300,10 +300,10 @@ const PRODUCTS: Record<string, ProductConfig> = {
       'Pan-India delivery',
     ],
     types: [
-      { label: 'White Mug',       img: 'https://www.thecrosswild.com/products_image/4c2c70e121e7476fa095c187b6ab2a2e.jpg' },
-      { label: 'Colour Mug',      img: 'https://www.thecrosswild.com/products_image/eb85bc3c535700dfb594d1d6751244ac.jpg' },
-      { label: 'Corporate Gift',  img: 'https://www.thecrosswild.com/products_image/a34823c6ca08d69011b704e0e9551548.jpg' },
-      { label: 'Promotional Mug', img: 'https://www.thecrosswild.com/products_image/68ee7632b4a386af593eafa8458d17b8.jpg' },
+      { label: 'White Mug',       img: 'https://res.cloudinary.com/djvsjbzez/image/upload/v1779366755/crosswild/products/migrated/4c2c70e121e7476fa095c187b6ab2a2e.jpg' },
+      { label: 'Colour Mug',      img: 'https://res.cloudinary.com/djvsjbzez/image/upload/v1779366771/crosswild/products/migrated/eb85bc3c535700dfb594d1d6751244ac.jpg' },
+      { label: 'Corporate Gift',  img: 'https://res.cloudinary.com/djvsjbzez/image/upload/v1779366765/crosswild/products/migrated/a34823c6ca08d69011b704e0e9551548.jpg' },
+      { label: 'Promotional Mug', img: 'https://res.cloudinary.com/djvsjbzez/image/upload/v1779366760/crosswild/products/migrated/68ee7632b4a386af593eafa8458d17b8.jpg' },
     ],
     benefits: [
       'Vibrant sublimation printing',

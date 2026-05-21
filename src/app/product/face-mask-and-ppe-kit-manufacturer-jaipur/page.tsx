@@ -8,17 +8,17 @@ import ServiceContentSections, { type ContentSection } from '@/components/Common
 
 const SLUG = 'face-mask-and-ppe-kit-manufacturer-jaipur';
 const CANONICAL = `https://www.thecrosswild.com/product/${SLUG}`;
-const BANNER_FALLBACK = 'https://www.thecrosswild.com/upload/category/18f1046130e78256ffcfed19179e0961.jpg';
+const BANNER_FALLBACK = 'https://res.cloudinary.com/djvsjbzez/image/upload/v1779366789/crosswild/category/migrated/18f1046130e78256ffcfed19179e0961.jpg';
 
 const PRODUCTS = [
   {
     name: 'Face Mask',
-    image: 'https://www.thecrosswild.com/products_image/7ee58cd665ba15256c8e85808a85e7b6.jpg',
+    image: 'https://res.cloudinary.com/djvsjbzez/image/upload/v1779366762/crosswild/products/migrated/7ee58cd665ba15256c8e85808a85e7b6.jpg',
     description: 'We manufacture high-quality face masks including N95 masks, printed face masks, and surgical masks to keep you and your team safe. Available in bulk quantities at the best wholesale prices.',
   },
   {
     name: 'PPE Kit',
-    image: 'https://www.thecrosswild.com/products_image/900af3a323036134f274d01d1bd2d79f.jpg',
+    image: 'https://res.cloudinary.com/djvsjbzez/image/upload/v1779366762/crosswild/products/migrated/900af3a323036134f274d01d1bd2d79f.jpg',
     description: 'Complete PPE Kits manufactured using high-standard materials for hospitals, clinics, salons, and other essential service workers. Bulk orders welcome with fast delivery across India.',
   },
 ];
@@ -97,7 +97,7 @@ export default async function FaceMaskPPEKitJaipur() {
         '@context': 'https://schema.org', '@type': 'Service',
         name: 'Face Mask and PPE Kit Manufacturer Jaipur',
         description: DEFAULT_SEO.description,
-        provider: { '@type': 'Organization', name: 'The CrossWild', url: 'https://www.thecrosswild.com', logo: 'https://www.thecrosswild.com/assets/front/images/logo.jpg' },
+        provider: { '@type': 'Organization', name: 'The CrossWild', url: 'https://www.thecrosswild.com', logo: 'https://res.cloudinary.com/djvsjbzez/image/upload/v1779366749/crosswild/seo/migrated/logo.jpg' },
         areaServed: { '@type': 'City', name: 'Jaipur' },
         serviceType: 'Face Mask & PPE Kit Manufacturing', category: 'Healthcare Products Manufacturing',
         offers: { '@type': 'Offer', availability: 'https://schema.org/PreOrder', priceCurrency: 'INR', url: CANONICAL },
