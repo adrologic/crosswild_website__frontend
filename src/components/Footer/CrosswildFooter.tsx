@@ -3,11 +3,10 @@
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { Mail, Phone, MapPin } from 'lucide-react';
+import { Mail, Phone, MapPin, Sparkles } from 'lucide-react';
 import {
   getSiteSettings,
   getMenu,
-  subscribeEmail,
   type SiteSettings,
   type Menu,
 } from '@/lib/cms';
@@ -39,10 +38,6 @@ export default function CrosswildFooter() {
   const [quickLinks, setQuickLinks] = useState<Menu | null>(null);
   const [bottomLinks, setBottomLinks] = useState<Menu | null>(null);
 
-  const [email, setEmail] = useState('');
-  const [subStatus, setSubStatus] = useState<{ ok: boolean; msg: string } | null>(null);
-  const [submitting, setSubmitting] = useState(false);
-
   useEffect(() => {
     Promise.all([
       getSiteSettings(),
@@ -62,17 +57,6 @@ export default function CrosswildFooter() {
   const contact = settings?.contact;
   const social = settings?.social;
 
-  const submit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!email) return;
-    setSubmitting(true);
-    setSubStatus(null);
-    const result = await subscribeEmail(email, 'footer');
-    setSubStatus({ ok: !!result.success, msg: result.message || (result.success ? 'Subscribed!' : 'Failed') });
-    if (result.success) setEmail('');
-    setSubmitting(false);
-  };
-
   const year = new Date().getFullYear();
   const services = servicesMenu?.items || footer?.servicesLinks || [];
   const quick = quickLinks?.items || footer?.quickLinks || [];
@@ -81,31 +65,22 @@ export default function CrosswildFooter() {
   return (
     <footer className="bg-[#111111] dark:bg-[#0E0B08] text-gray-300 dark:text-[#C8B99A]">
       {footer?.newsletter?.enabled !== false && (
-        <div className="bg-gradient-to-r from-primary to-primary-dark py-12">
-          <div className="w-full px-6 lg:px-12">
-            <div className="flex flex-col md:flex-row items-center justify-between gap-6">
-              <div className="text-white text-center md:text-left">
-                <h3 className="text-2xl font-bold mb-2">{footer?.newsletter?.heading || 'Get Exclusive Deals & Updates'}</h3>
-                <p className="text-white/80">{footer?.newsletter?.subheading || 'Subscribe to our newsletter for special offers and tips'}</p>
+        <div className="relative overflow-hidden bg-gradient-to-r from-primary to-primary-dark py-14 md:py-16">
+          {/* decorative blurred blobs */}
+          <div className="pointer-events-none absolute -top-16 -left-16 h-64 w-64 rounded-full bg-white/10 blur-3xl" aria-hidden="true" />
+          <div className="pointer-events-none absolute -bottom-16 -right-16 h-64 w-64 rounded-full bg-white/10 blur-3xl" aria-hidden="true" />
+
+          <div className="relative w-full px-6 lg:px-12">
+            <div className="mx-auto max-w-3xl text-center text-white">
+              <div className="mx-auto mb-5 inline-flex h-14 w-14 items-center justify-center rounded-2xl bg-white/15 backdrop-blur-sm ring-1 ring-white/20">
+                <Sparkles className="h-7 w-7" aria-hidden="true" />
               </div>
-              <form onSubmit={submit} className="w-full md:w-auto">
-                <div className="flex gap-2 max-w-md">
-                  <input
-                    type="email"
-                    required
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    placeholder={footer?.newsletter?.placeholder || 'Enter your email'}
-                    className="flex-1 px-4 py-3 rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-white"
-                  />
-                  <button type="submit" disabled={submitting} className="px-6 py-3 bg-[#111111] dark:bg-[#26211A] text-white font-semibold rounded-lg hover:bg-black dark:hover:bg-[#38302A] transition-colors whitespace-nowrap disabled:opacity-60">
-                    {submitting ? 'Sending…' : (footer?.newsletter?.buttonLabel || 'Subscribe')}
-                  </button>
-                </div>
-                {subStatus && (
-                  <p className={`mt-2 text-xs ${subStatus.ok ? 'text-green-100' : 'text-red-100'}`}>{subStatus.msg}</p>
-                )}
-              </form>
+              <h3 className="mb-3 text-3xl font-bold tracking-tight md:text-4xl">
+                {footer?.newsletter?.heading || 'Get Exclusive Deals & Updates'}
+              </h3>
+              <p className="mx-auto max-w-2xl text-base text-white/90 md:text-lg">
+                {footer?.newsletter?.subheading || 'Special offers, new product launches, and bulk-order discounts — delivered to inbox.'}
+              </p>
             </div>
           </div>
         </div>

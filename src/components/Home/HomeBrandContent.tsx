@@ -27,9 +27,9 @@ const FALLBACK_WHY_CHOOSE: HomeWhyChoose[] = [
 ];
 
 const FALLBACK_HIGHLIGHTS: HomeProductHighlight[] = [
-  { _id: 'h1', title: 'Mug Printing', image: '/images/products/Mugs/Promotional-Mug.jpg', link: '/product/mug-printing-in-Jaipur' },
-  { _id: 'h2', title: 'Cap Printing', image: '/images/products/Caps/Sports-Cap.jpg', link: '/product/cap-printing-manufacturer-in-jaipur' },
-  { _id: 'h3', title: 'Digital Printing', image: '/images/products/Digital-Printing/Digital-Printing.jpg', link: '/product/printing' },
+  { _id: 'h1', title: 'Mug Printing', image: '/images/products/Mugs/Promotional-Mug.jpg', link: '/contact-us' },
+  { _id: 'h2', title: 'Cap Printing', image: '/images/products/Caps/Sports-Cap.jpg', link: '/contact-us' },
+  { _id: 'h3', title: 'Digital Printing', image: '/images/products/Digital-Printing/Digital-Printing.jpg', link: '/contact-us' },
 ];
 
 const CAPABILITY_COLORS = [
