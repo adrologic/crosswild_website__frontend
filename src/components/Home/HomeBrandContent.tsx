@@ -50,7 +50,26 @@ const HIGHLIGHT_GRADIENTS = [
   'from-teal-900/70 to-teal-700/50',
 ];
 
-export default function HomeBrandContent() {
+// Editable text blocks come from PageContent — admin → Page Content → Home →
+// "Customize & Promote Section" (key `home/why-choose`).
+interface BrandTextContent {
+  introBadge?: string;
+  introHeading?: string;
+  introParagraph?: string;
+  capabilitiesHeading?: string;
+  customizeHeading?: string;
+  customizeParagraph?: string;
+  whyChooseHeading?: string;
+  bestResultsHeading?: string;
+  bestResultsParagraph?: string;
+  // Legacy field names also supported (heading + description from `home/why-choose`)
+  heading?: string;
+  description?: string;
+}
+
+interface Props { content?: BrandTextContent }
+
+export default function HomeBrandContent({ content }: Props = {}) {
   const [capabilities, setCapabilities] = useState<HomeCapability[]>(FALLBACK_CAPABILITIES);
   const [whyChoose, setWhyChoose] = useState<HomeWhyChoose[]>(FALLBACK_WHY_CHOOSE);
   const [highlights, setHighlights] = useState<HomeProductHighlight[]>(FALLBACK_HIGHLIGHTS);
@@ -61,6 +80,19 @@ export default function HomeBrandContent() {
     getHomeProductHighlights().then((d) => { if (d.length) setHighlights(d); });
   }, []);
 
+  // Text resolved from CMS with sensible defaults so the section never blanks.
+  const introBadge = content?.introBadge || 'Drive Brand Success with Cross Wild Manufacturing';
+  const introHeading = content?.introHeading || 'Custom T-Shirts, Bags, and Caps Manufacturer in Jaipur, India';
+  const introParagraph = content?.introParagraph || 'Founded in 2016, The Cross Wild has grown into one of the most trusted names in custom product printing and manufacturing in India. Based in Jaipur, we are proud to be a leading t-shirt manufacturer, bag manufacturer, and custom cap manufacturer with a rapidly expanding presence across India and internationally. Our goal is to be the ultimate one-stop shop for all customized product manufacturing and printing needs, offering unmatched quality and service.';
+  const capabilitiesHeading = content?.capabilitiesHeading || 'Explore Our Capabilities';
+  // `customizeHeading` / `customizeParagraph` map onto the legacy `heading` / `description`
+  // fields that the existing admin "Customize & Promote Section" already uses.
+  const customizeHeading = content?.customizeHeading || content?.heading || 'Customize & Promote with The Cross Wild';
+  const customizeParagraph = content?.customizeParagraph || content?.description || 'At The Cross Wild, we cover a wide spectrum of industries and events with products that fulfill functionality yet are stylish. Whether you are a business needing branded corporate T-shirts, a company looking for wholesale tote bags or an event organizer sourcing custom bags and personalized hats — The Cross Wild is sure to cater for all your needs. Over the years, our dedication to customer satisfaction has driven us to expand our portfolio. In addition to t-shirt printing and bag manufacturing, we now specialize in custom caps, mug printing, sweater manufacturing, and more. Leveraging state-of-the-art technologies, we deliver high-quality personalized and promotional products at competitive prices. Our designs are tailored to meet the corporate or individual needs of clients with attention to detail as well as affordability.';
+  const whyChooseHeading = content?.whyChooseHeading || 'Why Choose The CrossWild';
+  const bestResultsHeading = content?.bestResultsHeading || 'Get the Best Result for Your Corporate & Promotional Needs';
+  const bestResultsParagraph = content?.bestResultsParagraph || "Unbeatable quality is what you will enjoy with The Cross Wild. Whether you want event t-shirts with your company's logo and message printed on them or eco-friendly caps and stylish custom backpacks that will make everyone smile in admiration, we have something for almost any need and at reasonable prices.";
+
   return (
     <>
       {/* ── Intro + Capabilities ─────────────────────────── */}
@@ -68,24 +100,20 @@ export default function HomeBrandContent() {
         <div className="w-full px-6 lg:px-12">
           <div className="max-w-4xl mx-auto text-center mb-14">
             <p className="inline-block text-xs font-bold uppercase tracking-widest text-primary bg-primary/10 px-4 py-1.5 rounded-full mb-4">
-              Drive Brand Success with Cross Wild Manufacturing
+              {introBadge}
             </p>
             <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-6 leading-tight">
-              Custom T-Shirts, Bags, and Caps Manufacturer in Jaipur, India
+              {introHeading}
             </h2>
             <p className="text-base md:text-lg text-gray-600 dark:text-gray-300 leading-relaxed">
-              Founded in 2016, The Cross Wild has grown into one of the most trusted names in custom product printing
-              and manufacturing in India. Based in Jaipur, we are proud to be a leading t-shirt manufacturer, bag
-              manufacturer, and custom cap manufacturer with a rapidly expanding presence across India and
-              internationally. Our goal is to be the ultimate one-stop shop for all customized product manufacturing
-              and printing needs, offering unmatched quality and service.
+              {introParagraph}
             </p>
           </div>
 
           {/* Explore Our Capabilities */}
           <div>
             <h3 className="text-2xl font-bold text-gray-900 dark:text-white text-center mb-8">
-              Explore Our Capabilities
+              {capabilitiesHeading}
             </h3>
             <div className="grid sm:grid-cols-3 gap-6">
               {capabilities.map((cat, idx) => {
@@ -118,18 +146,10 @@ export default function HomeBrandContent() {
         <div className="w-full px-6 lg:px-12">
           <div className="max-w-4xl mx-auto text-center">
             <h2 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white mb-6">
-              Customize &amp; Promote with The Cross Wild
+              {customizeHeading}
             </h2>
-            <p className="text-base md:text-lg text-gray-600 dark:text-gray-300 leading-relaxed">
-              At The Cross Wild, we cover a wide spectrum of industries and events with products that fulfill
-              functionality yet are stylish. Whether you are a business needing branded corporate T-shirts, a company
-              looking for wholesale tote bags or an event organizer sourcing custom bags and personalized hats — The
-              Cross Wild is sure to cater for all your needs. Over the years, our dedication to customer satisfaction
-              has driven us to expand our portfolio. In addition to t-shirt printing and bag manufacturing, we now
-              specialize in custom caps, mug printing, sweater manufacturing, and more. Leveraging state-of-the-art
-              technologies, we deliver high-quality personalized and promotional products at competitive prices. Our
-              designs are tailored to meet the corporate or individual needs of clients with attention to detail as
-              well as affordability.
+            <p className="text-base md:text-lg text-gray-600 dark:text-gray-300 leading-relaxed whitespace-pre-line">
+              {customizeParagraph}
             </p>
           </div>
         </div>
@@ -140,7 +160,7 @@ export default function HomeBrandContent() {
         <div className="w-full px-6 lg:px-12">
           <div className="text-center mb-12">
             <h2 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white">
-              Why Choose the Cross Wild?
+              {whyChooseHeading}
             </h2>
           </div>
           <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
@@ -165,12 +185,10 @@ export default function HomeBrandContent() {
         <div className="w-full px-6 lg:px-12">
           <div className="max-w-3xl mx-auto text-center mb-12">
             <h2 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white mb-4">
-              Get the Best Result for Your Corporate &amp; Promotional Needs
+              {bestResultsHeading}
             </h2>
-            <p className="text-base md:text-lg text-gray-600 dark:text-gray-300 leading-relaxed">
-              Unbeatable quality is what you will enjoy with The Cross Wild. Whether you want event t-shirts with your
-              company&apos;s logo and message printed on them or eco-friendly caps and stylish custom backpacks that will
-              make everyone smile in admiration, we have something for almost any need and at reasonable prices.
+            <p className="text-base md:text-lg text-gray-600 dark:text-gray-300 leading-relaxed whitespace-pre-line">
+              {bestResultsParagraph}
             </p>
           </div>
 

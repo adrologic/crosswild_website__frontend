@@ -64,7 +64,8 @@ export default async function Home() {
       <DealsSection />
 
       {/* Brand Content — Intro, Capabilities, Why Choose, Product Highlights */}
-      <HomeBrandContent />
+      {/* Admin → Page Content → Home → "Customize & Promote Section" (home/why-choose) */}
+      <HomeBrandContent content={content?.['why-choose']} />
 
       {/* Promo Banner — Digital Printing / Brand Promotion, managed via admin panel */}
       <PromoBanner content={content?.['promo-banner']} />
