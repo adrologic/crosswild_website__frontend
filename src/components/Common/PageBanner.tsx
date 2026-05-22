@@ -24,14 +24,14 @@ export default function PageBanner({ title, subtitle, bannerImage, breadcrumbs }
           />
           <div className="absolute inset-0 bg-black/50" />
           <div className="absolute inset-0 flex flex-col items-center justify-center text-white text-center px-4">
-            <h1 className="text-3xl sm:text-4xl font-bold tracking-tight">{title}</h1>
+            <p className="text-3xl sm:text-4xl font-bold tracking-tight">{title}</p>
             {subtitle && <p className="mt-2 text-base sm:text-lg text-white/80 max-w-xl">{subtitle}</p>}
           </div>
         </div>
       ) : (
         <div className="bg-[#f5f5f5] dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 py-8 px-6">
           <div className="container text-center">
-            <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-white">{title}</h1>
+            <p className="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-white">{title}</p>
             {subtitle && <p className="mt-2 text-base text-gray-600 dark:text-gray-400">{subtitle}</p>}
           </div>
         </div>
