@@ -256,31 +256,6 @@ export default function ProductDetailClient({ id }: { id: string }) {
 
             {/* ════════ RIGHT — Product Info ════════ */}
             <div className="space-y-6">
-              {/* Category & Subcategory Tags */}
-              {hasCategories && (
-                <div className="flex flex-wrap gap-2">
-                  {product.productCategories!.map(pc => (
-                    <span key={pc.category} className="contents">
-                      <Link
-                        href={getCategoryUrl(pc.category)}
-                        className="px-3 py-1 bg-primary/10 text-primary text-xs font-medium rounded-full hover:bg-primary/20 transition-colors"
-                      >
-                        {getCategoryName(pc.category)}
-                      </Link>
-                      {pc.subcategories && pc.subcategories.length > 0 && pc.subcategories.map(sub => (
-                        <Link
-                          key={`${pc.category}-${sub}`}
-                          href={getSubCategoryUrl(sub)}
-                          className="px-3 py-1 bg-theme-bg-card border border-theme-border text-theme-text-secondary text-xs font-medium rounded-full hover:border-primary hover:text-primary transition-colors"
-                        >
-                          {formatSubcategory(sub)}
-                        </Link>
-                      ))}
-                    </span>
-                  ))}
-                </div>
-              )}
-
               {/* Product Type */}
               {hasProductType && (
                 <span className="inline-block px-3 py-1 bg-secondary-blue/10 text-secondary-blue text-xs font-medium rounded-full">
