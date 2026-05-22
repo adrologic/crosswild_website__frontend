@@ -103,7 +103,7 @@ export default async function SweatshirtManufacturerJaipur() {
 
       <div className="relative w-full">
         <Image src={bannerImage} alt={bannerTitle} width={1920} height={640} className="w-full h-auto" priority sizes="100vw" />
-        <h1 className="sr-only">{bannerTitle}</h1>
+        <p className="sr-only">{bannerTitle}</p>
       </div>
 
       <Breadcrumb pageName="Sweatshirt Manufacturing" description="" />

@@ -8,10 +8,14 @@ export type ContentSection = {
 export default function ServiceContentSections({ sections }: { sections: ContentSection[] }) {
   return (
     <>
-      {sections.map((s, i) => (
+      {sections.map((s, i) => {
+        // First section's heading is the page's single <h1>, all subsequent
+        // headings are <h2> so we keep one and only one H1 per page.
+        const Heading = i === 0 ? 'h1' : 'h2';
+        return (
         <div key={i}>
           {s.heading && (
-            <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">{s.heading}</h2>
+            <Heading className="text-2xl font-bold text-gray-900 dark:text-white mb-4">{s.heading}</Heading>
           )}
           {s.subheading && (
             <p className="font-semibold text-gray-700 dark:text-gray-300 italic mb-4">{s.subheading}</p>
@@ -34,7 +38,8 @@ export default function ServiceContentSections({ sections }: { sections: Content
             </ul>
           )}
         </div>
-      ))}
+        );
+      })}
     </>
   );
 }
