@@ -24,8 +24,8 @@ async function getSchemas() {
   try {
     const API_URL = (process.env.BACKEND_URL || 'https://crosswild-backend-p5l3.onrender.com') + '/api';
     const res = await fetch(`${API_URL}/seo/schemas`, {
-      // 1h cache — schemas (LocalBusiness, FAQ) rarely change.
-      next: { revalidate: 3600 },
+      // 60s cache so admin schema edits propagate within a minute.
+      next: { revalidate: 60 },
       // Tight timeout — render with null schemas (defaults take over) if backend is slow.
       signal: AbortSignal.timeout(3000),
     });

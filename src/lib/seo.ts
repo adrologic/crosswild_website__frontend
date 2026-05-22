@@ -28,8 +28,8 @@ const defaultSEO = {
 export async function getGlobalSEO() {
   try {
     const response = await fetch(`${API_URL}/seo/global`, {
-      // 1h cache — global SEO settings rarely change. Worst-case stale data is a non-issue compared to FCP cost.
-      next: { revalidate: 3600 },
+      // 60s cache so admin edits to global SEO are visible within a minute.
+      next: { revalidate: 60 },
       // Tight timeout — fall back to defaults if backend is slow/cold rather than block FCP.
       signal: AbortSignal.timeout(3000),
     });

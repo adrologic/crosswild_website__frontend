@@ -6,8 +6,8 @@ const API_URL =
 export async function getPageContent(pageSlug: string): Promise<Record<string, any>> {
   try {
     const res = await fetch(`${API_URL}/content/${pageSlug}`, {
-      // 1h cache — page content rarely changes between admin saves.
-      next: { revalidate: 3600 },
+      // 60s cache so admin edits are visible on the live site within a minute.
+      next: { revalidate: 60 },
       // Tight timeout — each page renders with hardcoded fallbacks if backend is slow,
       // so blocking SSR longer than this would directly hurt FCP/Speed Index.
       signal: AbortSignal.timeout(3000),
@@ -23,7 +23,7 @@ export async function getPageContent(pageSlug: string): Promise<Record<string, a
 export async function getSection(pageSlug: string, sectionKey: string): Promise<any> {
   try {
     const res = await fetch(`${API_URL}/content/${pageSlug}/${sectionKey}`, {
-      next: { revalidate: 3600 },
+      next: { revalidate: 60 },
       signal: AbortSignal.timeout(3000),
     });
     if (!res.ok) return null;

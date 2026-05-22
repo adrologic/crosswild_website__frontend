@@ -95,7 +95,7 @@ async function getLocation(slug: string) {
 async function getAllLocationSlugs(): Promise<string[]> {
   try {
     const res = await fetch(`${API_URL}/locations?active=true`, {
-      next: { revalidate: 3600 },
+      next: { revalidate: 60 },
       signal: AbortSignal.timeout(3000),
     });
     if (res.ok) {
@@ -109,7 +109,7 @@ async function getAllLocationSlugs(): Promise<string[]> {
 async function getAllLocations() {
   try {
     const res = await fetch(`${API_URL}/locations?active=true`, {
-      next: { revalidate: 3600 },
+      next: { revalidate: 60 },
       signal: AbortSignal.timeout(3000),
     });
     if (res.ok) {
