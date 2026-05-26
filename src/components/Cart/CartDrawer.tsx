@@ -23,6 +23,26 @@ export default function CartDrawer() {
 
   const onClose = () => dispatch(closeCart());
 
+  // Only mount the drawer when it's open so crawlers don't see the
+  // Cart/Your cart is empty headings on every page. Mount immediately on
+  // open, then animate in; on close, animate out and unmount after the
+  // 300ms transition.
+  const [shouldRender, setShouldRender] = React.useState(false);
+  const [isVisible, setIsVisible] = React.useState(false);
+
+  React.useEffect(() => {
+    if (isOpen) {
+      setShouldRender(true);
+      const raf = requestAnimationFrame(() => setIsVisible(true));
+      return () => cancelAnimationFrame(raf);
+    }
+    setIsVisible(false);
+    const timer = setTimeout(() => setShouldRender(false), 300);
+    return () => clearTimeout(timer);
+  }, [isOpen]);
+
+  if (!shouldRender) return null;
+
   const getWhatsAppOrderLink = () => {
     const itemsList = cart.map(item =>
       `• ${item.name}${item.size ? ` (Size: ${item.size})` : ''}${item.color ? ` (Color: ${item.color})` : ''} ×${item.quantity}`
@@ -50,7 +70,7 @@ export default function CartDrawer() {
       <div
         onClick={onClose}
         className={`fixed inset-0 bg-black/50 z-[999] transition-opacity duration-300 ${
-          isOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'
+          isVisible ? 'opacity-100' : 'opacity-0 pointer-events-none'
         }`}
       />
 
