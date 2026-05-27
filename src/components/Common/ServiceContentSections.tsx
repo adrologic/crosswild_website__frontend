@@ -5,13 +5,23 @@ export type ContentSection = {
   bullets?: string[];
 };
 
-export default function ServiceContentSections({ sections }: { sections: ContentSection[] }) {
+export default function ServiceContentSections({
+  sections,
+  asPrimary = false,
+}: {
+  sections: ContentSection[];
+  /**
+   * When true, this group's first heading renders as the page's single <h1>.
+   * Defaults to false so every heading is an <h2> — pages render multiple
+   * instances of this component, and only the primary group should emit the
+   * lone <h1>. Keeps exactly one H1 per page.
+   */
+  asPrimary?: boolean;
+}) {
   return (
     <>
       {sections.map((s, i) => {
-        // First section's heading is the page's single <h1>, all subsequent
-        // headings are <h2> so we keep one and only one H1 per page.
-        const Heading = i === 0 ? 'h1' : 'h2';
+        const Heading = asPrimary && i === 0 ? 'h1' : 'h2';
         return (
         <div key={i}>
           {s.heading && (

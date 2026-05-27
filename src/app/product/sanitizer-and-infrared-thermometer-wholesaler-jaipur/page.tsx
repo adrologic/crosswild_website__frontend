@@ -106,7 +106,7 @@ export default async function SanitizerThermometerJaipur() {
       <section className="py-12 bg-white dark:bg-gray-900">
         <div className="w-full px-6 lg:px-16 xl:px-24 max-w-6xl mx-auto space-y-12">
 
-          <ServiceContentSections sections={beforeSections} />
+          <ServiceContentSections sections={beforeSections} asPrimary />
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 max-w-2xl">
             {productsToRender.map((p: any) => (

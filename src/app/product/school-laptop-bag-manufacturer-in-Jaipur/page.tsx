@@ -142,7 +142,7 @@ export default async function BagManufacturerJaipur() {
         <div className="w-full px-6 lg:px-16 xl:px-24 max-w-6xl mx-auto space-y-12">
 
           <div>
-            <ServiceContentSections sections={beforeSections} />
+            <ServiceContentSections sections={beforeSections} asPrimary />
 
             <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-4">Types of Bags We Make</h2>
             <div className="overflow-x-auto rounded-xl border border-gray-200 dark:border-gray-700 mb-6">
