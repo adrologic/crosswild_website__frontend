@@ -263,9 +263,9 @@ export default function ProductDetailClient({ id }: { id: string }) {
                 </span>
               )}
 
-              {/* Product Name */}
+              {/* Product Name — keep in sync with the breadcrumb (both use product.name) */}
               <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold text-theme-text leading-tight tracking-tight">
-                {product.title || product.name}
+                {product.name}
               </h1>
 
               {/* Tagline */}
