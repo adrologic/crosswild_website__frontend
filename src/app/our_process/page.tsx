@@ -19,8 +19,9 @@ export default async function OurProcess() {
   return (
     <>
       <Breadcrumb
-        pageName="Our Process"
-        description={content?.intro?.description || "Our process making business easy in fashion"}
+        pageName={content?.banner?.title || 'Our Process'}
+        description={content?.banner?.description || content?.intro?.description || 'Our process making business easy in fashion'}
+        asH1
       />
       <Process intro={content?.intro} steps={content?.steps?.steps} />
     </>

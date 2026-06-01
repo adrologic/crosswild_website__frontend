@@ -621,9 +621,9 @@ export default async function LocationPage({
               {location.name}, {location.state}
             </div>
 
-            <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 dark:text-white leading-tight">
+            <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 dark:text-white leading-tight">
               {location.heroHeading || location.name}
-            </h1>
+            </h2>
 
             <p className="text-lg text-gray-600 dark:text-gray-300 leading-relaxed">
               {location.description}

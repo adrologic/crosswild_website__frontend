@@ -25,17 +25,21 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function ServicesPage() {
-  const [services, introSection, ctaSection] = await Promise.all([
+  const [services, introSection, ctaSection, bannerSection] = await Promise.all([
     getServiceCards(),
     getSection('services', 'intro').catch(() => null),
     getSection('services', 'cta').catch(() => null),
+    getSection('services', 'banner').catch(() => null),
   ]);
 
   const intro = introSection || {} as Record<string, unknown>;
   const cta = ctaSection || {} as Record<string, unknown>;
+  const banner = bannerSection || {} as Record<string, unknown>;
 
   // Fallback to hardcoded copy if backend is offline
-  const breadcrumbDesc = (intro as any).breadcrumbDescription as string ||
+  const bannerTitle = (banner as any).title as string || 'Our Services';
+  const breadcrumbDesc = (banner as any).description as string ||
+    (intro as any).breadcrumbDescription as string ||
     'Custom manufacturing of T-shirts, bags, caps, uniforms and more — bulk orders from ₹70/piece with pan-India delivery.';
   const introHeading = (intro as any).heading as string || 'What We Manufacture';
   const introParagraph = (intro as any).paragraph as string ||
@@ -47,7 +51,7 @@ export default async function ServicesPage() {
 
   return (
     <>
-      <Breadcrumb pageName="Our Services" description={breadcrumbDesc} />
+      <Breadcrumb pageName={bannerTitle} description={breadcrumbDesc} asH1 />
 
       <section className="py-16 bg-white dark:bg-gray-900">
         <div className="max-w-7xl mx-auto px-6 lg:px-12">

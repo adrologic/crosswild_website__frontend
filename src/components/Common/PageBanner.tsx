@@ -6,10 +6,16 @@ interface Props {
   subtitle?: string;
   bannerImage?: string | null;
   breadcrumbs?: { label: string; href?: string }[];
+  /**
+   * When true, render the banner title as the page's <h1>. Default false so
+   * pages that already own their h1 elsewhere keep this as a <p>. One h1 per page.
+   */
+  asH1?: boolean;
 }
 
-export default function PageBanner({ title, subtitle, bannerImage, breadcrumbs }: Props) {
+export default function PageBanner({ title, subtitle, bannerImage, breadcrumbs, asH1 = false }: Props) {
   const crumbs = breadcrumbs || [{ label: 'Home', href: '/' }, { label: title }];
+  const TitleTag = asH1 ? 'h1' : 'p';
 
   return (
     <div className="w-full">
@@ -24,14 +30,14 @@ export default function PageBanner({ title, subtitle, bannerImage, breadcrumbs }
           />
           <div className="absolute inset-0 bg-black/50" />
           <div className="absolute inset-0 flex flex-col items-center justify-center text-white text-center px-4">
-            <p className="text-3xl sm:text-4xl font-bold tracking-tight">{title}</p>
+            <TitleTag className="text-3xl sm:text-4xl font-bold tracking-tight">{title}</TitleTag>
             {subtitle && <p className="mt-2 text-base sm:text-lg text-white/80 max-w-xl">{subtitle}</p>}
           </div>
         </div>
       ) : (
         <div className="bg-[#f5f5f5] dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 py-8 px-6">
           <div className="container text-center">
-            <p className="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-white">{title}</p>
+            <TitleTag className="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-white">{title}</TitleTag>
             {subtitle && <p className="mt-2 text-base text-gray-600 dark:text-gray-400">{subtitle}</p>}
           </div>
         </div>

@@ -3,10 +3,19 @@ import Link from "next/link";
 const Breadcrumb = ({
   pageName,
   description,
+  asH1 = false,
 }: {
   pageName: string;
   description: string;
+  /**
+   * When true, render `pageName` as the page's <h1>. Default false so the
+   * title stays a <p> — pages that own their <h1> elsewhere (e.g. a hero
+   * section below this banner) opt out; pages without any other h1 opt in.
+   * Either way, exactly one h1 per page.
+   */
+  asH1?: boolean;
 }) => {
+  const TitleTag = asH1 ? 'h1' : 'p';
   return (
     <>
       <section className="relative z-10 overflow-hidden pt-28 lg:pt-[150px]">
@@ -14,11 +23,9 @@ const Breadcrumb = ({
           <div className="-mx-4 flex flex-wrap items-center">
             <div className="w-full px-4 md:w-8/12 lg:w-7/12">
               <div className="mb-8 max-w-[570px] md:mb-0 lg:mb-12">
-                {/* Page title here is a <p> on purpose — only one <h1> per
-                    page (the section heading below this banner owns it) */}
-                <p className="mb-5 text-2xl font-bold text-black dark:text-white sm:text-3xl">
+                <TitleTag className="mb-5 text-2xl font-bold text-black dark:text-white sm:text-3xl">
                   {pageName}
-                </p>
+                </TitleTag>
                 <p className="text-base font-medium leading-relaxed text-body-color">
                   {description}
                 </p>

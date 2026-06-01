@@ -34,6 +34,7 @@ export default async function AboutPage() {
         subtitle={banner?.subtitle}
         bannerImage={banner?.image || null}
         breadcrumbs={[{ label: 'Home', href: '/' }, { label: 'About Us' }]}
+        asH1
       />
       <AboutSectionOne content={content?.intro} />
       <AboutSectionTwo

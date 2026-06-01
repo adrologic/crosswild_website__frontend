@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import Breadcrumb from "@/components/Common/Breadcrumb";
 import Gallery from "@/components/Gallary/ImageGallary";
 import { generatePageMetadata } from "@/lib/seo";
+import { getPageContent } from "@/lib/content";
 
 export async function generateMetadata(): Promise<Metadata> {
   return generatePageMetadata('/image-gallery', {
@@ -13,15 +14,16 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export const revalidate = 60;
 
-const ImageGallery = () => {
+const ImageGallery = async () => {
+  const content = await getPageContent('image-gallery');
   return (
     <>
       <Breadcrumb
-        pageName="Image Gallery" // Should match the actual page content
-        description="Explore our best custom printing and manufacturing projects."
+        pageName={content?.banner?.title || 'Image Gallery'}
+        description={content?.banner?.description || 'Explore our best custom printing and manufacturing projects.'}
+        asH1
       />
-      {/* Assuming 'Process' component is actually displaying the gallery content */}
-      <Gallery /> 
+      <Gallery />
     </>
   );
 };

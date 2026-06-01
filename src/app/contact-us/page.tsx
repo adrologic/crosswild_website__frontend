@@ -19,8 +19,9 @@ export default async function ContactPage() {
   return (
     <>
       <Breadcrumb
-        pageName="Contact Page"
-        description={content?.info?.subheading || "Get in touch with us for inquiries, support, or collaborations."}
+        pageName={content?.banner?.title || 'Contact Page'}
+        description={content?.banner?.description || content?.info?.subheading || 'Get in touch with us for inquiries, support, or collaborations.'}
+        asH1
       />
       <Contact content={content?.info} />
     </>
