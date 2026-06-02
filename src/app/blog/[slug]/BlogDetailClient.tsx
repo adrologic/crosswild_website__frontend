@@ -8,18 +8,35 @@ import { Calendar, User, ArrowLeft, Share2, Eye, Clock, ArrowRight } from 'lucid
 import Breadcrumb from '@/components/Common/Breadcrumb';
 import { BlogSEO } from '@/components/SEO/SEOHead';
 
-// Authors sometimes paste the blog title as the first <h1>/<h2> inside the
-// body HTML, which creates a duplicate heading next to the page's <h1>.
-// Strip a leading h1/h2 whose visible text matches the blog title (case-
-// and whitespace-insensitive) before injecting the HTML.
-function stripLeadingTitleDuplicate(html: string | undefined, title: string | undefined): string {
+// Authors sometimes paste the blog title as an <h1> or <h2> inside the body
+// HTML, which creates a duplicate heading next to the page's <h1>. Strip
+// every h1/h2 in the body whose visible text matches the blog title
+// (case-, whitespace-, and HTML-entity-insensitive). Legitimate subsection
+// h2s (different text) are untouched.
+function normalizeHeadingText(s: string): string {
+  return s
+    // strip nested tags
+    .replace(/<[^>]*>/g, '')
+    // decode the entities most commonly seen in author-pasted content
+    .replace(/&amp;/gi, '&')
+    .replace(/&lt;/gi, '<')
+    .replace(/&gt;/gi, '>')
+    .replace(/&quot;/gi, '"')
+    .replace(/&#39;|&apos;/gi, "'")
+    .replace(/&nbsp;|&#160;| /g, ' ')
+    // collapse any whitespace (incl. tabs/newlines) to single spaces
+    .replace(/[\s ]+/g, ' ')
+    .trim()
+    .toLowerCase();
+}
+
+function stripTitleDuplicateHeadings(html: string | undefined, title: string | undefined): string {
   if (!html || !title) return html || '';
-  const target = title.replace(/\s+/g, ' ').trim().toLowerCase();
+  const target = normalizeHeadingText(title);
   if (!target) return html;
-  const match = html.match(/^\s*<h([12])\b[^>]*>([\s\S]*?)<\/h\1>\s*/i);
-  if (!match) return html;
-  const inner = match[2].replace(/<[^>]*>/g, '').replace(/\s+/g, ' ').trim().toLowerCase();
-  return inner === target ? html.slice(match[0].length) : html;
+  return html.replace(/<h([12])\b[^>]*>([\s\S]*?)<\/h\1>\s*/gi, (match, _level, inner) => {
+    return normalizeHeadingText(inner) === target ? '' : match;
+  });
 }
 
 export default function BlogDetailClient({ slug }: { slug: string }) {
@@ -283,7 +300,7 @@ export default function BlogDetailClient({ slug }: { slug: string }) {
                   prose-ol:list-decimal prose-ol:pl-6 prose-ol:mb-4
                   prose-li:text-gray-700 dark:prose-li:text-gray-300 prose-li:mb-1
                   prose-strong:text-gray-900 dark:prose-strong:text-white"
-                dangerouslySetInnerHTML={{ __html: stripLeadingTitleDuplicate(blog.paragraph, blog.title) }}
+                dangerouslySetInnerHTML={{ __html: stripTitleDuplicateHeadings(blog.paragraph, blog.title) }}
               />
 
               {/* Share Section */}
