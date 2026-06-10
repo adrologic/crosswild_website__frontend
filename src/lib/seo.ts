@@ -24,36 +24,38 @@ const defaultSEO = {
   defaultOgImage: '/images/og-default.jpg',
 };
 
+// Timeout + single retry on transient backend failure (cold start, network blip).
+const SEO_TIMEOUT_MS = 15000;
+const SEO_RETRY_DELAY_MS = 500;
+
+async function fetchSeoJson(path: string): Promise<any | null> {
+  const url = `${API_URL}${path}`;
+  for (let attempt = 0; attempt < 2; attempt++) {
+    try {
+      const response = await fetch(url, {
+        next: { revalidate: 60 },
+        signal: AbortSignal.timeout(SEO_TIMEOUT_MS),
+      });
+      if (response.ok) return await response.json();
+      if (response.status >= 400 && response.status < 500) return null;
+    } catch {
+      // network / abort / timeout — fall through to retry
+    }
+    if (attempt === 0) await new Promise((r) => setTimeout(r, SEO_RETRY_DELAY_MS));
+  }
+  return null;
+}
+
 // Fetch global SEO settings from API
 export async function getGlobalSEO() {
-  try {
-    const response = await fetch(`${API_URL}/seo/global`, {
-      // 60s cache so admin edits to global SEO are visible within a minute.
-      next: { revalidate: 60 },
-      // Tight timeout — fall back to defaults if backend is slow/cold rather than block FCP.
-      signal: AbortSignal.timeout(3000),
-    });
-    if (!response.ok) return defaultSEO;
-    const data = await response.json();
-    return data.settings || defaultSEO;
-  } catch {
-    return defaultSEO;
-  }
+  const data = await fetchSeoJson('/seo/global');
+  return data?.settings || defaultSEO;
 }
 
 // Fetch page-specific SEO from API
 export async function getPageSEO(path: string) {
-  try {
-    const response = await fetch(`${API_URL}/seo/pages/${encodeURIComponent(path)}`, {
-      next: { revalidate: 60 },
-      signal: AbortSignal.timeout(3000),
-    });
-    if (!response.ok) return null;
-    const data = await response.json();
-    return data.page;
-  } catch {
-    return null;
-  }
+  const data = await fetchSeoJson(`/seo/pages/${encodeURIComponent(path)}`);
+  return data?.page || null;
 }
 
 // Generate metadata for a page

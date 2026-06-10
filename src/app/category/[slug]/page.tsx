@@ -11,7 +11,7 @@ async function getCategory(slug: string) {
   try {
     const res = await fetch(`${API_URL}/categories/${slug}`, {
       next: { revalidate: 60 },
-      signal: AbortSignal.timeout(3000),
+      signal: AbortSignal.timeout(15000),
     });
     if (!res.ok) return null;
     return await res.json();
@@ -26,7 +26,7 @@ async function getSiblings(parentId: string) {
   try {
     const res = await fetch(`${API_URL}/categories?parent=${parentId}&active=true`, {
       next: { revalidate: 60 },
-      signal: AbortSignal.timeout(3000),
+      signal: AbortSignal.timeout(15000),
     });
     if (!res.ok) return [];
     const data = await res.json();
@@ -42,7 +42,7 @@ async function getTopLevelCategories() {
   try {
     const res = await fetch(`${API_URL}/categories?root=true&active=true`, {
       next: { revalidate: 300 },
-      signal: AbortSignal.timeout(3000),
+      signal: AbortSignal.timeout(15000),
     });
     if (!res.ok) return [];
     const data = await res.json();

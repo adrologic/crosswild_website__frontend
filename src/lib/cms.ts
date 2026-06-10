@@ -2,8 +2,10 @@
 //
 // All helpers:
 //   - Use Next.js ISR with `revalidate: 60` (admin edits show up within a minute).
-//   - Time out after 3s. If the backend is slow or down, callers fall back to
-//     hardcoded defaults so SSR is never blocked.
+//   - Time out after 15s and retry once on transient failure. The backend is
+//     a Render free-tier instance that can cold-start in 30–60s; the keep-warm
+//     workflow + this timeout/retry combo means a real cold start rarely
+//     leaks empty data into the UI.
 //   - Return safe defaults on any error (empty list / null) — never throw.
 
 const API_URL =
@@ -12,19 +14,27 @@ const API_URL =
     : `${process.env.BACKEND_URL || process.env.NEXT_PUBLIC_BACKEND_URL || 'https://crosswild-backend-p5l3.onrender.com'}/api`;
 
 const REVALIDATE = 60;
-const TIMEOUT_MS = 3000;
+const TIMEOUT_MS = 15000;
+const RETRY_DELAY_MS = 500;
 
 async function safeJson<T>(path: string, fallback: T): Promise<T> {
-  try {
-    const res = await fetch(`${API_URL}${path}`, {
-      next: { revalidate: REVALIDATE },
-      signal: AbortSignal.timeout(TIMEOUT_MS),
-    });
-    if (!res.ok) return fallback;
-    return (await res.json()) as T;
-  } catch {
-    return fallback;
+  const url = `${API_URL}${path}`;
+  for (let attempt = 0; attempt < 2; attempt++) {
+    try {
+      const res = await fetch(url, {
+        next: { revalidate: REVALIDATE },
+        signal: AbortSignal.timeout(TIMEOUT_MS),
+      });
+      if (res.ok) return (await res.json()) as T;
+      // 4xx is a real error (wrong path / bad request) — don't retry.
+      if (res.status >= 400 && res.status < 500) return fallback;
+      // 5xx: fall through to retry.
+    } catch {
+      // Network / abort / timeout — fall through to retry.
+    }
+    if (attempt === 0) await new Promise((r) => setTimeout(r, RETRY_DELAY_MS));
   }
+  return fallback;
 }
 
 // ────────────────────────────────────────────────────────────────────────────

@@ -3,33 +3,36 @@ const API_URL =
     ? (process.env.NEXT_PUBLIC_API_URL || '/api')
     : `${process.env.BACKEND_URL || 'https://crosswild-backend-p5l3.onrender.com'}/api`;
 
-export async function getPageContent(pageSlug: string): Promise<Record<string, any>> {
-  try {
-    const res = await fetch(`${API_URL}/content/${pageSlug}`, {
-      // 60s cache so admin edits are visible on the live site within a minute.
-      next: { revalidate: 60 },
-      // Tight timeout — each page renders with hardcoded fallbacks if backend is slow,
-      // so blocking SSR longer than this would directly hurt FCP/Speed Index.
-      signal: AbortSignal.timeout(3000),
-    });
-    if (!res.ok) return {};
-    const data = await res.json();
-    return data.content || {};
-  } catch {
-    return {};
+const REVALIDATE = 60;
+const TIMEOUT_MS = 15000;
+const RETRY_DELAY_MS = 500;
+
+// Shared fetch helper: timeout + single retry on network/timeout/5xx.
+// Returns the parsed JSON on success, or null on giving up.
+async function fetchJsonWithRetry(path: string): Promise<any | null> {
+  const url = `${API_URL}${path}`;
+  for (let attempt = 0; attempt < 2; attempt++) {
+    try {
+      const res = await fetch(url, {
+        next: { revalidate: REVALIDATE },
+        signal: AbortSignal.timeout(TIMEOUT_MS),
+      });
+      if (res.ok) return await res.json();
+      if (res.status >= 400 && res.status < 500) return null;
+    } catch {
+      // network / abort / timeout — fall through
+    }
+    if (attempt === 0) await new Promise((r) => setTimeout(r, RETRY_DELAY_MS));
   }
+  return null;
+}
+
+export async function getPageContent(pageSlug: string): Promise<Record<string, any>> {
+  const data = await fetchJsonWithRetry(`/content/${pageSlug}`);
+  return data?.content || {};
 }
 
 export async function getSection(pageSlug: string, sectionKey: string): Promise<any> {
-  try {
-    const res = await fetch(`${API_URL}/content/${pageSlug}/${sectionKey}`, {
-      next: { revalidate: 60 },
-      signal: AbortSignal.timeout(3000),
-    });
-    if (!res.ok) return null;
-    const data = await res.json();
-    return data.data || null;
-  } catch {
-    return null;
-  }
+  const data = await fetchJsonWithRetry(`/content/${pageSlug}/${sectionKey}`);
+  return data?.data || null;
 }

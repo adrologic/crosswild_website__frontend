@@ -21,19 +21,24 @@ const inter = Inter({
 });
 
 async function getSchemas() {
-  try {
-    const API_URL = (process.env.BACKEND_URL || 'https://crosswild-backend-p5l3.onrender.com') + '/api';
-    const res = await fetch(`${API_URL}/seo/schemas`, {
-      // 60s cache so admin schema edits propagate within a minute.
-      next: { revalidate: 60 },
-      // Tight timeout — render with null schemas (defaults take over) if backend is slow.
-      signal: AbortSignal.timeout(3000),
-    });
-    if (!res.ok) return null;
-    return res.json();
-  } catch {
-    return null;
+  const API_URL = (process.env.BACKEND_URL || 'https://crosswild-backend-p5l3.onrender.com') + '/api';
+  for (let attempt = 0; attempt < 2; attempt++) {
+    try {
+      const res = await fetch(`${API_URL}/seo/schemas`, {
+        // 60s cache so admin schema edits propagate within a minute.
+        next: { revalidate: 60 },
+        // 15s timeout absorbs Render cold starts; the keep-warm cron should
+        // make this rarely matter.
+        signal: AbortSignal.timeout(15000),
+      });
+      if (res.ok) return res.json();
+      if (res.status >= 400 && res.status < 500) return null;
+    } catch {
+      // network / abort / timeout — fall through to retry
+    }
+    if (attempt === 0) await new Promise((r) => setTimeout(r, 500));
   }
+  return null;
 }
 
 export default async function RootLayout({

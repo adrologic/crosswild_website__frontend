@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { Mail, Phone, MapPin, Sparkles } from 'lucide-react';
+import { Mail, Phone, MapPin } from 'lucide-react';
 import {
   getSiteSettings,
   getMenu,
@@ -64,28 +64,6 @@ export default function CrosswildFooter() {
 
   return (
     <footer className="bg-[#111111] dark:bg-[#0E0B08] text-gray-300 dark:text-[#C8B99A]">
-      {footer?.newsletter?.enabled !== false && (
-        <div className="relative overflow-hidden bg-gradient-to-r from-primary to-primary-dark py-14 md:py-16">
-          {/* decorative blurred blobs */}
-          <div className="pointer-events-none absolute -top-16 -left-16 h-64 w-64 rounded-full bg-white/10 blur-3xl" aria-hidden="true" />
-          <div className="pointer-events-none absolute -bottom-16 -right-16 h-64 w-64 rounded-full bg-white/10 blur-3xl" aria-hidden="true" />
-
-          <div className="relative w-full px-6 lg:px-12">
-            <div className="mx-auto max-w-3xl text-center text-white">
-              <div className="mx-auto mb-5 inline-flex h-14 w-14 items-center justify-center rounded-2xl bg-white/15 backdrop-blur-sm ring-1 ring-white/20">
-                <Sparkles className="h-7 w-7" aria-hidden="true" />
-              </div>
-              <h3 className="mb-3 text-3xl font-bold tracking-tight md:text-4xl">
-                {footer?.newsletter?.heading || 'Get Exclusive Deals & Updates'}
-              </h3>
-              <p className="mx-auto max-w-2xl text-base text-white/90 md:text-lg">
-                {footer?.newsletter?.subheading || 'Special offers, new product launches, and bulk-order discounts — delivered to inbox.'}
-              </p>
-            </div>
-          </div>
-        </div>
-      )}
-
       <div className="w-full px-6 lg:px-12 py-12">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-8">
           {/* Company Info */}

@@ -1,8 +1,19 @@
 "use client";
 
-import { useState } from "react";
-import { MapPin, Phone, Mail, Clock } from "lucide-react";
+import { useState, useEffect } from "react";
+import { MapPin, Phone, Mail, Clock, RefreshCw } from "lucide-react";
 import { submitContact } from "@/lib/cms";
+
+// 6 chars, A–Z + 2–9, with visually ambiguous chars removed (0/O, 1/I/l).
+const CAPTCHA_ALPHABET = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+const CAPTCHA_LENGTH = 6;
+function generateCaptcha(): string {
+  let s = "";
+  for (let i = 0; i < CAPTCHA_LENGTH; i++) {
+    s += CAPTCHA_ALPHABET[Math.floor(Math.random() * CAPTCHA_ALPHABET.length)];
+  }
+  return s;
+}
 
 const DEFAULT_OFFICES = [
   { title: "Corporate Office", city: "Jaipur", address: "D-8, Near World Trade Park, D-Block, Malviya Nagar, Jaipur, Rajasthan 302017", phone: ["+91-9571815050", "+91-9529626262"], hours: "Mon–Sat: 9:00 AM – 6:00 PM" },
@@ -26,6 +37,18 @@ const Contact = ({ content }: Props) => {
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
 
+  // Captcha is generated client-side after mount to avoid SSR/CSR hydration
+  // mismatch (Math.random would yield different values on server vs client).
+  const [captcha, setCaptcha] = useState("");
+  const [captchaInput, setCaptchaInput] = useState("");
+  useEffect(() => {
+    setCaptcha(generateCaptcha());
+  }, []);
+  const refreshCaptcha = () => {
+    setCaptcha(generateCaptcha());
+    setCaptchaInput("");
+  };
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   };
@@ -33,6 +56,12 @@ const Contact = ({ content }: Props) => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (submitting) return;
+    // Captcha gate — case-insensitive, regenerate on failure to prevent retry.
+    if (!captcha || captchaInput.trim().toUpperCase() !== captcha) {
+      setError("Verification code does not match. Please try again.");
+      refreshCaptcha();
+      return;
+    }
     setSubmitting(true);
     setError("");
     const result = await submitContact({
@@ -47,6 +76,7 @@ const Contact = ({ content }: Props) => {
       setSubmitted(true);
     } else {
       setError(result.message || "Failed to send. Please try again.");
+      refreshCaptcha();
     }
   };
 
@@ -168,6 +198,47 @@ const Contact = ({ content }: Props) => {
                           value={formData.message}
                           onChange={handleChange}
                           className="border-stroke w-full resize-none rounded-xs border bg-[#f8f8f8] px-6 py-3 text-base text-body-color outline-hidden focus:border-primary dark:border-transparent dark:bg-[#2C303B] dark:text-body-color-dark dark:shadow-two dark:focus:border-primary dark:focus:shadow-none"
+                        />
+                      </div>
+                    </div>
+                    <div className="w-full px-4">
+                      <div className="mb-8">
+                        <label className="mb-3 block text-sm font-medium text-dark dark:text-white">
+                          Verification
+                        </label>
+                        <div className="flex flex-wrap items-center gap-3 mb-3">
+                          <span
+                            aria-label={`Captcha code: ${captcha || 'loading'}`}
+                            className="select-none rounded-xs border border-stroke bg-[#f8f8f8] dark:bg-[#2C303B] dark:border-transparent px-5 py-3 font-mono text-lg font-bold tracking-[0.4em] text-dark dark:text-white"
+                            style={{
+                              backgroundImage:
+                                'repeating-linear-gradient(45deg, transparent 0, transparent 6px, rgba(0,0,0,0.06) 6px, rgba(0,0,0,0.06) 8px)',
+                              fontStyle: 'italic',
+                              minWidth: '11rem',
+                              textAlign: 'center',
+                            }}
+                          >
+                            {captcha || ' '}
+                          </span>
+                          <button
+                            type="button"
+                            onClick={refreshCaptcha}
+                            aria-label="Generate a new verification code"
+                            className="inline-flex items-center gap-1 text-sm text-primary hover:underline"
+                          >
+                            <RefreshCw className="w-4 h-4" aria-hidden="true" />
+                            Refresh
+                          </button>
+                        </div>
+                        <input
+                          type="text"
+                          name="captcha"
+                          required
+                          autoComplete="off"
+                          placeholder="Enter the code shown above"
+                          value={captchaInput}
+                          onChange={(e) => setCaptchaInput(e.target.value)}
+                          className="border-stroke w-full rounded-xs border bg-[#f8f8f8] px-6 py-3 text-base text-body-color outline-hidden focus:border-primary dark:border-transparent dark:bg-[#2C303B] dark:text-body-color-dark dark:shadow-two dark:focus:border-primary dark:focus:shadow-none"
                         />
                       </div>
                     </div>
