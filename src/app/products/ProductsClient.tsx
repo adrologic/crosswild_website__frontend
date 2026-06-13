@@ -93,12 +93,36 @@ function ProductsContent() {
       try {
         setLoading(true);
         setError(null);
-        const params: Record<string, string> = {};
 
-        if (selectedCategory !== 'all') params.category = selectedCategory;
+        // The API returns a paginated list (default 50, max 100 per page) sorted
+        // newest-first. The "All Products" view does client-side search/sort over
+        // the full set, so fetch every page — otherwise newer categories (e.g.
+        // bags) crowd out older ones (e.g. t-shirts) beyond the first page.
+        const baseParams: { category?: string; limit: number } = { limit: 100 };
+        if (selectedCategory !== 'all') baseParams.category = selectedCategory;
 
-        const response = await productsAPI.getAll(params);
-        setProducts(response.products || []);
+        const allProducts: Product[] = [];
+        let page = 1;
+        let totalPages = 1;
+        const MAX_PAGES = 50; // safety guard against an unexpected loop
+        do {
+          const response = await productsAPI.getAll({ ...baseParams, page });
+          allProducts.push(...(response.products || []));
+          totalPages = response.totalPages ?? 1;
+          page += 1;
+        } while (page <= totalPages && page <= MAX_PAGES);
+
+        // On the "All Products" view, mix the categories. The API returns
+        // products newest-first, which clusters them by category (e.g. all
+        // bags, then all caps, then all t-shirts). A shuffle interleaves them.
+        if (selectedCategory === 'all') {
+          for (let i = allProducts.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [allProducts[i], allProducts[j]] = [allProducts[j], allProducts[i]];
+          }
+        }
+
+        setProducts(allProducts);
       } catch (err) {
         console.error('Failed to fetch products:', err);
         setError('Failed to load products. Please try again later.');
@@ -138,18 +162,21 @@ function ProductsContent() {
         filtered.sort((a, b) => (b.rating || 0) - (a.rating || 0));
         break;
       default:
-        // Featured first, then bestsellers, then new arrivals
-        filtered.sort((a, b) => {
-          if (a.featured && !b.featured) return -1;
-          if (!a.featured && b.featured) return 1;
-          if (a.bestSeller && !b.bestSeller) return -1;
-          if (!a.bestSeller && b.bestSeller) return 1;
-          return 0;
-        });
+        // On "All Products" keep the shuffled order so categories stay mixed.
+        // Within a single category, surface featured/bestsellers first.
+        if (selectedCategory !== 'all') {
+          filtered.sort((a, b) => {
+            if (a.featured && !b.featured) return -1;
+            if (!a.featured && b.featured) return 1;
+            if (a.bestSeller && !b.bestSeller) return -1;
+            if (!a.bestSeller && b.bestSeller) return 1;
+            return 0;
+          });
+        }
     }
 
     return filtered;
-  }, [products, searchQuery, sortBy]);
+  }, [products, searchQuery, sortBy, selectedCategory]);
 
   const currentCategory = getCategoryById(selectedCategory);
 

@@ -120,6 +120,7 @@ export default async function DigitalPrintingJaipur() {
             <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-3">Get Custom Printing Done in Bulk</h2>
             <p className="text-gray-600 dark:text-gray-400 mb-6">Contact us for bulk pricing on digital, screen, sublimation and rubber printing. Pan-India delivery from Jaipur.</p>
             <div className="flex flex-wrap gap-4 justify-center">
+              <Link href="/products?category=printing" className="bg-primary/10 text-primary border-2 border-primary px-8 py-3 rounded-lg font-semibold hover:bg-primary hover:text-white transition-colors">Explore All Printing →</Link>
               <Link href="/contact-us" className="bg-primary text-white px-8 py-3 rounded-lg font-semibold hover:bg-primary/90 transition-colors">Get a Free Quote</Link>
               <a href="tel:+919529626262" className="border-2 border-primary text-primary px-8 py-3 rounded-lg font-semibold hover:bg-primary/5 transition-colors">Call +91-9529626262</a>
             </div>

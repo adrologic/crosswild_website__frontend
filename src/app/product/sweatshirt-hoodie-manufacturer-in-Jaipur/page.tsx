@@ -159,6 +159,7 @@ export default async function SweatshirtManufacturerJaipur() {
             <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-3">Order Custom Sweatshirts &amp; Hoodies in Bulk</h2>
             <p className="text-gray-600 dark:text-gray-400 mb-6">Contact us for bulk pricing. Orders dispatched from our Jaipur manufacturing unit across India.</p>
             <div className="flex flex-wrap gap-4 justify-center">
+              <Link href="/products?category=sweatshirts" className="bg-primary/10 text-primary border-2 border-primary px-8 py-3 rounded-lg font-semibold hover:bg-primary hover:text-white transition-colors">Explore All Sweatshirts →</Link>
               <Link href="/contact-us" className="bg-primary text-white px-8 py-3 rounded-lg font-semibold hover:bg-primary/90 transition-colors">Get a Free Quote</Link>
               <a href="tel:+919571815050" className="border-2 border-primary text-primary px-8 py-3 rounded-lg font-semibold hover:bg-primary/5 transition-colors">Call +91-9571815050</a>
             </div>

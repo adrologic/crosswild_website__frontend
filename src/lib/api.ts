@@ -110,9 +110,14 @@ interface Order {
 
 interface ProductsResponse {
   products: Product[];
-  total: number;
-  page: number;
-  pages: number;
+  // Fields returned by the current backend (productController.getAllProducts)
+  totalProducts?: number;
+  currentPage?: number;
+  totalPages?: number;
+  // Legacy aliases (not returned by the current API)
+  total?: number;
+  page?: number;
+  pages?: number;
 }
 
 interface BlogsResponse {
