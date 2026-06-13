@@ -63,13 +63,18 @@ const formatCategoryName = (category: string) => {
   return names[category] || category;
 };
 
+// Cache fetched products per category so returning from a product detail page
+// doesn't refetch or re-shuffle the list. Module scope persists across client-
+// side navigation; it's cleared on a full page reload.
+const productsCache = new Map<string, Product[]>();
+
 function ProductsContent() {
   const searchParams = useSearchParams();
   const categoryParam = searchParams.get('category');
   const searchParam = searchParams.get('search');
 
-  const [products, setProducts] = useState<Product[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [products, setProducts] = useState<Product[]>(() => productsCache.get(categoryParam || 'all') ?? []);
+  const [loading, setLoading] = useState(() => !productsCache.has(categoryParam || 'all'));
   const [error, setError] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState(searchParam || '');
   const [selectedCategory, setSelectedCategory] = useState(categoryParam || 'all');
@@ -87,8 +92,16 @@ function ProductsContent() {
     if (searchParam !== null) setSearchQuery(searchParam);
   }, [searchParam]);
 
-  // Fetch products from API
+  // Fetch products from API (cached per category so returning from a detail
+  // page is instant and the list order stays stable).
   useEffect(() => {
+    const cached = productsCache.get(selectedCategory);
+    if (cached) {
+      setProducts(cached);
+      setLoading(false);
+      return;
+    }
+
     const fetchProducts = async () => {
       try {
         setLoading(true);
@@ -123,6 +136,7 @@ function ProductsContent() {
         }
 
         setProducts(allProducts);
+        productsCache.set(selectedCategory, allProducts);
       } catch (err) {
         console.error('Failed to fetch products:', err);
         setError('Failed to load products. Please try again later.');
@@ -133,6 +147,29 @@ function ProductsContent() {
 
     fetchProducts();
   }, [selectedCategory]);
+
+  // Save scroll position before opening a product, so back-navigation returns
+  // the user to the product they clicked instead of the top of the list.
+  const rememberScroll = () => {
+    if (typeof window !== 'undefined') {
+      sessionStorage.setItem('products-scroll', String(window.scrollY));
+    }
+  };
+
+  // On return (back from a product detail page), restore the saved scroll
+  // position. Cleared after use so a fresh visit to /products still lands at top.
+  useEffect(() => {
+    const saved = sessionStorage.getItem('products-scroll');
+    if (!saved) return;
+    sessionStorage.removeItem('products-scroll');
+    const y = parseInt(saved, 10);
+    if (Number.isNaN(y)) return;
+    // Wait two frames so the (cached) grid is laid out before restoring scroll.
+    const raf = requestAnimationFrame(() =>
+      requestAnimationFrame(() => window.scrollTo(0, y))
+    );
+    return () => cancelAnimationFrame(raf);
+  }, []);
 
   // Filter and sort products
   const filteredProducts = useMemo(() => {
@@ -184,7 +221,7 @@ function ProductsContent() {
   const ProductCard = ({ product }: { product: Product }) => (
     <div className="group bg-white dark:bg-gray-800 rounded-xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-100 dark:border-gray-700">
       {/* Image Container */}
-      <Link href={`/products/${product.id}`} className="block relative">
+      <Link href={`/products/${product.id}`} onClick={rememberScroll} className="block relative">
         <div className="relative aspect-[4/3] bg-gradient-to-br from-gray-100 to-gray-50 dark:from-gray-700 dark:to-gray-800 overflow-hidden">
           {product.image ? (
             <SafeImage
@@ -229,7 +266,7 @@ function ProductsContent() {
       {/* Content */}
       <div className="p-3 sm:p-4">
         {/* Title */}
-        <Link href={`/products/${product.id}`}>
+        <Link href={`/products/${product.id}`} onClick={rememberScroll}>
           <h3 className="font-semibold text-sm sm:text-base text-gray-900 dark:text-white mb-1.5 line-clamp-2 group-hover:text-primary transition-colors">
             {product.title || product.name}
           </h3>
@@ -267,7 +304,7 @@ function ProductsContent() {
             <Mail className="w-4 h-4" aria-hidden="true" />
           </a>
           <Link
-            href={`/products/${product.id}`}
+            href={`/products/${product.id}`} onClick={rememberScroll}
             className="flex-1 flex items-center justify-center gap-1 px-4 py-2 bg-primary hover:bg-primary/90 text-white text-sm font-semibold rounded-xl transition-colors"
           >
             View
@@ -282,7 +319,7 @@ function ProductsContent() {
   const ProductListCard = ({ product }: { product: Product }) => (
     <div className="group bg-white dark:bg-gray-800 rounded-xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-100 dark:border-gray-700 flex">
       {/* Image */}
-      <Link href={`/products/${product.id}`} className="relative w-32 sm:w-44 md:w-56 flex-shrink-0">
+      <Link href={`/products/${product.id}`} onClick={rememberScroll} className="relative w-32 sm:w-44 md:w-56 flex-shrink-0">
         <div className="absolute inset-0 bg-gradient-to-br from-gray-100 to-gray-50 dark:from-gray-700 dark:to-gray-800">
           {product.image ? (
             <SafeImage
@@ -322,7 +359,7 @@ function ProductsContent() {
             {formatCategoryName(product.category)}
           </span>
 
-          <Link href={`/products/${product.id}`}>
+          <Link href={`/products/${product.id}`} onClick={rememberScroll}>
             <h3 className="font-bold text-xl text-gray-900 dark:text-white mb-2 group-hover:text-primary transition-colors">
               {product.title || product.name}
             </h3>
@@ -371,7 +408,7 @@ function ProductsContent() {
             Email
           </a>
           <Link
-            href={`/products/${product.id}`}
+            href={`/products/${product.id}`} onClick={rememberScroll}
             className="flex items-center gap-2 px-6 py-2.5 bg-primary hover:bg-primary/90 text-white font-semibold rounded-xl transition-colors"
           >
             View Details

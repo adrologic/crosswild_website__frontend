@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { productsAPI, type Product } from '@/lib/api';
-import { getCategoryUrl, getSubCategoryUrl } from '@/lib/categoryUrls';
+import { getCategoryUrl } from '@/lib/categoryUrls';
 import SafeImage from '@/components/Common/SafeImage';
 import Link from 'next/link';
 import {
@@ -53,7 +53,6 @@ export default function ProductDetailClient({ id }: { id: string }) {
         setLoading(true);
         setError(null);
         const data = await productsAPI.getById(id);
-        console.log('Product data:', JSON.stringify(data, null, 2));
         setProduct(data);
       } catch (err) {
         console.error('Failed to fetch product:', err);
@@ -367,108 +366,109 @@ export default function ProductDetailClient({ id }: { id: string }) {
           </div>
         </section>
 
-        {/* ─── ABOUT / FULL DESCRIPTION ─── */}
-        {product.shortDescription && product.description && (
-          <section className="max-w-3xl mx-auto px-5 pb-6">
-            <div className="bg-theme-bg-card border border-theme-border rounded-2xl p-6 md:p-8">
-              <h2 className="text-lg font-bold text-theme-text mb-4">About This Product</h2>
-              <div
-                className="rich-text text-sm text-theme-text-secondary leading-7 max-w-prose"
-                dangerouslySetInnerHTML={{ __html: product.description }}
-              />
-            </div>
-          </section>
-        )}
+        {/* ─── DETAIL BOXES — 2 columns on desktop to use width & cut page length ─── */}
+        {((product.shortDescription && product.description) || hasSpecsTable || hasSections) && (
+          <section className="max-w-7xl mx-auto px-5 pb-6">
+            <div className="grid md:grid-cols-2 gap-6 items-start">
 
-        {/* ─── PRODUCT DETAILS / SPECIFICATIONS TABLE ─── */}
-        {hasSpecsTable && (
-          <section className="max-w-3xl mx-auto px-5 pb-6">
-            <div className="bg-theme-bg-card border border-theme-border rounded-2xl p-6 md:p-8">
-              <div className="flex items-center gap-2 mb-5">
-                <Info className="w-5 h-5 text-primary" />
-                <h2 className="text-lg font-bold text-theme-text">Product Details</h2>
-              </div>
-              <div className="divide-y divide-theme-border">
-                {hasProductType && (
-                  <div className="flex items-start py-3 first:pt-0 last:pb-0">
-                    <span className="w-2/5 text-sm font-medium text-theme-text-muted flex-shrink-0">Type</span>
-                    <span className="text-sm text-theme-text">{product.productType!.name}</span>
-                  </div>
-                )}
-                {hasCategories && (
-                  <div className="flex items-start py-3 first:pt-0 last:pb-0">
-                    <span className="w-2/5 text-sm font-medium text-theme-text-muted flex-shrink-0">Category</span>
-                    <span className="text-sm text-theme-text">
-                      {product.productCategories!.map(pc => {
-                        const catName = getCategoryName(pc.category);
-                        const subs = pc.subcategories?.length
-                          ? ` (${pc.subcategories.map(formatSubcategory).join(', ')})`
-                          : '';
-                        return catName + subs;
-                      }).join(' · ')}
-                    </span>
-                  </div>
-                )}
-                {hasSizes && (
-                  <div className="flex items-start py-3 first:pt-0 last:pb-0">
-                    <span className="w-2/5 text-sm font-medium text-theme-text-muted flex-shrink-0">Available Sizes</span>
-                    <span className="text-sm text-theme-text">{product.sizes!.join(', ')}</span>
-                  </div>
-                )}
-                {hasColors && (
-                  <div className="flex items-start py-3 first:pt-0 last:pb-0">
-                    <span className="w-2/5 text-sm font-medium text-theme-text-muted flex-shrink-0">Available Colors</span>
-                    <span className="text-sm text-theme-text">{product.colors!.join(', ')}</span>
-                  </div>
-                )}
-                {hasMinOrder && (
-                  <div className="flex items-start py-3 first:pt-0 last:pb-0">
-                    <span className="w-2/5 text-sm font-medium text-theme-text-muted flex-shrink-0">Min. Order Quantity</span>
-                    <span className="text-sm text-theme-text">{product.minOrderQuantity} pcs</span>
-                  </div>
-                )}
-                {detailEntries.map(([key, value]) => (
-                  <div key={key} className="flex items-start py-3 first:pt-0 last:pb-0">
-                    <span className="w-2/5 text-sm font-medium text-theme-text-muted flex-shrink-0 capitalize">
-                      {getDetailLabel(key)}
-                    </span>
-                    <span className="text-sm text-theme-text">
-                      {formatDetailValue(value)}
-                    </span>
-                  </div>
-                ))}
-                {hasCustomFields && product.customFields!.map((field, idx) => (
-                  <div key={`cf-${idx}`} className="flex items-start py-3 first:pt-0 last:pb-0">
-                    <span className="w-2/5 text-sm font-medium text-theme-text-muted flex-shrink-0">
-                      {field.label}
-                    </span>
-                    <span className="text-sm text-theme-text">
-                      {field.value}
-                    </span>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </section>
-        )}
+              {/* About This Product */}
+              {product.shortDescription && product.description && (
+                <div className="bg-theme-bg-card border border-theme-border rounded-2xl p-6 md:p-8">
+                  <h2 className="text-lg font-bold text-theme-text mb-4">About This Product</h2>
+                  <div
+                    className="rich-text text-sm text-theme-text-secondary leading-7"
+                    dangerouslySetInnerHTML={{ __html: product.description }}
+                  />
+                </div>
+              )}
 
-        {/* ─── DYNAMIC CMS CONTENT SECTIONS ─── */}
-        {hasSections && (
-          <section className="max-w-3xl mx-auto px-5 pb-6 space-y-4">
-            {product.sections!.map((section, index) => (
-              <div
-                key={index}
-                className="bg-theme-bg-card border border-theme-border rounded-2xl p-6 md:p-8"
-              >
-                <h2 className="text-lg font-bold text-theme-text mb-4">
-                  {section.title}
-                </h2>
+              {/* Product Details / Specifications */}
+              {hasSpecsTable && (
+                <div className="bg-theme-bg-card border border-theme-border rounded-2xl p-6 md:p-8">
+                  <div className="flex items-center gap-2 mb-5">
+                    <Info className="w-5 h-5 text-primary" />
+                    <h2 className="text-lg font-bold text-theme-text">Product Details</h2>
+                  </div>
+                  <div className="divide-y divide-theme-border">
+                    {hasProductType && (
+                      <div className="flex items-start py-3 first:pt-0 last:pb-0">
+                        <span className="w-2/5 text-sm font-medium text-theme-text-muted flex-shrink-0">Type</span>
+                        <span className="text-sm text-theme-text">{product.productType!.name}</span>
+                      </div>
+                    )}
+                    {hasCategories && (
+                      <div className="flex items-start py-3 first:pt-0 last:pb-0">
+                        <span className="w-2/5 text-sm font-medium text-theme-text-muted flex-shrink-0">Category</span>
+                        <span className="text-sm text-theme-text">
+                          {product.productCategories!.map(pc => {
+                            const catName = getCategoryName(pc.category);
+                            const subs = pc.subcategories?.length
+                              ? ` (${pc.subcategories.map(formatSubcategory).join(', ')})`
+                              : '';
+                            return catName + subs;
+                          }).join(' · ')}
+                        </span>
+                      </div>
+                    )}
+                    {hasSizes && (
+                      <div className="flex items-start py-3 first:pt-0 last:pb-0">
+                        <span className="w-2/5 text-sm font-medium text-theme-text-muted flex-shrink-0">Available Sizes</span>
+                        <span className="text-sm text-theme-text">{product.sizes!.join(', ')}</span>
+                      </div>
+                    )}
+                    {hasColors && (
+                      <div className="flex items-start py-3 first:pt-0 last:pb-0">
+                        <span className="w-2/5 text-sm font-medium text-theme-text-muted flex-shrink-0">Available Colors</span>
+                        <span className="text-sm text-theme-text">{product.colors!.join(', ')}</span>
+                      </div>
+                    )}
+                    {hasMinOrder && (
+                      <div className="flex items-start py-3 first:pt-0 last:pb-0">
+                        <span className="w-2/5 text-sm font-medium text-theme-text-muted flex-shrink-0">Min. Order Quantity</span>
+                        <span className="text-sm text-theme-text">{product.minOrderQuantity} pcs</span>
+                      </div>
+                    )}
+                    {detailEntries.map(([key, value]) => (
+                      <div key={key} className="flex items-start py-3 first:pt-0 last:pb-0">
+                        <span className="w-2/5 text-sm font-medium text-theme-text-muted flex-shrink-0 capitalize">
+                          {getDetailLabel(key)}
+                        </span>
+                        <span className="text-sm text-theme-text">
+                          {formatDetailValue(value)}
+                        </span>
+                      </div>
+                    ))}
+                    {hasCustomFields && product.customFields!.map((field, idx) => (
+                      <div key={`cf-${idx}`} className="flex items-start py-3 first:pt-0 last:pb-0">
+                        <span className="w-2/5 text-sm font-medium text-theme-text-muted flex-shrink-0">
+                          {field.label}
+                        </span>
+                        <span className="text-sm text-theme-text">
+                          {field.value}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Dynamic CMS content sections */}
+              {hasSections && product.sections!.map((section, index) => (
                 <div
-                  className="rich-text text-sm text-theme-text-secondary leading-7 max-w-prose"
-                  dangerouslySetInnerHTML={{ __html: section.content }}
-                />
-              </div>
-            ))}
+                  key={index}
+                  className="bg-theme-bg-card border border-theme-border rounded-2xl p-6 md:p-8"
+                >
+                  <h2 className="text-lg font-bold text-theme-text mb-4">
+                    {section.title}
+                  </h2>
+                  <div
+                    className="rich-text text-sm text-theme-text-secondary leading-7"
+                    dangerouslySetInnerHTML={{ __html: section.content }}
+                  />
+                </div>
+              ))}
+
+            </div>
           </section>
         )}
 
