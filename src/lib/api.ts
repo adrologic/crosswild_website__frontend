@@ -182,6 +182,15 @@ export const productsAPI = {
     if (!response.ok) throw new Error('Failed to fetch product stats');
     return response.json();
   },
+
+  // Get a cheap signature of the product set. Changes when any product is
+  // added/edited/removed — used to know whether a cached list is still fresh.
+  getVersion: async (): Promise<string> => {
+    const response = await fetch(`${API_URL}/products/version`);
+    if (!response.ok) throw new Error('Failed to fetch products version');
+    const data = await response.json();
+    return data.version ?? `${data.count ?? ''}:${data.lastModified ?? ''}`;
+  },
 };
 
 // Helper function to map blog _id to id

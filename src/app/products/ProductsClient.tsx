@@ -65,15 +65,22 @@ const formatCategoryName = (category: string) => {
 
 // Cache fetched products per category so returning from a product detail page
 // doesn't refetch or re-shuffle the list. Module scope persists across client-
-// side navigation; it's cleared on a full page reload.
-const productsCache = new Map<string, Product[]>();
+// side navigation; it's cleared on a full page reload. Each entry stores the
+// API "version" signature it was fetched at, so we can detect when the data
+// changed (product added/edited/removed) and refetch only then.
+type CacheEntry = { products: Product[]; signature: string };
+const productsCache = new Map<string, CacheEntry>();
+
+// Products shown per page. Search/filter/sort always run over the full set;
+// only the rendered slice is paginated.
+const PRODUCTS_PER_PAGE = 30;
 
 function ProductsContent() {
   const searchParams = useSearchParams();
   const categoryParam = searchParams.get('category');
   const searchParam = searchParams.get('search');
 
-  const [products, setProducts] = useState<Product[]>(() => productsCache.get(categoryParam || 'all') ?? []);
+  const [products, setProducts] = useState<Product[]>(() => productsCache.get(categoryParam || 'all')?.products ?? []);
   const [loading, setLoading] = useState(() => !productsCache.has(categoryParam || 'all'));
   const [error, setError] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState(searchParam || '');
@@ -81,6 +88,22 @@ function ProductsContent() {
   const [sortBy, setSortBy] = useState('featured');
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const [showMobileFilters, setShowMobileFilters] = useState(false);
+  // Bumped to re-run the freshness check (e.g. when the tab regains focus after
+  // adding data in the admin panel in another tab).
+  const [revalidateTick, setRevalidateTick] = useState(0);
+  const [currentPage, setCurrentPage] = useState(1);
+
+  // Re-check for new data whenever the tab/window regains focus.
+  useEffect(() => {
+    const revalidate = () => setRevalidateTick((t) => t + 1);
+    const onVisible = () => { if (document.visibilityState === 'visible') revalidate(); };
+    window.addEventListener('focus', revalidate);
+    document.addEventListener('visibilitychange', onVisible);
+    return () => {
+      window.removeEventListener('focus', revalidate);
+      document.removeEventListener('visibilitychange', onVisible);
+    };
+  }, []);
 
   // Sync URL params when they change (e.g. header search navigation)
   useEffect(() => {
@@ -92,61 +115,84 @@ function ProductsContent() {
     if (searchParam !== null) setSearchQuery(searchParam);
   }, [searchParam]);
 
-  // Fetch products from API (cached per category so returning from a detail
-  // page is instant and the list order stays stable).
+  // Load products for the selected category.
+  //
+  // Caching strategy ("remember the page, refresh only when data changes"):
+  //  - If we have a cached list, render it instantly with no spinner.
+  //  - In the background, ask the API for a cheap version signature
+  //    (product count + last-modified time). If it matches the cached
+  //    signature, nothing changed — keep the cache, no full refetch.
+  //  - If it differs (a product was added / edited / removed), or there is
+  //    no cache, (re)fetch the full list and update the cache silently.
   useEffect(() => {
-    const cached = productsCache.get(selectedCategory);
-    if (cached) {
-      setProducts(cached);
-      setLoading(false);
-      return;
-    }
+    let cancelled = false;
 
-    const fetchProducts = async () => {
-      try {
-        setLoading(true);
-        setError(null);
+    // Fetch every page (API caps at 100/page) and shuffle the All-Products view.
+    const buildList = async (): Promise<Product[]> => {
+      const baseParams: { category?: string; limit: number } = { limit: 100 };
+      if (selectedCategory !== 'all') baseParams.category = selectedCategory;
 
-        // The API returns a paginated list (default 50, max 100 per page) sorted
-        // newest-first. The "All Products" view does client-side search/sort over
-        // the full set, so fetch every page — otherwise newer categories (e.g.
-        // bags) crowd out older ones (e.g. t-shirts) beyond the first page.
-        const baseParams: { category?: string; limit: number } = { limit: 100 };
-        if (selectedCategory !== 'all') baseParams.category = selectedCategory;
+      const list: Product[] = [];
+      let page = 1;
+      let totalPages = 1;
+      const MAX_PAGES = 50; // safety guard against an unexpected loop
+      do {
+        const response = await productsAPI.getAll({ ...baseParams, page });
+        list.push(...(response.products || []));
+        totalPages = response.totalPages ?? 1;
+        page += 1;
+      } while (page <= totalPages && page <= MAX_PAGES);
 
-        const allProducts: Product[] = [];
-        let page = 1;
-        let totalPages = 1;
-        const MAX_PAGES = 50; // safety guard against an unexpected loop
-        do {
-          const response = await productsAPI.getAll({ ...baseParams, page });
-          allProducts.push(...(response.products || []));
-          totalPages = response.totalPages ?? 1;
-          page += 1;
-        } while (page <= totalPages && page <= MAX_PAGES);
-
-        // On the "All Products" view, mix the categories. The API returns
-        // products newest-first, which clusters them by category (e.g. all
-        // bags, then all caps, then all t-shirts). A shuffle interleaves them.
-        if (selectedCategory === 'all') {
-          for (let i = allProducts.length - 1; i > 0; i--) {
-            const j = Math.floor(Math.random() * (i + 1));
-            [allProducts[i], allProducts[j]] = [allProducts[j], allProducts[i]];
-          }
+      // Mix categories on the All-Products view so they aren't grouped newest-first.
+      if (selectedCategory === 'all') {
+        for (let i = list.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [list[i], list[j]] = [list[j], list[i]];
         }
+      }
+      return list;
+    };
 
-        setProducts(allProducts);
-        productsCache.set(selectedCategory, allProducts);
-      } catch (err) {
-        console.error('Failed to fetch products:', err);
-        setError('Failed to load products. Please try again later.');
-      } finally {
+    const load = async () => {
+      const cached = productsCache.get(selectedCategory);
+      if (cached) {
+        setProducts(cached.products);
         setLoading(false);
+      } else {
+        setLoading(true);
+      }
+      setError(null);
+
+      try {
+        // Cheap freshness check. '' => the check failed; in that case keep any cache.
+        let signature = '';
+        try {
+          signature = await productsAPI.getVersion();
+        } catch {
+          signature = '';
+        }
+        if (cancelled) return;
+
+        // Cache still valid (unchanged, or check failed) — keep showing it.
+        if (cached && (!signature || cached.signature === signature)) return;
+
+        // No cache, or the data changed — (re)fetch the full list and update.
+        const list = await buildList();
+        if (cancelled) return;
+        productsCache.set(selectedCategory, { products: list, signature });
+        setProducts(list);
+      } catch (err) {
+        if (cancelled) return;
+        console.error('Failed to fetch products:', err);
+        if (!cached) setError('Failed to load products. Please try again later.');
+      } finally {
+        if (!cancelled) setLoading(false);
       }
     };
 
-    fetchProducts();
-  }, [selectedCategory]);
+    load();
+    return () => { cancelled = true; };
+  }, [selectedCategory, revalidateTick]);
 
   // Save scroll position before opening a product, so back-navigation returns
   // the user to the product they clicked instead of the top of the list.
@@ -216,6 +262,49 @@ function ProductsContent() {
   }, [products, searchQuery, sortBy, selectedCategory]);
 
   const currentCategory = getCategoryById(selectedCategory);
+
+  // Pagination — PRODUCTS_PER_PAGE per page. Search / filter / sort above run
+  // over the FULL set, so the paginated view always reflects the complete
+  // filtered list (not just the current page).
+  const totalPages = Math.max(1, Math.ceil(filteredProducts.length / PRODUCTS_PER_PAGE));
+
+  const paginatedProducts = useMemo(
+    () => filteredProducts.slice((currentPage - 1) * PRODUCTS_PER_PAGE, currentPage * PRODUCTS_PER_PAGE),
+    [filteredProducts, currentPage]
+  );
+
+  // Back to page 1 whenever the filtered set changes (new search / filter / sort / category).
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchQuery, sortBy, selectedCategory]);
+
+  // Keep the current page in range if the list shrinks (e.g. a background refresh).
+  useEffect(() => {
+    if (currentPage > totalPages) setCurrentPage(totalPages);
+  }, [currentPage, totalPages]);
+
+  const goToPage = (page: number) => {
+    const next = Math.min(Math.max(1, page), totalPages);
+    setCurrentPage(next);
+    if (typeof window !== 'undefined') window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  // Page buttons to render, collapsing long ranges with ellipses.
+  const pageNumbers = useMemo<(number | 'ellipsis')[]>(() => {
+    const pages: (number | 'ellipsis')[] = [];
+    if (totalPages <= 7) {
+      for (let i = 1; i <= totalPages; i++) pages.push(i);
+    } else {
+      pages.push(1);
+      if (currentPage > 3) pages.push('ellipsis');
+      const start = Math.max(2, currentPage - 1);
+      const end = Math.min(totalPages - 1, currentPage + 1);
+      for (let i = start; i <= end; i++) pages.push(i);
+      if (currentPage < totalPages - 2) pages.push('ellipsis');
+      pages.push(totalPages);
+    }
+    return pages;
+  }, [totalPages, currentPage]);
 
   // Product Card Component
   const ProductCard = ({ product }: { product: Product }) => (
@@ -575,7 +664,11 @@ function ProductsContent() {
               {/* Results Count */}
               <div className="flex items-center justify-between mb-6">
                 <p className="text-gray-600 dark:text-gray-400">
-                  {loading ? 'Loading...' : `${filteredProducts.length} products found`}
+                  {loading
+                    ? 'Loading...'
+                    : filteredProducts.length === 0
+                    ? '0 products found'
+                    : `Showing ${(currentPage - 1) * PRODUCTS_PER_PAGE + 1}–${Math.min(currentPage * PRODUCTS_PER_PAGE, filteredProducts.length)} of ${filteredProducts.length} products`}
                 </p>
               </div>
 
@@ -617,16 +710,54 @@ function ProductsContent() {
                 </div>
               ) : viewMode === 'grid' ? (
                 <div className="grid grid-cols-2 xl:grid-cols-3 gap-3 sm:gap-5">
-                  {filteredProducts.map((product) => (
+                  {paginatedProducts.map((product) => (
                     <ProductCard key={product.id} product={product} />
                   ))}
                 </div>
               ) : (
                 <div className="space-y-4">
-                  {filteredProducts.map((product) => (
+                  {paginatedProducts.map((product) => (
                     <ProductListCard key={product.id} product={product} />
                   ))}
                 </div>
+              )}
+
+              {/* Pagination — only when there's more than one page of results */}
+              {!loading && !error && filteredProducts.length > 0 && totalPages > 1 && (
+                <nav className="mt-10 flex flex-wrap items-center justify-center gap-2" aria-label="Products pagination">
+                  <button
+                    onClick={() => goToPage(currentPage - 1)}
+                    disabled={currentPage === 1}
+                    className="px-4 py-2 rounded-lg border border-gray-200 dark:border-gray-700 text-sm font-medium text-gray-700 dark:text-gray-200 disabled:opacity-40 disabled:cursor-not-allowed hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                  >
+                    Prev
+                  </button>
+                  {pageNumbers.map((p, i) =>
+                    p === 'ellipsis' ? (
+                      <span key={`ellipsis-${i}`} className="px-2 text-gray-400 select-none">…</span>
+                    ) : (
+                      <button
+                        key={p}
+                        onClick={() => goToPage(p)}
+                        aria-current={p === currentPage ? 'page' : undefined}
+                        className={`min-w-[2.5rem] px-3 py-2 rounded-lg text-sm font-semibold transition-colors ${
+                          p === currentPage
+                            ? 'bg-primary text-white'
+                            : 'border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700'
+                        }`}
+                      >
+                        {p}
+                      </button>
+                    )
+                  )}
+                  <button
+                    onClick={() => goToPage(currentPage + 1)}
+                    disabled={currentPage === totalPages}
+                    className="px-4 py-2 rounded-lg border border-gray-200 dark:border-gray-700 text-sm font-medium text-gray-700 dark:text-gray-200 disabled:opacity-40 disabled:cursor-not-allowed hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                  >
+                    Next
+                  </button>
+                </nav>
               )}
             </main>
           </div>
