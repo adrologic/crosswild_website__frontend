@@ -60,32 +60,43 @@ export default function PopularProducts() {
 
         {/* Products Grid */}
         <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6 mb-8">
-          {products.map((product) => (
+          {products.map((product) => {
+            const hoverImage = product.images?.find((img) => img && img !== product.image);
+            return (
             <div
               key={product.id}
-              className="group bg-theme-bg-card rounded-xl overflow-hidden shadow-md hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2"
+              className="group bg-card-bg dark:bg-gray-800 rounded-[22px] p-[14px] shadow-[0_14px_30px_rgba(22,36,59,0.16)] hover:-translate-y-[5px] hover:shadow-[0_22px_44px_rgba(22,36,59,0.24)] transition-all duration-[220ms] ease-out"
             >
               {/* Image Container */}
-              <Link href={`/products/${product.id}`} className="block relative h-40 sm:h-64 bg-theme-bg-soft overflow-hidden">
+              <Link href={`/products/${product.id}`} className="relative aspect-[4/3] bg-[#ffffff] dark:bg-gray-700 rounded-2xl shadow-[0_4px_12px_rgba(22,36,59,0.08)] overflow-hidden block">
                 {product.image && (
                   <SafeImage
                     src={product.image}
                     alt={product.name}
                     fill
-                    className="object-contain p-2 group-hover:scale-110 transition-transform duration-500"
+                    className={`object-contain p-[22px] transition-all duration-500 group-hover:scale-105 ${hoverImage ? 'group-hover:opacity-0' : ''}`}
+                    sizes="(max-width: 768px) 50vw, 25vw"
+                  />
+                )}
+                {hoverImage && (
+                  <SafeImage
+                    src={hoverImage}
+                    alt={product.name}
+                    fill
+                    className="object-contain p-[22px] opacity-0 transition-all duration-500 group-hover:opacity-100 group-hover:scale-105"
                     sizes="(max-width: 768px) 50vw, 25vw"
                   />
                 )}
 
                 {/* Badges */}
-                <div className="absolute top-3 left-3 flex flex-col gap-2">
+                <div className="absolute top-[14px] left-[14px] flex flex-col gap-2">
                   {product.bestSeller && (
-                    <span className="bg-orange-500 text-white text-xs font-bold px-3 py-1 rounded-full shadow-lg">
+                    <span className="inline-flex items-center gap-1 px-3 py-1.5 bg-[#ff4f20] text-white text-[11px] font-bold rounded-full shadow-[0_4px_10px_rgba(255,79,32,0.35)]">
                       Best Seller
                     </span>
                   )}
                   {product.featured && (
-                    <span className="bg-blue-500 text-white text-xs font-bold px-3 py-1 rounded-full shadow-lg">
+                    <span className="inline-flex items-center gap-1 px-3 py-1.5 bg-[#ff4f20] text-white text-[11px] font-bold rounded-full shadow-[0_4px_10px_rgba(255,79,32,0.35)]">
                       Featured
                     </span>
                   )}
@@ -94,7 +105,7 @@ export default function PopularProducts() {
                 {/* Quick View Overlay */}
                 <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
                   <div className="flex gap-2">
-                    <span className="p-3 bg-white rounded-full hover:bg-gray-100 transition-colors">
+                    <span className="p-3 bg-[#ffffff] rounded-full hover:bg-gray-100 transition-colors">
                       <Eye className="w-5 h-5 text-gray-900" />
                     </span>
                   </div>
@@ -102,9 +113,12 @@ export default function PopularProducts() {
               </Link>
 
               {/* Product Info */}
-              <div className="p-3 sm:p-5">
+              <div className="pt-4 px-2 pb-1.5">
+                {product.category && (
+                  <span className="inline-flex items-center bg-[#ffffff] dark:bg-gray-700 text-primary text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full shadow-[0_2px_6px_rgba(22,36,59,0.08)] mb-2 capitalize">{product.category}</span>
+                )}
                 <Link href={`/products/${product.id}`}>
-                  <h3 className="font-bold text-sm sm:text-lg mb-1 sm:mb-2 line-clamp-2 hover:text-primary transition-colors">
+                  <h3 className="font-bold text-base text-[#16243b] dark:text-white mb-3.5 line-clamp-2 group-hover:text-primary transition-colors">
                     {product.title || product.name}
                   </h3>
                 </Link>
@@ -123,27 +137,28 @@ export default function PopularProducts() {
                 )}
 
                 {/* CTA Buttons - WhatsApp, Email, View */}
-                <div className="flex gap-2">
+                <div className="flex items-center gap-2">
                   <a
                     href={getWhatsAppLink(product)}
                     target="_blank"
                     rel="noopener noreferrer"
                     aria-label={`Inquire about ${product.name} on WhatsApp`}
-                    className="flex items-center justify-center px-3 py-2 bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-200 rounded-xl transition-colors"
+                    className="flex items-center justify-center w-[38px] h-[38px] bg-[#ffffff] dark:bg-gray-700 text-primary rounded-[11px] shadow-[0_3px_8px_rgba(22,36,59,0.10)] hover:bg-primary hover:text-white transition-colors"
                   >
                     <MessageCircle className="w-4 h-4" aria-hidden="true" />
                   </a>
                   <a
                     href={getEmailLink(product)}
                     aria-label={`Email inquiry about ${product.name}`}
-                    className="flex items-center justify-center px-3 py-2 bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-200 rounded-xl transition-colors"
+                    className="flex items-center justify-center w-[38px] h-[38px] bg-[#ffffff] dark:bg-gray-700 text-primary rounded-[11px] shadow-[0_3px_8px_rgba(22,36,59,0.10)] hover:bg-primary hover:text-white transition-colors"
                   >
                     <Mail className="w-4 h-4" aria-hidden="true" />
                   </a>
                 </div>
               </div>
             </div>
-          ))}
+            );
+          })}
         </div>
 
         {/* View All Button */}

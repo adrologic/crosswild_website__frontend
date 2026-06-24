@@ -392,7 +392,7 @@ export default function CrosswildHeader() {
       </div>
 
       {/* Main Header */}
-      <header className={`sticky top-0 z-50 bg-theme-bg border-b border-theme-border transition-shadow duration-300 ${
+      <header className={`sticky top-0 z-50 bg-navbar-bg border-b border-navbar-border transition-shadow duration-300 ${
         isScrolled ? 'shadow-md dark:shadow-[0_4px_12px_rgba(0,0,0,0.4)]' : 'shadow-sm'
       }`}>
         <div className="w-full px-6 lg:px-12">

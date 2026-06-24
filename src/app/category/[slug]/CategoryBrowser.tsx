@@ -5,6 +5,7 @@ import Link from 'next/link';
 import SafeImage from '@/components/Common/SafeImage';
 import { productsAPI, type Product } from '@/lib/api';
 import { getCategoryUrl, getSubCategoryUrl } from '@/lib/categoryUrls';
+import { toPlainText } from '@/lib/text';
 import {
   Search,
   SlidersHorizontal,
@@ -117,80 +118,99 @@ export default function CategoryBrowser({ category, parent, subcategories, topCa
     return filtered;
   }, [products, searchQuery, sortBy]);
 
-  const ProductCard = ({ product }: { product: Product }) => (
-    <div className="group bg-white dark:bg-gray-800 rounded-xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-100 dark:border-gray-700">
-      <Link href={`/products/${product.id}`} className="block relative">
-        <div className="relative aspect-[4/3] bg-gradient-to-br from-gray-100 to-gray-50 dark:from-gray-700 dark:to-gray-800 overflow-hidden">
+  const ProductCard = ({ product }: { product: Product }) => {
+    const hoverImage = product.images?.find((img) => img && img !== product.image);
+    return (
+    <div className="group bg-card-bg dark:bg-gray-800 rounded-[22px] p-[14px] shadow-[0_14px_30px_rgba(22,36,59,0.16)] hover:-translate-y-[5px] hover:shadow-[0_22px_44px_rgba(22,36,59,0.24)] transition-all duration-[220ms] ease-out">
+      <Link href={`/products/${product.id}`} className="block">
+        <div className="relative aspect-[4/3] bg-[#ffffff] dark:bg-gray-700 rounded-2xl shadow-[0_4px_12px_rgba(22,36,59,0.08)] overflow-hidden">
           {product.image ? (
-            <SafeImage
-              src={product.image}
-              alt={product.name}
-              fill
-              className="object-contain p-2 group-hover:scale-105 transition-transform duration-500"
-              sizes="(max-width: 768px) 50vw, 25vw"
-            />
+            <>
+              <SafeImage
+                src={product.image}
+                alt={product.name}
+                fill
+                className={`object-contain p-[22px] transition-all duration-500 group-hover:scale-105 ${hoverImage ? 'group-hover:opacity-0' : ''}`}
+                sizes="(max-width: 768px) 50vw, 25vw"
+              />
+              {hoverImage && (
+                <SafeImage
+                  src={hoverImage}
+                  alt={product.name}
+                  fill
+                  className="object-contain p-[22px] opacity-0 transition-all duration-500 group-hover:opacity-100 group-hover:scale-105"
+                  sizes="(max-width: 768px) 50vw, 25vw"
+                />
+              )}
+            </>
           ) : (
             <div className="absolute inset-0 flex items-center justify-center">
               <Package className="w-16 h-16 text-gray-300" />
             </div>
           )}
-          <div className="absolute top-3 left-3 flex flex-col gap-2">
+          <div className="absolute top-[14px] left-[14px] flex flex-col gap-2">
             {product.featured && (
-              <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-gradient-to-r from-amber-500 to-orange-500 text-white text-xs font-semibold rounded-full shadow-lg">
+              <span className="inline-flex items-center gap-1 px-3 py-1.5 bg-[#ff4f20] text-white text-[11px] font-bold rounded-full shadow-[0_4px_10px_rgba(255,79,32,0.35)]">
                 <Sparkles className="w-3 h-3" />Featured
               </span>
             )}
             {product.newArrival && (
-              <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-gradient-to-r from-emerald-500 to-teal-500 text-white text-xs font-semibold rounded-full shadow-lg">New</span>
+              <span className="inline-flex items-center gap-1 px-3 py-1.5 bg-[#ff4f20] text-white text-[11px] font-bold rounded-full shadow-[0_4px_10px_rgba(255,79,32,0.35)]">New</span>
             )}
             {product.bestSeller && (
-              <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-gradient-to-r from-purple-500 to-pink-500 text-white text-xs font-semibold rounded-full shadow-lg">
+              <span className="inline-flex items-center gap-1 px-3 py-1.5 bg-[#ff4f20] text-white text-[11px] font-bold rounded-full shadow-[0_4px_10px_rgba(255,79,32,0.35)]">
                 <TrendingUp className="w-3 h-3" />Best Seller
               </span>
             )}
           </div>
         </div>
       </Link>
-      <div className="p-3 sm:p-4">
+      <div className="pt-4 px-2 pb-1.5">
+        {product.category && (
+          <span className="inline-flex items-center bg-[#ffffff] text-primary text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full shadow-[0_2px_6px_rgba(22,36,59,0.08)] mb-2 capitalize">
+            {product.category}
+          </span>
+        )}
         <Link href={`/products/${product.id}`}>
-          <h3 className="font-semibold text-sm sm:text-base text-gray-900 dark:text-white mb-1.5 line-clamp-2 group-hover:text-primary transition-colors">
+          <h3 className="font-bold text-base text-[#16243b] dark:text-white mb-3.5 line-clamp-2 group-hover:text-primary transition-colors">
             {product.title || product.name}
           </h3>
         </Link>
         {product.rating > 0 && (
-          <div className="flex items-center gap-1.5 mb-2">
+          <div className="flex items-center gap-1.5 mb-3">
             <Star className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
             <span className="text-xs font-medium text-gray-600 dark:text-gray-400">{product.rating.toFixed(1)}</span>
             {product.reviews > 0 && <span className="text-xs text-gray-400">({product.reviews})</span>}
           </div>
         )}
-        <div className="flex gap-2">
+        <div className="flex items-center gap-2">
           <a href={getWhatsAppLink(product)} target="_blank" rel="noopener noreferrer"
             aria-label={`Inquire about ${product.name} on WhatsApp`}
-            className="flex items-center justify-center px-3 py-2 bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-200 rounded-xl transition-colors">
+            className="flex items-center justify-center w-[38px] h-[38px] bg-[#ffffff] dark:bg-gray-700 text-primary rounded-[11px] shadow-[0_3px_8px_rgba(22,36,59,0.10)] hover:bg-primary hover:text-white transition-colors">
             <MessageCircle className="w-4 h-4" />
           </a>
           <a href={getEmailLink(product)}
             aria-label={`Email inquiry about ${product.name}`}
-            className="flex items-center justify-center px-3 py-2 bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-200 rounded-xl transition-colors">
+            className="flex items-center justify-center w-[38px] h-[38px] bg-[#ffffff] dark:bg-gray-700 text-primary rounded-[11px] shadow-[0_3px_8px_rgba(22,36,59,0.10)] hover:bg-primary hover:text-white transition-colors">
             <Mail className="w-4 h-4" />
           </a>
           <Link href={`/products/${product.id}`}
-            className="flex-1 flex items-center justify-center gap-1 px-4 py-2 bg-primary hover:bg-primary/90 text-white text-sm font-semibold rounded-xl transition-colors">
+            className="flex-1 flex items-center justify-center gap-1 h-[38px] bg-[#ffffff] dark:bg-gray-700 text-primary border-[1.5px] border-primary rounded-[11px] text-sm font-bold hover:bg-primary hover:text-white transition-colors">
             View<ChevronRight className="w-4 h-4" />
           </Link>
         </div>
       </div>
     </div>
-  );
+    );
+  };
 
   const ProductListCard = ({ product }: { product: Product }) => (
-    <div className="group bg-white dark:bg-gray-800 rounded-xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-100 dark:border-gray-700 flex">
+    <div className="group bg-card-bg dark:bg-gray-800 rounded-[22px] p-[14px] gap-[14px] shadow-[0_14px_30px_rgba(22,36,59,0.16)] hover:-translate-y-[5px] hover:shadow-[0_22px_44px_rgba(22,36,59,0.24)] transition-all duration-[220ms] ease-out flex">
       <Link href={`/products/${product.id}`} className="relative w-32 sm:w-44 md:w-56 flex-shrink-0">
-        <div className="absolute inset-0 bg-gradient-to-br from-gray-100 to-gray-50 dark:from-gray-700 dark:to-gray-800">
+        <div className="absolute inset-0 bg-[#ffffff] dark:bg-gray-700 rounded-2xl shadow-[0_4px_12px_rgba(22,36,59,0.08)] overflow-hidden">
           {product.image ? (
             <SafeImage src={product.image} alt={product.name} fill
-              className="object-contain p-2 group-hover:scale-105 transition-transform duration-500"
+              className="object-contain p-4 group-hover:scale-105 transition-transform duration-500"
               sizes="(max-width: 768px) 30vw, 20vw" />
           ) : (
             <div className="absolute inset-0 flex items-center justify-center"><Package className="w-12 h-12 text-gray-300" /></div>
@@ -199,12 +219,17 @@ export default function CategoryBrowser({ category, parent, subcategories, topCa
       </Link>
       <div className="flex-1 p-6 flex flex-col">
         <div className="flex-1">
+          {product.category && (
+            <span className="inline-flex items-center bg-[#ffffff] dark:bg-gray-700 text-primary text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full shadow-[0_2px_6px_rgba(22,36,59,0.08)] mb-2 capitalize">
+              {product.category}
+            </span>
+          )}
           <Link href={`/products/${product.id}`}>
-            <h3 className="font-bold text-xl text-gray-900 dark:text-white mb-2 group-hover:text-primary transition-colors">
+            <h3 className="font-bold text-xl text-[#16243b] dark:text-white mb-2 group-hover:text-primary transition-colors">
               {product.title || product.name}
             </h3>
           </Link>
-          <p className="text-gray-500 dark:text-gray-400 mb-4 line-clamp-2">{product.description}</p>
+          <p className="text-gray-500 dark:text-gray-400 mb-4 line-clamp-2">{toPlainText(product.description)}</p>
           <div className="flex items-center gap-4 mb-4">
             {product.rating > 0 && (
               <div className="flex items-center gap-1">
@@ -217,15 +242,15 @@ export default function CategoryBrowser({ category, parent, subcategories, topCa
         </div>
         <div className="flex gap-3">
           <a href={getWhatsAppLink(product)} target="_blank" rel="noopener noreferrer"
-            className="flex items-center justify-center px-3 py-2 bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-200 rounded-xl transition-colors">
+            className="flex items-center justify-center w-[38px] h-[38px] bg-[#ffffff] dark:bg-gray-700 text-primary rounded-[11px] shadow-[0_3px_8px_rgba(22,36,59,0.10)] hover:bg-primary hover:text-white transition-colors">
             <MessageCircle className="w-4 h-4" />
           </a>
           <a href={getEmailLink(product)}
-            className="flex items-center gap-2 px-4 py-2.5 bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-200 font-semibold rounded-xl transition-colors">
+            className="flex items-center gap-2 px-4 h-[38px] bg-[#ffffff] dark:bg-gray-700 text-primary font-bold rounded-[11px] shadow-[0_3px_8px_rgba(22,36,59,0.10)] hover:bg-primary hover:text-white transition-colors">
             <Mail className="w-4 h-4" />Email
           </a>
           <Link href={`/products/${product.id}`}
-            className="flex items-center gap-2 px-6 py-2.5 bg-primary hover:bg-primary/90 text-white font-semibold rounded-xl transition-colors">
+            className="flex items-center gap-2 px-6 h-[38px] bg-[#ffffff] dark:bg-gray-700 text-primary border-[1.5px] border-primary font-bold rounded-[11px] hover:bg-primary hover:text-white transition-colors">
             View Details<ChevronRight className="w-4 h-4" />
           </Link>
         </div>
@@ -240,11 +265,11 @@ export default function CategoryBrowser({ category, parent, subcategories, topCa
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       {/* Hero Header */}
-      <div className="bg-gradient-to-br from-primary via-primary/90 to-primary/80 pt-28 pb-12">
+      <div className="bg-[#abccff] pt-28 pb-12">
         <div className="w-full px-6 lg:px-12">
-          <div className="text-center text-white">
+          <div className="text-center text-[#ff4f20]">
             <h1 className="text-4xl md:text-5xl font-bold mb-4">{heroTitle}</h1>
-            <p className="text-lg text-white/80 max-w-2xl mx-auto">{heroSubtitle}</p>
+            <p className="text-lg text-[#ff4f20]/90 max-w-2xl mx-auto">{heroSubtitle}</p>
           </div>
         </div>
       </div>

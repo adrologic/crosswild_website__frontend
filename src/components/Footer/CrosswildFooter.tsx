@@ -63,7 +63,7 @@ export default function CrosswildFooter() {
   const bottom = bottomLinks?.items || footer?.bottomLinks || [];
 
   return (
-    <footer className="bg-[#111111] dark:bg-[#0E0B08] text-gray-300 dark:text-[#C8B99A]">
+    <footer className="bg-[#0f1a2e] dark:bg-[#0E0B08] text-gray-300 dark:text-[#C8B99A]">
       <div className="w-full px-6 lg:px-12 py-12">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-8">
           {/* Company Info */}

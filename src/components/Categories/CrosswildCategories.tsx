@@ -4,6 +4,7 @@ import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { ArrowRight } from 'lucide-react';
 import { getCategoryHomeCards, type CategoryHomeCard } from '@/lib/cms';
+import { toPlainText } from '@/lib/text';
 
 const FALLBACK: CategoryHomeCard[] = [
   { _id: '1', title: 'T-Shirts', description: 'Custom printed & embroidered tees', icon: '👕', link: '/product/customize-promotional-t-shirt-manufacturer-in-Jaipur', popular: true },
@@ -69,7 +70,7 @@ export default function CrosswildCategories() {
                   <h3 className="font-bold text-lg mb-2 text-gray-900 group-hover:text-primary transition-colors">
                     {category.title}
                   </h3>
-                  <p className="text-sm text-gray-600 mb-4">{category.description}</p>
+                  <p className="text-sm text-gray-600 mb-4">{toPlainText(category.description)}</p>
                   <div className="flex items-center text-primary text-sm font-semibold">
                     <span className="group-hover:mr-2 transition-all">Shop Now</span>
                     <ArrowRight className="w-4 h-4 opacity-0 group-hover:opacity-100 transition-all" />

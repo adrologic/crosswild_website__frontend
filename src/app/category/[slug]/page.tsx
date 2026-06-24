@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { generateCategoryMetadata, generateCategorySchema, generateBreadcrumbSchema, getGlobalSEO } from '@/lib/seo';
 import { ChevronRight } from 'lucide-react';
 import CategoryBrowser from './CategoryBrowser';
+import { toPlainText } from '@/lib/text';
 
 const API_URL = (process.env.BACKEND_URL || 'https://crosswild-backend-p5l3.onrender.com') + '/api';
 
@@ -150,7 +151,7 @@ export default async function CategoryPage({
         parent={parent ? { id: parent.id, name: parent.name, seoUrl: parent.seoUrl } : null}
         subcategories={(siblingSubs || []).map((s: any) => ({ id: s.id, name: s.name, seoUrl: s.seoUrl }))}
         topCategories={topCategories.map((c: any) => ({ id: c.id, name: c.name, seoUrl: c.seoUrl }))}
-        description={category.seo?.description || category.description?.replace(/<[^>]*>/g, '').slice(0, 200)}
+        description={category.seo?.description || toPlainText(category.description).slice(0, 200)}
       />
 
       {/* Server-rendered rich descriptions (good for SEO, after the browser) */}

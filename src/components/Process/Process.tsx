@@ -19,6 +19,7 @@ import {
   type LucideIcon,
 } from "lucide-react";
 import { getProcessSteps, type ProcessStep } from '@/lib/cms';
+import { toPlainText } from '@/lib/text';
 
 const ICON_MAP: Record<string, LucideIcon> = {
   ClipboardList, Scissors, Printer, ShieldCheck, Package, Handshake,
@@ -98,7 +99,7 @@ export default function OurProcess() {
                     </div>
                     <h3 className="text-lg font-semibold text-gray-900">{step.title}</h3>
                     <p className="text-gray-500 text-sm mt-2 leading-relaxed">
-                      {step.description}
+                      {toPlainText(step.description)}
                     </p>
                   </div>
                 </SwiperSlide>

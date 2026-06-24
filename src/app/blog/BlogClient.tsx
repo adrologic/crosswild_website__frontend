@@ -6,6 +6,7 @@ import Link from "next/link";
 import { blogsAPI, type Blog } from "@/lib/api";
 import Breadcrumb from "@/components/Common/Breadcrumb";
 import { Calendar, User, Tag, ArrowRight, Eye, Search } from "lucide-react";
+import { toPlainText } from "@/lib/text";
 
 const BlogClient = () => {
   const [blogs, setBlogs] = useState<Blog[]>([]);
@@ -46,7 +47,7 @@ const BlogClient = () => {
     return matchesSearch && matchesTag;
   });
 
-  const stripHtml = (html: string) => html?.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim() || '';
+  const stripHtml = (html: string) => toPlainText(html);
 
   // Format date
   const formatDate = (dateString: string) => {

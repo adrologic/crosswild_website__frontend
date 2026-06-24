@@ -6,6 +6,7 @@ import SafeImage from '@/components/Common/SafeImage';
 import { Product } from '@/lib/api';
 import { useProducts } from '@/hooks/useProducts';
 import { Star, Zap, ArrowRight, Loader2, MessageCircle, Mail, ChevronRight } from 'lucide-react';
+import { toPlainText } from '@/lib/text';
 
 const WHATSAPP_NUMBER = '+919529626262';
 const EMAIL_ADDRESS = 'orders@thecrosswild.com';
@@ -66,23 +67,34 @@ export default function TrendingProducts() {
 
         {/* Products Grid - Featured Layout */}
         <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-6 mb-8">
-          {products.map((product, index) => (
+          {products.map((product, index) => {
+            const hoverImage = product.images?.find((img) => img && img !== product.image);
+            return (
             <div
               key={product.id}
-              className={`group relative bg-theme-bg-card dark:bg-[#26211A] rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 ${
+              className={`group bg-card-bg dark:bg-gray-800 rounded-[22px] p-[14px] shadow-[0_14px_30px_rgba(22,36,59,0.16)] hover:-translate-y-[5px] hover:shadow-[0_22px_44px_rgba(22,36,59,0.24)] transition-all duration-[220ms] ease-out ${
                 index === 0 ? 'lg:col-span-2 lg:row-span-2' : ''
               }`}
             >
               {/* Image Container */}
               {index === 0 ? (
-                <div className="relative overflow-hidden h-52 sm:h-96 lg:h-full bg-theme-bg-soft">
+                <div className="relative overflow-hidden rounded-2xl h-52 sm:h-96 lg:h-full bg-theme-bg-soft">
                   <Link href={`/products/${product.id}`} className="block absolute inset-0">
                     {product.image && (
                       <SafeImage
                         src={product.image}
                         alt={product.name}
                         fill
-                        className="object-contain p-3 group-hover:scale-110 transition-transform duration-500"
+                        className={`object-contain p-3 group-hover:scale-105 transition-all duration-500 ${hoverImage ? 'group-hover:opacity-0' : ''}`}
+                        sizes="(max-width: 768px) 100vw, 66vw"
+                      />
+                    )}
+                    {hoverImage && (
+                      <SafeImage
+                        src={hoverImage}
+                        alt={product.name}
+                        fill
+                        className="object-contain p-3 opacity-0 transition-all duration-500 group-hover:opacity-100 group-hover:scale-105"
                         sizes="(max-width: 768px) 100vw, 66vw"
                       />
                     )}
@@ -91,14 +103,14 @@ export default function TrendingProducts() {
                   </Link>
 
                   {/* Badges */}
-                  <div className="absolute top-4 right-4 flex flex-col gap-2 z-10 pointer-events-none">
+                  <div className="absolute top-[14px] left-[14px] flex flex-col gap-2 z-10 pointer-events-none">
                     {product.newArrival && (
-                      <span className="bg-green-500 text-white text-xs font-bold px-3 py-1 rounded-full shadow-lg animate-bounce">
+                      <span className="inline-flex items-center gap-1 px-3 py-1.5 bg-[#ff4f20] text-white text-[11px] font-bold rounded-full shadow-[0_4px_10px_rgba(255,79,32,0.35)]">
                         New
                       </span>
                     )}
                     {product.featured && (
-                      <span className="bg-purple-500 text-white text-xs font-bold px-3 py-1 rounded-full shadow-lg">
+                      <span className="inline-flex items-center gap-1 px-3 py-1.5 bg-[#ff4f20] text-white text-[11px] font-bold rounded-full shadow-[0_4px_10px_rgba(255,79,32,0.35)]">
                         Trending
                       </span>
                     )}
@@ -110,7 +122,7 @@ export default function TrendingProducts() {
                       {product.title || product.name}
                     </h3>
                     <p className="text-sm md:text-base opacity-90 mb-4 line-clamp-2">
-                      {product.description}
+                      {toPlainText(product.description)}
                     </p>
                     {product.rating > 0 && (
                       <div className="flex items-center gap-2 mb-4">
@@ -127,14 +139,14 @@ export default function TrendingProducts() {
                         target="_blank"
                         rel="noopener noreferrer"
                         aria-label={`Inquire about ${product.name} on WhatsApp`}
-                        className="flex items-center justify-center px-4 py-3 bg-white/20 hover:bg-white/30 text-white rounded-lg transition-colors"
+                        className="flex items-center justify-center w-[38px] h-[38px] bg-[#ffffff] dark:bg-gray-700 text-primary rounded-[11px] shadow-[0_3px_8px_rgba(22,36,59,0.10)] hover:bg-primary hover:text-white transition-colors"
                       >
                         <MessageCircle className="w-5 h-5" aria-hidden="true" />
                       </a>
                       <a
                         href={getEmailLink(product)}
                         aria-label={`Email inquiry about ${product.name}`}
-                        className="flex items-center justify-center px-4 py-3 bg-white/20 hover:bg-white/30 text-white rounded-lg transition-colors"
+                        className="flex items-center justify-center w-[38px] h-[38px] bg-[#ffffff] dark:bg-gray-700 text-primary rounded-[11px] shadow-[0_3px_8px_rgba(22,36,59,0.10)] hover:bg-primary hover:text-white transition-colors"
                       >
                         <Mail className="w-5 h-5" aria-hidden="true" />
                       </a>
@@ -144,30 +156,36 @@ export default function TrendingProducts() {
               ) : (
                 <Link
                   href={`/products/${product.id}`}
-                  className="block relative overflow-hidden h-40 sm:h-64 bg-theme-bg-soft"
+                  className="block relative aspect-[4/3] bg-[#ffffff] dark:bg-gray-700 rounded-2xl shadow-[0_4px_12px_rgba(22,36,59,0.08)] overflow-hidden"
                 >
                   {product.image && (
                     <SafeImage
                       src={product.image}
                       alt={product.name}
                       fill
-                      className="object-contain p-2 group-hover:scale-110 transition-transform duration-500"
+                      className={`object-contain p-[22px] transition-all duration-500 group-hover:scale-105 ${hoverImage ? 'group-hover:opacity-0' : ''}`}
+                      sizes="(max-width: 768px) 50vw, 33vw"
+                    />
+                  )}
+                  {hoverImage && (
+                    <SafeImage
+                      src={hoverImage}
+                      alt={product.name}
+                      fill
+                      className="object-contain p-[22px] opacity-0 transition-all duration-500 group-hover:opacity-100 group-hover:scale-105"
                       sizes="(max-width: 768px) 50vw, 33vw"
                     />
                   )}
 
-                  {/* Gradient Overlay */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
-
                   {/* Badges */}
-                  <div className="absolute top-4 right-4 flex flex-col gap-2">
+                  <div className="absolute top-[14px] left-[14px] flex flex-col gap-2">
                     {product.newArrival && (
-                      <span className="bg-green-500 text-white text-xs font-bold px-3 py-1 rounded-full shadow-lg animate-bounce">
+                      <span className="inline-flex items-center gap-1 px-3 py-1.5 bg-[#ff4f20] text-white text-[11px] font-bold rounded-full shadow-[0_4px_10px_rgba(255,79,32,0.35)]">
                         New
                       </span>
                     )}
                     {product.featured && (
-                      <span className="bg-purple-500 text-white text-xs font-bold px-3 py-1 rounded-full shadow-lg">
+                      <span className="inline-flex items-center gap-1 px-3 py-1.5 bg-[#ff4f20] text-white text-[11px] font-bold rounded-full shadow-[0_4px_10px_rgba(255,79,32,0.35)]">
                         Trending
                       </span>
                     )}
@@ -177,9 +195,14 @@ export default function TrendingProducts() {
 
               {/* Product Info (for small cards) */}
               {index !== 0 && (
-                <div className="p-5 bg-theme-bg-card dark:bg-[#26211A]">
+                <div className="pt-4 px-2 pb-1.5">
+                  {product.category && (
+                    <span className="inline-flex items-center bg-[#ffffff] dark:bg-gray-700 text-primary text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full shadow-[0_2px_6px_rgba(22,36,59,0.08)] mb-2 capitalize">
+                      {product.category}
+                    </span>
+                  )}
                   <Link href={`/products/${product.id}`}>
-                    <h3 className="font-bold text-lg mb-2 line-clamp-2 hover:text-primary transition-colors">
+                    <h3 className="font-bold text-base text-[#16243b] dark:text-white mb-3.5 line-clamp-2 group-hover:text-primary transition-colors">
                       {product.title || product.name}
                     </h3>
                   </Link>
@@ -198,20 +221,20 @@ export default function TrendingProducts() {
                   )}
 
                   {/* CTA Buttons - WhatsApp, Email */}
-                  <div className="flex gap-2">
+                  <div className="flex items-center gap-2">
                     <a
                       href={getWhatsAppLink(product)}
                       target="_blank"
                       rel="noopener noreferrer"
                       aria-label={`Inquire about ${product.name} on WhatsApp`}
-                      className="flex items-center justify-center px-3 py-2 bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-200 rounded-xl transition-colors"
+                      className="flex items-center justify-center w-[38px] h-[38px] bg-[#ffffff] dark:bg-gray-700 text-primary rounded-[11px] shadow-[0_3px_8px_rgba(22,36,59,0.10)] hover:bg-primary hover:text-white transition-colors"
                     >
                       <MessageCircle className="w-4 h-4" aria-hidden="true" />
                     </a>
                     <a
                       href={getEmailLink(product)}
                       aria-label={`Email inquiry about ${product.name}`}
-                      className="flex items-center justify-center px-3 py-2 bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-200 rounded-xl transition-colors"
+                      className="flex items-center justify-center w-[38px] h-[38px] bg-[#ffffff] dark:bg-gray-700 text-primary rounded-[11px] shadow-[0_3px_8px_rgba(22,36,59,0.10)] hover:bg-primary hover:text-white transition-colors"
                     >
                       <Mail className="w-4 h-4" aria-hidden="true" />
                     </a>
@@ -219,7 +242,8 @@ export default function TrendingProducts() {
                 </div>
               )}
             </div>
-          ))}
+            );
+          })}
         </div>
 
         {/* View All Button */}

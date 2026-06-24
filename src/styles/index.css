@@ -10,22 +10,22 @@
    ============================================ */
 
 :root {
-  /* ── PRIMARY BRAND: Orange (Buy Now CTAs) ── */
-  --brand-primary: #F97316;
-  --brand-primary-dark: #EA580C;        /* backward-compat alias */
-  --brand-primary-hover: #EA580C;
-  --brand-primary-active: #C2410C;
-  --brand-primary-light: #FDBA74;
-  --brand-primary-50: #FFF7ED;
-  --brand-primary-100: #FFEDD5;
-  --brand-primary-200: #FED7AA;
-  --brand-primary-300: #FDBA74;
-  --brand-primary-400: #FB923C;
-  --brand-primary-500: #F97316;
-  --brand-primary-600: #EA580C;
-  --brand-primary-700: #C2410C;
-  --brand-primary-800: #9A3412;
-  --brand-primary-900: #7C2D12;
+  /* ── PRIMARY BRAND: Orange-red accent #ff4f20 (headings, links, accents) ── */
+  --brand-primary: #ff4f20;
+  --brand-primary-dark: #e63f14;        /* backward-compat alias */
+  --brand-primary-hover: #e63f14;
+  --brand-primary-active: #c2330f;
+  --brand-primary-light: #ff9c80;
+  --brand-primary-50: #fff1ec;
+  --brand-primary-100: #ffe1d7;
+  --brand-primary-200: #ffc2af;
+  --brand-primary-300: #ff9c80;
+  --brand-primary-400: #ff7550;
+  --brand-primary-500: #ff4f20;
+  --brand-primary-600: #e63f14;
+  --brand-primary-700: #c2330f;
+  --brand-primary-800: #9e2a0e;
+  --brand-primary-900: #7c220c;
 
   /* ── SECONDARY BRAND: Blue (Add to Cart, links, trust) ── */
   --brand-secondary-blue: #3B82F6;
@@ -47,31 +47,31 @@
   --brand-secondary-800: #111111;
   --brand-secondary-900: #080808;
 
-  /* ── BACKGROUNDS (Light Mode) ── */
-  --brand-bg-primary: #FFFFFF;
-  --brand-bg-secondary: #F7F7F7;
-  --brand-bg-section: #F3F4F6;
-  --brand-bg-card: #FFFFFF;
-  --brand-bg-card-elevated: #FAFAFA;
+  /* ── BACKGROUNDS (Light Mode) — soft-blue canvas, deeper alternating sections ── */
+  --brand-bg-primary: #e9f1fd;
+  --brand-bg-secondary: #dbe8fc;
+  --brand-bg-section: #dbe8fc;
+  --brand-bg-card: #a9ccfd;
+  --brand-bg-card-elevated: #b9d4ff;
   --brand-bg-tertiary: #FFFFFF;        /* compat alias */
 
-  /* ── TEXT (Light Mode) ── */
-  --brand-text-primary: #111111;
-  --brand-text-secondary: #555555;
-  --brand-text-muted: #888888;
-  --brand-text-disabled: #AAAAAA;
-  --brand-text-highlight: #F97316;
+  /* ── TEXT (Light Mode) — dark slate for body readability ── */
+  --brand-text-primary: #16243b;
+  --brand-text-secondary: #2a3a55;
+  --brand-text-muted: #5b6b86;
+  --brand-text-disabled: #97a3b8;
+  --brand-text-highlight: #ff4f20;
 
   /* ── BORDERS (Light Mode) ── */
-  --brand-border: #E5E5E5;
-  --brand-border-dark: #CCCCCC;
+  --brand-border: #cfe0f7;
+  --brand-border-dark: #b4cbed;
 
-  /* ── PRODUCT CARDS (Light Mode) ── */
-  --brand-card-bg: #FFFFFF;
-  --brand-card-border: #E5E5E5;
-  --brand-card-hover: #F9FAFB;
-  --brand-card-price: #111111;
-  --brand-card-old-price: #888888;
+  /* ── PRODUCT CARDS (Light Mode) — soft-blue card, slate price for contrast ── */
+  --brand-card-bg: #a9ccfd;
+  --brand-card-border: #93bdf9;
+  --brand-card-hover: #9ec2ff;
+  --brand-card-price: #16243b;
+  --brand-card-old-price: #5b6b86;
 
   /* ── BADGES ── */
   --brand-badge-sale: #EF4444;
@@ -81,10 +81,10 @@
 
   /* ── INPUT FIELDS (Light Mode) ── */
   --brand-input-bg: #FFFFFF;
-  --brand-input-border: #D1D5DB;
-  --brand-input-focus: #F97316;
-  --brand-input-placeholder: #9CA3AF;
-  --brand-input-text: #111111;
+  --brand-input-border: #cfe0f7;
+  --brand-input-focus: #ff4f20;
+  --brand-input-placeholder: #7c8aa3;
+  --brand-input-text: #16243b;
 
   /* ── STATUS COLORS ── */
   --brand-success: #22C55E;
@@ -96,12 +96,12 @@
   /* ── RATING ── */
   --brand-rating-star: #FACC15;
 
-  /* ── NAVBAR (Light Mode) ── */
-  --brand-navbar-bg: #FFFFFF;
-  --brand-navbar-border: #E5E5E5;
-  --brand-navbar-active: #F97316;
-  --brand-navbar-normal: #555555;
-  --brand-navbar-hover: #111111;
+  /* ── NAVBAR (Light Mode) — soft-blue bar ── */
+  --brand-navbar-bg: #abccff;
+  --brand-navbar-border: #93bdf9;
+  --brand-navbar-active: #ff4f20;
+  --brand-navbar-normal: #16243b;
+  --brand-navbar-hover: #0f1a2e;
 
   /* ── ACCENT (legacy) ── */
   --brand-accent: #22C55E;
@@ -629,4 +629,86 @@
 .dark .shadow-xl {
   --tw-shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
   box-shadow: var(--tw-shadow);
+}
+
+/* ============================================
+   LIGHT-THEME RE-SKIN (Crosswild blue / orange)
+   Cosmetic only. Applies in light mode; .dark is
+   left untouched so dark mode keeps working.
+   ============================================ */
+
+/* ── Typography: heavier headings, comfortable body line-height ── */
+@layer base {
+  body {
+    line-height: 1.65;
+  }
+  h1, h2, h3, h4, h5, h6 {
+    font-weight: 800;
+    letter-spacing: -0.01em;
+  }
+}
+
+/* ── Page backgrounds → light shades of #abccff (no stark white) ──
+   White / near-white surfaces take the soft-blue canvas tone; the
+   gray-100 band takes a slightly deeper tone for gentle alternation.
+   Cards (#a9ccfd) and the navbar (#abccff) stay distinct on top. */
+html:not(.dark) .bg-white,
+html:not(.dark) .bg-gray-50,
+html:not(.dark) .bg-\[\#f8f8f8\],
+html:not(.dark) .bg-\[\#f5f5f5\],
+html:not(.dark) .bg-\[\#efefef\] {
+  background-color: #e9f1fd !important;
+}
+html:not(.dark) .bg-gray-100 {
+  background-color: #dbe8fc !important;
+}
+
+/* ── Primary filled buttons → light-blue bg + orange text ──
+   Matches the `bg-primary` + `text-white` button signature used
+   site-wide. Adds a soft shadow + faint orange outline so buttons
+   stay visible on the soft-blue navbar and on white sections. */
+html:not(.dark) .bg-primary.text-white {
+  background-color: #abccff !important;
+  color: #ff4f20 !important;
+  box-shadow: 0 6px 16px rgba(171, 204, 255, 0.6),
+              0 0 0 1.5px rgba(255, 79, 32, 0.45);
+  transition: background-color 0.2s ease, box-shadow 0.2s ease;
+}
+html:not(.dark) .bg-primary.text-white:hover {
+  background-color: #9ec2ff !important;
+  box-shadow: 0 8px 20px rgba(171, 204, 255, 0.75),
+              0 0 0 1.5px rgba(255, 79, 32, 0.6);
+}
+/* Icons inside those buttons follow the orange text colour */
+html:not(.dark) .bg-primary.text-white svg {
+  color: #ff4f20 !important;
+}
+
+/* ── Headings → orange accent on light backgrounds ──
+   Skips headings that are intentionally white (e.g. footer),
+   gradient/clipped text, or already a custom arbitrary colour. */
+html:not(.dark) :is(h1, h2, h3, h4):not([class*="text-white"]):not([class*="text-transparent"]):not([class*="text-["]) {
+  color: #ff4f20;
+}
+/* On soft-blue cards, keep headings & prices dark slate for contrast */
+html:not(.dark) .bg-card-bg :is(h1, h2, h3, h4, h5),
+html:not(.dark) .bg-theme-bg-card :is(h1, h2, h3, h4, h5) {
+  color: #16243b !important;
+}
+/* Lift muted gray body text to slate on soft-blue cards (readability) */
+html:not(.dark) .bg-card-bg :is(.text-gray-400, .text-gray-500, .text-gray-600),
+html:not(.dark) .bg-theme-bg-card :is(.text-gray-400, .text-gray-500, .text-gray-600) {
+  color: #2a3a55 !important;
+}
+
+/* Product image "lightbox" — clean light surface (soft spotlight fading to
+   light blue) so product photos stay crisp, true-colour and highlighted,
+   without mixing the product's colour into the card. */
+html:not(.dark) .product-media {
+  background: radial-gradient(circle at 50% 40%, #f7faff 0%, #eaf2fe 70%, #e1ebfb 100%);
+}
+
+/* ── Sticky header: subtle shadow to separate it from content ── */
+html:not(.dark) header.sticky {
+  box-shadow: 0 4px 14px rgba(22, 36, 59, 0.10);
 }

@@ -23,7 +23,7 @@ export default function ServiceProductCard({
   sizes = '(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw',
 }: ServiceProductCardProps) {
   return (
-    <div className="border border-gray-200 dark:border-gray-700 rounded-xl overflow-hidden bg-white dark:bg-gray-800 shadow-sm hover:shadow-md transition-shadow flex flex-col">
+    <div className="border border-card-border dark:border-gray-700 rounded-xl overflow-hidden bg-card-bg dark:bg-gray-800 shadow-sm hover:shadow-md transition-shadow flex flex-col">
       <div className="relative h-[220px] w-full bg-gray-100 dark:bg-gray-700 flex-shrink-0">
         <Image src={image} alt={name} fill className="object-cover" sizes={sizes} />
       </div>
@@ -47,7 +47,7 @@ export default function ServiceProductCard({
         <div className="flex gap-2 mt-3">
           <Link
             href="/contact-us"
-            className="flex-1 text-center bg-primary text-white text-[13px] font-semibold py-2 px-3 rounded hover:bg-primary/90 transition-colors"
+            className="flex-1 text-center bg-primary text-white text-[13px] font-semibold py-2 px-3 rounded-lg hover:bg-primary/90 transition-colors"
           >
             Add to Enquiry
           </Link>
@@ -55,7 +55,7 @@ export default function ServiceProductCard({
             href="https://api.whatsapp.com/send?phone=919529626262"
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center gap-1 bg-green-500 hover:bg-green-600 text-white text-[13px] font-semibold py-2 px-3 rounded transition-colors"
+            className="flex items-center gap-1 bg-green-500 hover:bg-green-600 text-white text-[13px] font-semibold py-2 px-3 rounded-lg transition-colors"
           >
             {WA_ICON}
             WhatsApp

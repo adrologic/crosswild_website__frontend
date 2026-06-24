@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import Image from 'next/image';
+import { toPlainText } from '@/lib/text';
 
 const API_URL = (process.env.BACKEND_URL || 'https://crosswild-backend-p5l3.onrender.com') + '/api';
 
@@ -12,7 +13,7 @@ interface Blog {
 }
 
 function stripHtml(html: string): string {
-  return html.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim();
+  return toPlainText(html);
 }
 
 async function getHomeBlogs(): Promise<Blog[]> {

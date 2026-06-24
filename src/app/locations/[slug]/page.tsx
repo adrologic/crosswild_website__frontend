@@ -8,6 +8,7 @@ import { LOCATIONS } from "@/data/locations";
 import ScrollUp from "@/components/Common/ScrollUp";
 import TrustSection from "@/components/Features/TrustSection";
 import LocationImageSlider from "@/components/Locations/LocationImageSlider";
+import { toPlainText } from "@/lib/text";
 
 
 const PopularProducts = dynamicImport(() => import("@/components/Products/PopularProducts"));
@@ -745,7 +746,7 @@ export default async function LocationPage({
                       <p className="text-xs text-primary font-semibold uppercase tracking-wide">From ₹70 per piece</p>
                     </div>
                   </div>
-                  <p className="text-gray-600 dark:text-gray-300 text-sm mb-5 leading-relaxed">{product.description}</p>
+                  <p className="text-gray-600 dark:text-gray-300 text-sm mb-5 leading-relaxed">{toPlainText(product.description)}</p>
 
                   <div className="mb-5">
                     <p className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-3">Types Available</p>

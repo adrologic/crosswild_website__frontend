@@ -12,6 +12,7 @@ import {
   type HomeWhyChoose,
   type HomeProductHighlight,
 } from '@/lib/cms';
+import { toPlainText } from '@/lib/text';
 
 // Fallbacks so the section never blanks out during the first paint or backend outage.
 const FALLBACK_CAPABILITIES: HomeCapability[] = [
@@ -172,7 +173,7 @@ export default function HomeBrandContent({ content }: Props = {}) {
                     {item.number}
                   </div>
                   <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-3">{item.title}</h3>
-                  <p className="text-sm text-gray-600 dark:text-gray-300 leading-relaxed">{item.description}</p>
+                  <p className="text-sm text-gray-600 dark:text-gray-300 leading-relaxed">{toPlainText(item.description)}</p>
                 </div>
               );
             })}

@@ -4,6 +4,7 @@ import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { Tag, Clock, TrendingUp, Zap } from 'lucide-react';
 import { getDeals, getSiteSettings, type Deal } from '@/lib/cms';
+import { toPlainText } from '@/lib/text';
 
 const COLORS = [
   'from-blue-500 to-blue-600',
@@ -66,7 +67,7 @@ export default function DealsSection() {
                   <Icon className="w-12 h-12 mb-4 opacity-80" />
                   <h3 className="text-xl font-bold mb-2">{deal.title}</h3>
                   <div className="text-4xl font-black mb-2">{deal.discountLabel}</div>
-                  <p className="text-white/90 mb-6">{deal.description}</p>
+                  <p className="text-white/90 mb-6">{toPlainText(deal.description)}</p>
                   <div className="inline-flex items-center gap-2 bg-white/20 hover:bg-white/30 px-4 py-2 rounded-lg backdrop-blur-sm transition-colors">
                     <span className="font-semibold">Claim Now</span>
                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">

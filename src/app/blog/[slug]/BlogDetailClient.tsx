@@ -7,6 +7,7 @@ import { blogsAPI, type Blog } from '@/lib/api';
 import { Calendar, User, ArrowLeft, Share2, Eye, Clock, ArrowRight } from 'lucide-react';
 import Breadcrumb from '@/components/Common/Breadcrumb';
 import { BlogSEO } from '@/components/SEO/SEOHead';
+import { toPlainText } from '@/lib/text';
 
 // Authors sometimes paste the blog title as an <h1> or <h2> inside the body
 // HTML, which creates a duplicate heading next to the page's <h1>. Strip
@@ -89,7 +90,7 @@ export default function BlogDetailClient({ slug }: { slug: string }) {
     }
   };
 
-  const stripHtml = (html: string) => html?.replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim() || '';
+  const stripHtml = (html: string) => toPlainText(html);
 
   // Estimate reading time
   const getReadingTime = (content: string) => {
