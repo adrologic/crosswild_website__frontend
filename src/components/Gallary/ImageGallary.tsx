@@ -1,8 +1,12 @@
 "use client";
 import Image from 'next/image';
+import { useEffect, useState } from 'react';
+import { getGalleryItems } from '@/lib/cms';
 
 const Gallery = () => {
-  const images = [
+  // Static fallback — shown until (and unless) the CMS gallery has items, so
+  // the page never goes blank if the backend is empty or unreachable.
+  const FALLBACK_IMAGES = [
     { src: "/images/gallery/gallery-1.jpg", alt: "Custom T-shirt Manufacturing Jaipur" },
     { src: "/images/gallery/gallery-2.jpg", alt: "Custom Bag Manufacturing India" },
     { src: "/images/gallery/gallery-3.jpg", alt: "Cap Manufacturing Jaipur" },
@@ -14,6 +18,29 @@ const Gallery = () => {
     { src: "/images/gallery/gallery-9.jpg", alt: "Custom Mug Printing Jaipur" },
     { src: "/images/gallery/gallery-10.jpg", alt: "Bulk Order Manufacturing India" },
   ];
+
+  const [images, setImages] = useState(FALLBACK_IMAGES);
+
+  // Pull the admin-managed gallery (GET /api/gallery?active=true); keep the
+  // static images whenever the CMS has none.
+  useEffect(() => {
+    let cancelled = false;
+    getGalleryItems()
+      .then((items) => {
+        if (cancelled || !items.length) return;
+        setImages(
+          items.map((item) => ({
+            src: item.image,
+            alt: item.alt || item.title || 'The CrossWild gallery image',
+          }))
+        );
+      })
+      .catch(() => {});
+    return () => {
+      cancelled = true;
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <div className="py-12 px-4 sm:px-6 lg:px-8 bg-gray-50">

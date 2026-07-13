@@ -46,44 +46,54 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority,
   }));
 
-  // Dynamic product URLs
+  // Dynamic product URLs — backend caps list endpoints at 100/page, so paginate
   let productRoutes: MetadataRoute.Sitemap = [];
   try {
-    const productsRes = await fetch(`${API_URL}/api/products?limit=1000`, {
-      next: { revalidate: 3600 },
-      signal: AbortSignal.timeout(8000),
-    });
-    if (productsRes.ok) {
+    const products: any[] = [];
+    const MAX_PAGES = 50; // safety guard against an unexpected loop
+    for (let page = 1; page <= MAX_PAGES; page++) {
+      const productsRes = await fetch(`${API_URL}/api/products?limit=100&page=${page}`, {
+        next: { revalidate: 3600 },
+        signal: AbortSignal.timeout(8000),
+      });
+      if (!productsRes.ok) break;
       const data = await productsRes.json();
-      const products = data.products || [];
-      productRoutes = products.map((product: any) => ({
-        url: `${baseUrl}/products/${product.slug || product._id || product.id}`,
-        lastModified: product.updatedAt ? new Date(product.updatedAt) : new Date(),
-        changeFrequency: 'weekly' as const,
-        priority: 0.8,
-      }));
+      const batch = data.products || [];
+      products.push(...batch);
+      if (batch.length < 100) break; // short page — no more results
     }
+    productRoutes = products.map((product: any) => ({
+      url: `${baseUrl}/products/${product.slug || product._id || product.id}`,
+      lastModified: product.updatedAt ? new Date(product.updatedAt) : new Date(),
+      changeFrequency: 'weekly' as const,
+      priority: 0.8,
+    }));
   } catch {
     // Backend unavailable — skip dynamic product routes
   }
 
-  // Dynamic blog URLs
+  // Dynamic blog URLs — backend caps list endpoints at 100/page, so paginate
   let blogRoutes: MetadataRoute.Sitemap = [];
   try {
-    const blogsRes = await fetch(`${API_URL}/api/blogs?limit=1000`, {
-      next: { revalidate: 3600 },
-      signal: AbortSignal.timeout(8000),
-    });
-    if (blogsRes.ok) {
+    const blogs: any[] = [];
+    const MAX_PAGES = 50; // safety guard against an unexpected loop
+    for (let page = 1; page <= MAX_PAGES; page++) {
+      const blogsRes = await fetch(`${API_URL}/api/blogs?limit=100&page=${page}`, {
+        next: { revalidate: 3600 },
+        signal: AbortSignal.timeout(8000),
+      });
+      if (!blogsRes.ok) break;
       const data = await blogsRes.json();
-      const blogs = data.blogs || [];
-      blogRoutes = blogs.map((blog: any) => ({
-        url: `${baseUrl}/blog/${blog.slug || blog._id || blog.id}`,
-        lastModified: blog.updatedAt ? new Date(blog.updatedAt) : new Date(),
-        changeFrequency: 'monthly' as const,
-        priority: 0.6,
-      }));
+      const batch = data.blogs || [];
+      blogs.push(...batch);
+      if (batch.length < 100) break; // short page — no more results
     }
+    blogRoutes = blogs.map((blog: any) => ({
+      url: `${baseUrl}/blog/${blog.slug || blog._id || blog.id}`,
+      lastModified: blog.updatedAt ? new Date(blog.updatedAt) : new Date(),
+      changeFrequency: 'monthly' as const,
+      priority: 0.6,
+    }));
   } catch {
     // Backend unavailable — skip dynamic blog routes
   }

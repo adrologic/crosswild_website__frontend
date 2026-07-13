@@ -311,10 +311,10 @@ function ProductsContent() {
   const ProductCard = ({ product }: { product: Product }) => {
     const hoverImage = product.images?.find((img) => img && img !== product.image);
     return (
-    <div className="group bg-card-bg dark:bg-gray-800 rounded-[22px] p-[14px] shadow-[0_14px_30px_rgba(22,36,59,0.16)] hover:-translate-y-[5px] hover:shadow-[0_22px_44px_rgba(22,36,59,0.24)] transition-all duration-[220ms] ease-out">
+    <div className="group bg-card-bg rounded-[22px] p-[14px] shadow-[0_14px_30px_rgba(22,36,59,0.16)] hover:-translate-y-[5px] hover:shadow-[0_22px_44px_rgba(22,36,59,0.24)] transition-all duration-[220ms] ease-out">
       {/* Image tile */}
       <Link href={`/products/${product.id}`} onClick={rememberScroll} className="block">
-        <div className="relative aspect-[4/3] bg-[#ffffff] dark:bg-gray-700 rounded-2xl shadow-[0_4px_12px_rgba(22,36,59,0.08)] overflow-hidden">
+        <div className="relative aspect-[4/3] bg-[#ffffff] rounded-2xl shadow-[0_4px_12px_rgba(22,36,59,0.08)] overflow-hidden">
           {product.image ? (
             <>
               <SafeImage
@@ -400,20 +400,20 @@ function ProductsContent() {
             target="_blank"
             rel="noopener noreferrer"
             aria-label={`Inquire about ${product.name} on WhatsApp`}
-            className="flex items-center justify-center w-[38px] h-[38px] bg-[#ffffff] dark:bg-gray-700 text-primary rounded-[11px] shadow-[0_3px_8px_rgba(22,36,59,0.10)] hover:bg-primary hover:text-white transition-colors"
+            className="flex items-center justify-center w-[38px] h-[38px] bg-[#ffffff] text-primary rounded-[11px] shadow-[0_3px_8px_rgba(22,36,59,0.10)] hover:bg-primary hover:text-white transition-colors"
           >
             <MessageCircle className="w-4 h-4" aria-hidden="true" />
           </a>
           <a
             href={getEmailLink(product)}
             aria-label={`Email inquiry about ${product.name}`}
-            className="flex items-center justify-center w-[38px] h-[38px] bg-[#ffffff] dark:bg-gray-700 text-primary rounded-[11px] shadow-[0_3px_8px_rgba(22,36,59,0.10)] hover:bg-primary hover:text-white transition-colors"
+            className="flex items-center justify-center w-[38px] h-[38px] bg-[#ffffff] text-primary rounded-[11px] shadow-[0_3px_8px_rgba(22,36,59,0.10)] hover:bg-primary hover:text-white transition-colors"
           >
             <Mail className="w-4 h-4" aria-hidden="true" />
           </a>
           <Link
             href={`/products/${product.id}`} onClick={rememberScroll}
-            className="flex-1 flex items-center justify-center gap-1 h-[38px] bg-[#ffffff] dark:bg-gray-700 text-primary border-[1.5px] border-primary rounded-[11px] text-sm font-bold hover:bg-primary hover:text-white transition-colors"
+            className="flex-1 flex items-center justify-center gap-1 h-[38px] bg-[#ffffff] text-primary border-[1.5px] border-primary rounded-[11px] text-sm font-bold hover:bg-primary hover:text-white transition-colors"
           >
             View
             <ChevronRight className="w-4 h-4" />
@@ -426,10 +426,10 @@ function ProductsContent() {
 
   // List View Card
   const ProductListCard = ({ product }: { product: Product }) => (
-    <div className="group bg-card-bg dark:bg-gray-800 rounded-[22px] p-[14px] gap-[14px] shadow-[0_14px_30px_rgba(22,36,59,0.16)] hover:-translate-y-[5px] hover:shadow-[0_22px_44px_rgba(22,36,59,0.24)] transition-all duration-[220ms] ease-out flex">
+    <div className="group bg-card-bg rounded-[22px] p-[14px] gap-[14px] shadow-[0_14px_30px_rgba(22,36,59,0.16)] hover:-translate-y-[5px] hover:shadow-[0_22px_44px_rgba(22,36,59,0.24)] transition-all duration-[220ms] ease-out flex">
       {/* Image */}
       <Link href={`/products/${product.id}`} onClick={rememberScroll} className="relative w-32 sm:w-44 md:w-56 flex-shrink-0">
-        <div className="absolute inset-0 bg-[#ffffff] dark:bg-gray-700 rounded-2xl shadow-[0_4px_12px_rgba(22,36,59,0.08)] overflow-hidden">
+        <div className="absolute inset-0 bg-[#ffffff] rounded-2xl shadow-[0_4px_12px_rgba(22,36,59,0.08)] overflow-hidden">
           {product.image ? (
             <SafeImage
               src={product.image}
@@ -464,7 +464,7 @@ function ProductsContent() {
       {/* Content */}
       <div className="flex-1 p-6 flex flex-col">
         <div className="flex-1">
-          <span className="inline-flex items-center bg-[#ffffff] dark:bg-gray-700 text-primary text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full shadow-[0_2px_6px_rgba(22,36,59,0.08)] mb-2">
+          <span className="inline-flex items-center bg-[#ffffff] text-primary text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full shadow-[0_2px_6px_rgba(22,36,59,0.08)] mb-2">
             {formatCategoryName(product.category)}
           </span>
 
@@ -505,20 +505,20 @@ function ProductsContent() {
             target="_blank"
             rel="noopener noreferrer"
             aria-label={`Inquire about ${product.name} on WhatsApp`}
-            className="flex items-center justify-center w-[38px] h-[38px] bg-[#ffffff] dark:bg-gray-700 text-primary rounded-[11px] shadow-[0_3px_8px_rgba(22,36,59,0.10)] hover:bg-primary hover:text-white transition-colors"
+            className="flex items-center justify-center w-[38px] h-[38px] bg-[#ffffff] text-primary rounded-[11px] shadow-[0_3px_8px_rgba(22,36,59,0.10)] hover:bg-primary hover:text-white transition-colors"
           >
             <MessageCircle className="w-4 h-4" aria-hidden="true" />
           </a>
           <a
             href={getEmailLink(product)}
-            className="flex items-center gap-2 px-4 h-[38px] bg-[#ffffff] dark:bg-gray-700 text-primary font-bold rounded-[11px] shadow-[0_3px_8px_rgba(22,36,59,0.10)] hover:bg-primary hover:text-white transition-colors"
+            className="flex items-center gap-2 px-4 h-[38px] bg-[#ffffff] text-primary font-bold rounded-[11px] shadow-[0_3px_8px_rgba(22,36,59,0.10)] hover:bg-primary hover:text-white transition-colors"
           >
             <Mail className="w-4 h-4" aria-hidden="true" />
             Email
           </a>
           <Link
             href={`/products/${product.id}`} onClick={rememberScroll}
-            className="flex items-center gap-2 px-6 h-[38px] bg-[#ffffff] dark:bg-gray-700 text-primary border-[1.5px] border-primary font-bold rounded-[11px] hover:bg-primary hover:text-white transition-colors"
+            className="flex items-center gap-2 px-6 h-[38px] bg-[#ffffff] text-primary border-[1.5px] border-primary font-bold rounded-[11px] hover:bg-primary hover:text-white transition-colors"
           >
             View Details
             <ChevronRight className="w-4 h-4" />
@@ -539,13 +539,13 @@ function ProductsContent() {
       />
       <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
         {/* Hero Header */}
-        <div className="bg-[#abccff] pt-28 pb-12">
+        <div className="bg-[#abccff] dark:bg-[#9a0822] pt-28 pb-12">
           <div className="w-full px-6 lg:px-12 sm:px-6 lg:px-8">
-            <div className="text-center text-[#ff4f20]">
+            <div className="text-center text-[#ff4f20] dark:text-white">
               <h1 className="text-4xl md:text-5xl font-bold mb-4">
                 {currentCategory?.name || 'Our Products'}
               </h1>
-              <p className="text-lg text-[#ff4f20]/90 max-w-2xl mx-auto">
+              <p className="text-lg text-[#ff4f20]/90 dark:text-white/90 max-w-2xl mx-auto">
                 {selectedCategory === 'all'
                   ? 'Discover premium custom merchandise and promotional products for your brand'
                   : `Explore our collection of high-quality ${currentCategory?.name?.toLowerCase()}`

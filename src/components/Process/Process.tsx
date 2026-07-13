@@ -51,7 +51,7 @@ export default function OurProcess() {
             <h2 className="text-4xl md:text-5xl font-bold text-gray-900 leading-tight">
               Making business easy
             </h2>
-            <p className="text-2xl font-light text-indigo-700 mt-1">in fashion</p>
+            <p className="text-2xl font-light text-primary mt-1">in fashion</p>
             <p className="mt-6 text-gray-600 text-base md:text-lg max-w-md mx-auto lg:mx-0">
               From initial consultation to final delivery, our streamlined
               process ensures precision, creativity, and quality at every step.
@@ -61,7 +61,7 @@ export default function OurProcess() {
           <div className="mt-10">
             <button
               onClick={() => router.push("/our_process")}
-              className="px-8 py-3 rounded-lg bg-indigo-600 text-white font-medium hover:bg-indigo-700 transition duration-300 shadow-md"
+              className="px-8 py-3 rounded-lg bg-primary text-white font-medium transition duration-300 shadow-md"
             >
               Explore Full Process
             </button>
@@ -84,18 +84,18 @@ export default function OurProcess() {
               768: { slidesPerView: 2 },
               1024: { slidesPerView: 3 },
             }}
-            className="pb-12"
+            className="pb-12 [--swiper-theme-color:var(--brand-primary)]"
           >
             {steps.map((step, index) => {
               const Icon = (step.icon && ICON_MAP[step.icon]) || ShieldCheck;
               return (
                 <SwiperSlide key={step._id}>
                   <div className="flex flex-col items-center bg-white shadow-md rounded-2xl p-6 text-center transition-transform duration-300 hover:shadow-xl hover:-translate-y-2">
-                    <div className="text-sm font-medium text-indigo-600 mb-3">
+                    <div className="text-sm font-medium text-primary mb-3">
                       Step {step.number || index + 1}
                     </div>
-                    <div className="w-16 h-16 flex items-center justify-center rounded-full bg-indigo-50 mb-4">
-                      <Icon className="w-8 h-8 text-indigo-700" />
+                    <div className="w-16 h-16 flex items-center justify-center rounded-full bg-primary/10 mb-4">
+                      <Icon className="w-8 h-8 text-primary" />
                     </div>
                     <h3 className="text-lg font-semibold text-gray-900">{step.title}</h3>
                     <p className="text-gray-500 text-sm mt-2 leading-relaxed">
@@ -108,12 +108,12 @@ export default function OurProcess() {
           </Swiper>
 
           <div className="absolute left-0 top-1/2 transform -translate-y-1/2 z-10">
-            <button aria-label="Previous slide" className="custom-swiper-button-prev bg-indigo-600 text-white w-10 h-10 rounded-full flex items-center justify-center shadow-md hover:bg-indigo-700 transition">
+            <button aria-label="Previous slide" className="custom-swiper-button-prev bg-primary text-white w-10 h-10 rounded-full flex items-center justify-center shadow-md transition">
               <ChevronLeft className="w-5 h-5" />
             </button>
           </div>
           <div className="absolute right-0 top-1/2 transform -translate-y-1/2 z-10">
-            <button aria-label="Next slide" className="custom-swiper-button-next bg-indigo-600 text-white w-10 h-10 rounded-full flex items-center justify-center shadow-md hover:bg-indigo-700 transition">
+            <button aria-label="Next slide" className="custom-swiper-button-next bg-primary text-white w-10 h-10 rounded-full flex items-center justify-center shadow-md transition">
               <ChevronRight className="w-5 h-5" />
             </button>
           </div>

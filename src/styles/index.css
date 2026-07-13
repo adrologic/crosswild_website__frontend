@@ -116,40 +116,40 @@
    ============================================ */
 
 .dark {
-  /* BASE BACKGROUNDS */
-  --brand-bg-primary: #121212;          /* Main background */
-  --brand-bg-secondary: #181818;        /* Secondary background */
-  --brand-bg-section: #1E1E1E;          /* Section background */
-  --brand-bg-card: #222222;             /* Card background */
-  --brand-bg-card-elevated: #252525;    /* Elevated card */
-  --brand-bg-tertiary: #222222;         /* compat alias */
+  /* BASE BACKGROUNDS — deep maroon (#9a0822 family), mirrors the light blue */
+  --brand-bg-primary: #1a0509;          /* Main background (deepest) */
+  --brand-bg-secondary: #260a11;        /* Secondary background */
+  --brand-bg-section: #260a11;          /* Section background */
+  --brand-bg-card: #5c0a18;             /* Card background (maroon) */
+  --brand-bg-card-elevated: #6e0c1d;    /* Elevated card */
+  --brand-bg-tertiary: #5c0a18;         /* compat alias */
 
-  /* TEXT COLORS */
-  --brand-text-primary: #FFFFFF;        /* Primary text */
-  --brand-text-secondary: #B3B3B3;      /* Secondary text */
-  --brand-text-muted: #888888;          /* Muted text */
-  --brand-text-disabled: #666666;       /* Disabled text */
-  --brand-text-highlight: #F97316;      /* Highlighted text */
+  /* TEXT COLORS — light on maroon */
+  --brand-text-primary: #fdeef0;        /* Primary text (near-white) */
+  --brand-text-secondary: #ecc9ce;      /* Secondary text */
+  --brand-text-muted: #c98f98;          /* Muted text */
+  --brand-text-disabled: #8f6a70;       /* Disabled text */
+  --brand-text-highlight: #ff4f20;      /* Highlighted text (orange accent) */
 
-  /* BRAND COLORS (same in dark — brand stays consistent) */
-  --brand-primary: #F97316;             /* Buy Now orange */
-  --brand-primary-dark: #EA580C;
-  --brand-primary-hover: #EA580C;
-  --brand-primary-active: #C2410C;
-  --brand-secondary-blue: #3B82F6;      /* Add to Cart blue */
+  /* BRAND COLORS — orange accent (same as light) */
+  --brand-primary: #ff4f20;
+  --brand-primary-dark: #e63f14;
+  --brand-primary-hover: #e63f14;
+  --brand-primary-active: #c2330f;
+  --brand-secondary-blue: #3B82F6;
   --brand-secondary-blue-hover: #2563EB;
   --brand-secondary-blue-active: #1D4ED8;
 
   /* BORDERS */
-  --brand-border: #2A2A2A;
-  --brand-border-dark: #333333;
+  --brand-border: #7a1020;
+  --brand-border-dark: #5c0a18;
 
   /* PRODUCT CARDS */
-  --brand-card-bg: #222222;
-  --brand-card-border: #2A2A2A;
-  --brand-card-hover: #2C2C2C;
-  --brand-card-price: #FFFFFF;
-  --brand-card-old-price: #888888;
+  --brand-card-bg: #5c0a18;
+  --brand-card-border: #7a1020;
+  --brand-card-hover: #6e0c1d;
+  --brand-card-price: #ffffff;
+  --brand-card-old-price: #c98f98;
 
   /* BADGES */
   --brand-badge-sale: #EF4444;
@@ -158,11 +158,11 @@
   --brand-badge-premium: #8B5CF6;
 
   /* INPUT FIELDS */
-  --brand-input-bg: #1E1E1E;
-  --brand-input-border: #2A2A2A;
-  --brand-input-focus: #F97316;
-  --brand-input-placeholder: #888888;
-  --brand-input-text: #FFFFFF;
+  --brand-input-bg: #260a11;
+  --brand-input-border: #7a1020;
+  --brand-input-focus: #ff4f20;
+  --brand-input-placeholder: #c98f98;
+  --brand-input-text: #fdeef0;
 
   /* STATUS COLORS */
   --brand-success: #22C55E;
@@ -174,12 +174,12 @@
   /* RATING */
   --brand-rating-star: #FACC15;
 
-  /* NAVBAR */
-  --brand-navbar-bg: #181818;
-  --brand-navbar-border: #2A2A2A;
-  --brand-navbar-active: #F97316;
-  --brand-navbar-normal: #B3B3B3;
-  --brand-navbar-hover: #FFFFFF;
+  /* NAVBAR — signature maroon */
+  --brand-navbar-bg: #9a0822;
+  --brand-navbar-border: #7a1020;
+  --brand-navbar-active: #ff4f20;
+  --brand-navbar-normal: #fdeef0;
+  --brand-navbar-hover: #ffffff;
 
   /* ACCENT (legacy) */
   --brand-accent: #22C55E;
@@ -446,34 +446,34 @@
   background-color: var(--brand-bg-section) !important;
 }
 .dark .bg-gray-900 {
-  background-color: #121212 !important;
+  background-color: #140407 !important;
 }
 .dark .bg-gray-800 {
-  background-color: #181818 !important;
+  background-color: #240810 !important;
 }
 .dark .bg-gray-700 {
-  background-color: #1E1E1E !important;
+  background-color: #3a0c15 !important;
 }
 .dark .bg-gray-600 {
-  background-color: #222222 !important;
+  background-color: #5c0a18 !important;
 }
 
 /* ── Gradient from/to overrides ── */
 .dark .from-gray-900,
 .dark .dark\:from-gray-900 {
-  --tw-gradient-from: #121212 !important;
+  --tw-gradient-from: #140407 !important;
 }
 .dark .to-gray-800,
 .dark .dark\:to-gray-800 {
-  --tw-gradient-to: #181818 !important;
+  --tw-gradient-to: #240810 !important;
 }
 .dark .from-gray-800,
 .dark .dark\:from-gray-800 {
-  --tw-gradient-from: #181818 !important;
+  --tw-gradient-from: #240810 !important;
 }
 .dark .to-gray-900,
 .dark .dark\:to-gray-900 {
-  --tw-gradient-to: #121212 !important;
+  --tw-gradient-to: #140407 !important;
 }
 .dark .from-white,
 .dark .via-white,
@@ -682,6 +682,21 @@ html:not(.dark) .bg-primary.text-white:hover {
 /* Icons inside those buttons follow the orange text colour */
 html:not(.dark) .bg-primary.text-white svg {
   color: #ff4f20 !important;
+}
+
+/* ── DARK THEME: filled primary buttons → maroon (#9a0822) + white text ── */
+.dark .bg-primary.text-white {
+  background-color: #9a0822 !important;
+  color: #ffffff !important;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.45),
+              0 0 0 1.5px rgba(255, 79, 32, 0.5);
+  transition: background-color 0.2s ease, box-shadow 0.2s ease;
+}
+.dark .bg-primary.text-white:hover {
+  background-color: #b50a28 !important;
+}
+.dark .bg-primary.text-white svg {
+  color: #ffffff !important;
 }
 
 /* ── Headings → orange accent on light backgrounds ──

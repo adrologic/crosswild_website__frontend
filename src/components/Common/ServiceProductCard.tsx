@@ -23,7 +23,7 @@ export default function ServiceProductCard({
   sizes = '(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw',
 }: ServiceProductCardProps) {
   return (
-    <div className="border border-card-border dark:border-gray-700 rounded-xl overflow-hidden bg-card-bg dark:bg-gray-800 shadow-sm hover:shadow-md transition-shadow flex flex-col">
+    <div className="border border-card-border dark:border-gray-700 rounded-xl overflow-hidden bg-card-bg shadow-sm hover:shadow-md transition-shadow flex flex-col">
       <div className="relative h-[220px] w-full bg-gray-100 dark:bg-gray-700 flex-shrink-0">
         <Image src={image} alt={name} fill className="object-cover" sizes={sizes} />
       </div>

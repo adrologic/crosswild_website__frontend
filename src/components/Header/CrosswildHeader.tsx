@@ -103,7 +103,7 @@ function buildNavCategories(tree: any[]): { nav: NavCategory[]; flat: FlatCatego
 
 function SearchBox({
   value, onChange, onSubmit, suggestions, loading, showDropdown,
-  onSelectProduct, onSelectCategory, onClose, containerRef, inputClass, isMobile, flatCategories,
+  onSelectProduct, onSelectCategory, onOpen, onClose, containerRef, inputClass, isMobile, flatCategories,
 }: {
   value: string;
   onChange: (v: string) => void;
@@ -113,6 +113,7 @@ function SearchBox({
   showDropdown: boolean;
   onSelectProduct: (id: string) => void;
   onSelectCategory: (slug: string) => void;
+  onOpen: () => void;
   onClose: () => void;
   containerRef: React.RefObject<HTMLDivElement | null>;
   inputClass: string;
@@ -133,7 +134,7 @@ function SearchBox({
           value={value}
           onChange={e => onChange(e.target.value)}
           onKeyDown={e => e.key === 'Enter' && onSubmit()}
-          onFocus={() => value.trim() && onClose()}
+          onFocus={() => value.trim() && onOpen()}
           className={inputClass}
           autoComplete="off"
         />
@@ -360,6 +361,7 @@ export default function CrosswildHeader() {
     router.push(getCategoryUrl(slug));
   }, [dispatch, router]);
 
+  const openDropdown = useCallback(() => setShowDropdown(true), []);
   const closeDropdown = useCallback(() => setShowDropdown(false), []);
 
   return (
@@ -409,7 +411,7 @@ export default function CrosswildHeader() {
                 value={searchQuery} onChange={setSearchQuery} onSubmit={handleSearchSubmit}
                 suggestions={suggestions} loading={searchLoading} showDropdown={showDropdown}
                 onSelectProduct={handleSelectProduct} onSelectCategory={handleSelectCategory}
-                onClose={closeDropdown} containerRef={desktopSearchRef}
+                onOpen={openDropdown} onClose={closeDropdown} containerRef={desktopSearchRef}
                 inputClass="w-full px-4 py-3 pr-12 border-2 border-theme-border bg-theme-bg-soft dark:bg-[#1E1A14] text-theme-text placeholder-theme-text-muted rounded-lg focus:border-primary focus:outline-none transition-colors text-sm"
                 isMobile={false} flatCategories={flatCategories}
               />
@@ -494,7 +496,7 @@ export default function CrosswildHeader() {
               suggestions={suggestions} loading={searchLoading} showDropdown={showDropdown}
               onSelectProduct={(id) => { handleSelectProduct(id); dispatch(closeMobileSearch()); }}
               onSelectCategory={(slug) => { handleSelectCategory(slug); dispatch(closeMobileSearch()); }}
-              onClose={closeDropdown} containerRef={mobileBarSearchRef}
+              onOpen={openDropdown} onClose={closeDropdown} containerRef={mobileBarSearchRef}
               inputClass="w-full px-4 py-2.5 border border-theme-border bg-theme-bg-soft dark:bg-[#1E1A14] text-theme-text placeholder-theme-text-muted rounded-lg pr-12 focus:outline-none focus:border-primary transition-colors text-sm"
               isMobile={true} flatCategories={flatCategories}
             />

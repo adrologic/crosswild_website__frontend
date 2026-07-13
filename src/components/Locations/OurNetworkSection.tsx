@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { MapPin } from 'lucide-react';
+import { LOCATIONS } from '@/data/locations';
 
 const API_URL = (process.env.BACKEND_URL || 'https://crosswild-backend-p5l3.onrender.com') + '/api';
 
@@ -16,7 +17,10 @@ interface CityCard {
 const BASE_CITIES: CityCard[] = [
   {
     city: 'Jaipur',
-    slug: 'tshirt-manufacturer-in-jaipur',
+    // No 'tshirt-manufacturer-in-jaipur' location page exists (it's neither in
+    // src/data/locations.ts nor in the next.config.js rewrite list), so link
+    // the Jaipur card to the existing Jaipur T-shirt manufacturer page.
+    slug: 'product/customize-promotional-t-shirt-manufacturer-in-Jaipur',
     branchAddress: 'D-8, Near World Trade Park, D-Block, Malviya Nagar, Jaipur, Rajasthan 302017',
     image: '/images/city/jaipur.jpg',
     branchPhone: '+91-9571286262',
@@ -51,6 +55,15 @@ const CITY_IMAGE_DEFAULTS: Record<string, string> = {
   Jodhpur: '/images/city/jodhpur.jpg',
   Udaipur: '/images/city/udaipur.jpg',
 };
+
+// Root-level location URLs only exist for slugs in the next.config.js rewrite
+// list (mirrored by src/data/locations.ts); anything else — e.g. a location
+// added later via the admin — is only served under /locations/<slug>.
+const ROOT_LOCATION_SLUGS = new Set<string>(LOCATIONS.map((l) => l.slug));
+function cityHref(slug: string): string {
+  if (slug.includes('/')) return `/${slug}`; // explicit path (e.g. Jaipur card)
+  return ROOT_LOCATION_SLUGS.has(slug) ? `/${slug}` : `/locations/${slug}`;
+}
 
 async function getCityCards(): Promise<CityCard[]> {
   // Start from static base so all 4 cities always appear
@@ -127,7 +140,7 @@ export default async function OurNetworkSection() {
             {cities.map((city) => (
               <Link
                 key={city.city}
-                href={`/${city.slug}`}
+                href={cityHref(city.slug)}
                 className="bg-white dark:bg-[#1f2937] border border-gray-200 dark:border-gray-700 rounded-xl p-5 block hover:shadow-md transition-shadow duration-200"
               >
                 {/* Circular city image */}

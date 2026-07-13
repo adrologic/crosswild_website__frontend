@@ -22,7 +22,7 @@ interface CartState {
 
 const STORAGE_KEY = 'crosswild-cart';
 
-function loadFromStorage(): CartItem[] {
+export function loadFromStorage(): CartItem[] {
   if (typeof window === 'undefined') return [];
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
@@ -41,10 +41,26 @@ function saveToStorage(items: CartItem[]) {
   }
 }
 
+// True when a stored line item matches the given id (+ size/color when provided).
+function matchesLineItem(
+  item: CartItem,
+  key: { id: string; size?: string; color?: string }
+): boolean {
+  if (item.id !== key.id) return false;
+  if (key.size !== undefined && item.size !== key.size) return false;
+  if (key.color !== undefined && item.color !== key.color) return false;
+  return true;
+}
+
 const cartSlice = createSlice({
   name: 'cart',
-  initialState: (): CartState => ({ items: loadFromStorage() }),
+  // Start empty on both server and client so SSR markup matches the first
+  // client render; the real cart is loaded via hydrateCart after mount.
+  initialState: (): CartState => ({ items: [] }),
   reducers: {
+    hydrateCart(state, action: PayloadAction<CartItem[]>) {
+      state.items = action.payload;
+    },
     addToCart(state, action: PayloadAction<Omit<CartItem, 'quantity'> & { quantity?: number }>) {
       const { quantity = 1, ...item } = action.payload;
       const existing = state.items.find(
@@ -57,16 +73,20 @@ const cartSlice = createSlice({
       }
       saveToStorage(state.items);
     },
-    removeFromCart(state, action: PayloadAction<string>) {
-      state.items = state.items.filter((i) => i.id !== action.payload);
+    // Line items are keyed by id+size+color (see addToCart), so removal and
+    // quantity updates must match on the same triple or they hit the wrong
+    // variant. A plain string payload (id only) is still accepted.
+    removeFromCart(state, action: PayloadAction<string | { id: string; size?: string; color?: string }>) {
+      const key = typeof action.payload === 'string' ? { id: action.payload } : action.payload;
+      state.items = state.items.filter((i) => !matchesLineItem(i, key));
       saveToStorage(state.items);
     },
-    updateQuantity(state, action: PayloadAction<{ id: string; quantity: number }>) {
-      const { id, quantity } = action.payload;
+    updateQuantity(state, action: PayloadAction<{ id: string; size?: string; color?: string; quantity: number }>) {
+      const { quantity, ...key } = action.payload;
       if (quantity <= 0) {
-        state.items = state.items.filter((i) => i.id !== id);
+        state.items = state.items.filter((i) => !matchesLineItem(i, key));
       } else {
-        const item = state.items.find((i) => i.id === id);
+        const item = state.items.find((i) => matchesLineItem(i, key));
         if (item) item.quantity = quantity;
       }
       saveToStorage(state.items);
@@ -78,13 +98,14 @@ const cartSlice = createSlice({
   },
 });
 
-export const { addToCart, removeFromCart, updateQuantity, clearCart } = cartSlice.actions;
+export const { hydrateCart, addToCart, removeFromCart, updateQuantity, clearCart } = cartSlice.actions;
 
 // Selectors
 export const selectCartItems = (state: RootState) => state.cart.items;
 export const selectTotalItems = (state: RootState) =>
   state.cart.items.reduce((sum, i) => sum + i.quantity, 0);
 export const selectTotalPrice = (state: RootState) =>
-  state.cart.items.reduce((sum, i) => sum + i.price * i.quantity, 0);
+  // B2B items may have no price — treat missing/non-numeric price as 0 (never NaN)
+  state.cart.items.reduce((sum, i) => sum + (Number(i.price) || 0) * i.quantity, 0);
 
 export default cartSlice.reducer;

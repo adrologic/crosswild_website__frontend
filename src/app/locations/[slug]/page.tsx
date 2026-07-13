@@ -8,6 +8,7 @@ import { LOCATIONS } from "@/data/locations";
 import ScrollUp from "@/components/Common/ScrollUp";
 import TrustSection from "@/components/Features/TrustSection";
 import LocationImageSlider from "@/components/Locations/LocationImageSlider";
+import LocationQuoteForm from "@/components/Locations/LocationQuoteForm";
 import { toPlainText } from "@/lib/text";
 
 
@@ -168,6 +169,14 @@ function locationLabel(l: any): string {
   return l.h1 || l.slug;
 }
 
+// Root-level URLs (e.g. /tshirt-manufacturer-in-jodhpur) only work for slugs
+// listed in next.config.js rewrites, which mirror the static LOCATIONS list.
+// Any location added later via the admin only exists under /locations/<slug>.
+const ROOT_LOCATION_SLUGS = new Set(LOCATIONS.map((l) => l.slug));
+function locationHref(slug: string): string {
+  return ROOT_LOCATION_SLUGS.has(slug) ? `/${slug}` : `/locations/${slug}`;
+}
+
 export default async function LocationPage({
   params,
 }: {
@@ -322,47 +331,7 @@ export default async function LocationPage({
                         </a>{" "}
                         or fill in the form below and we'll contact you:
                       </p>
-                      <form
-                        action={`mailto:orders@thecrosswild.com?subject=Enquiry from ${location.city || "Website"}`}
-                        method="get"
-                        className="space-y-3"
-                      >
-                        <input
-                          type="text"
-                          name="name"
-                          placeholder="Enter Your Name"
-                          required
-                          className="w-full px-4 py-2.5 rounded-lg border border-theme-border bg-theme-bg text-sm text-gray-800 dark:text-gray-100 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary"
-                        />
-                        <input
-                          type="email"
-                          name="email"
-                          placeholder="Enter Your Email"
-                          required
-                          className="w-full px-4 py-2.5 rounded-lg border border-theme-border bg-theme-bg text-sm text-gray-800 dark:text-gray-100 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary"
-                        />
-                        <input
-                          type="tel"
-                          name="phone"
-                          placeholder="Enter Your Phone No."
-                          maxLength={10}
-                          required
-                          className="w-full px-4 py-2.5 rounded-lg border border-theme-border bg-theme-bg text-sm text-gray-800 dark:text-gray-100 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary"
-                        />
-                        <textarea
-                          name="message"
-                          placeholder="Enter Your Enquiry"
-                          rows={3}
-                          required
-                          className="w-full px-4 py-2.5 rounded-lg border border-theme-border bg-theme-bg text-sm text-gray-800 dark:text-gray-100 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary resize-none"
-                        />
-                        <button
-                          type="submit"
-                          className="w-full py-3 bg-primary text-white font-bold rounded-lg hover:bg-primary-dark transition-colors tracking-wide"
-                        >
-                          SUBMIT
-                        </button>
-                      </form>
+                      <LocationQuoteForm city={location.city} />
 
                       {/* Quick contact row */}
                       <div className="flex gap-2 mt-4">
@@ -573,7 +542,7 @@ export default async function LocationPage({
                 {otherLocations.map((l: any) => (
                   <Link
                     key={l.slug}
-                    href={`/${l.slug}`}
+                    href={locationHref(l.slug)}
                     className="inline-flex items-center gap-2 px-4 py-2 bg-theme-bg-soft border border-theme-border rounded-full text-sm font-medium text-theme-text-secondary hover:text-primary hover:border-primary transition-colors"
                   >
                     <MapPin className="w-3.5 h-3.5" />
@@ -992,7 +961,7 @@ export default async function LocationPage({
               {otherLocations.map((l: any) => (
                 <Link
                   key={l.slug}
-                  href={`/${l.slug}`}
+                  href={locationHref(l.slug)}
                   className="inline-flex items-center gap-2 px-4 py-2 bg-theme-bg-soft border border-theme-border rounded-full text-sm font-medium text-theme-text-secondary hover:text-primary hover:border-primary transition-colors"
                 >
                   <MapPin className="w-3.5 h-3.5" />

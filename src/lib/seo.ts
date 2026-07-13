@@ -1,4 +1,5 @@
 import { Metadata } from 'next';
+import { toPlainText } from './text';
 
 const API_URL = (process.env.BACKEND_URL || 'https://crosswild-backend-p5l3.onrender.com') + '/api';
 
@@ -160,7 +161,7 @@ export async function generateProductMetadata(product: {
   // Use slug for URL if available, otherwise fallback to ID
   const urlPath = product.slug || product.id;
   const title = product.seo?.title || product.name;
-  const description = product.seo?.description || product.description.substring(0, 160);
+  const description = product.seo?.description || toPlainText(product.description).substring(0, 160);
   const image = product.seo?.ogImage || product.image;
   const keywords = product.seo?.keywords || [product.name, product.category, 'custom printing'].filter(Boolean);
   const canonicalUrl = product.seo?.canonicalUrl || `${siteUrl}/products/${urlPath}`;
@@ -225,7 +226,7 @@ export async function generateBlogMetadata(blog: {
   // Use slug for URL if available, otherwise fallback to ID
   const urlPath = blog.slug || blog.id;
   const title = blog.seo?.title || blog.title;
-  const description = blog.seo?.description || blog.paragraph.substring(0, 160);
+  const description = blog.seo?.description || toPlainText(blog.paragraph).substring(0, 160);
   const image = blog.seo?.ogImage || blog.image;
   const keywords = blog.seo?.keywords || blog.tags || [];
   const canonicalUrl = blog.seo?.canonicalUrl || `${siteUrl}/blog/${urlPath}`;
@@ -288,7 +289,7 @@ export async function generateCategoryMetadata(category: {
 
   const urlPath = category.seoUrl || category.id;
   const title = category.seo?.title || `${category.name} - ${globalSEO.siteName || defaultSEO.siteName}`;
-  const plainDesc = category.description?.replace(/<[^>]*>/g, '').substring(0, 160) || '';
+  const plainDesc = toPlainText(category.description).substring(0, 160);
   const description = category.seo?.description || plainDesc || `Browse ${category.name} at The CrossWild. Premium quality custom printing and merchandise.`;
   const image = category.seo?.ogImage || category.image;
   const keywords = category.seo?.keywords || [category.name, 'custom printing', 'The CrossWild'].filter(Boolean);
@@ -336,7 +337,7 @@ export function generateCategorySchema(category: any, subcategories: any[], site
     '@context': 'https://schema.org',
     '@type': 'CollectionPage',
     name: category.name,
-    description: category.seo?.description || category.description?.replace(/<[^>]*>/g, '').substring(0, 300),
+    description: category.seo?.description || (category.description ? toPlainText(category.description).substring(0, 300) : undefined),
     url: `${siteUrl}/category/${urlPath}`,
     image: category.image || undefined,
     isPartOf: {
@@ -349,97 +350,6 @@ export function generateCategorySchema(category: any, subcategories: any[], site
       name: sub.name,
       url: `${siteUrl}/category/${sub.seoUrl || sub.id}`,
     })),
-  };
-}
-
-// Generate JSON-LD structured data
-export function generateOrganizationSchema(globalSEO: any) {
-  return {
-    '@context': 'https://schema.org',
-    '@type': globalSEO.organizationSchema?.type || 'Organization',
-    name: globalSEO.organizationSchema?.name || globalSEO.siteName,
-    url: globalSEO.siteUrl,
-    logo: globalSEO.organizationSchema?.logo,
-    description: globalSEO.organizationSchema?.description || globalSEO.defaultDescription,
-    contactPoint: globalSEO.contactInfo ? {
-      '@type': 'ContactPoint',
-      telephone: globalSEO.contactInfo.phone,
-      email: globalSEO.contactInfo.email,
-      contactType: 'customer service',
-    } : undefined,
-    address: globalSEO.contactInfo?.address ? {
-      '@type': 'PostalAddress',
-      streetAddress: globalSEO.contactInfo.address.street,
-      addressLocality: globalSEO.contactInfo.address.city,
-      addressRegion: globalSEO.contactInfo.address.state,
-      postalCode: globalSEO.contactInfo.address.postalCode,
-      addressCountry: globalSEO.contactInfo.address.country,
-    } : undefined,
-    sameAs: [
-      globalSEO.socialLinks?.facebook,
-      globalSEO.socialLinks?.twitter,
-      globalSEO.socialLinks?.instagram,
-      globalSEO.socialLinks?.linkedin,
-      globalSEO.socialLinks?.youtube,
-    ].filter(Boolean),
-  };
-}
-
-export function generateProductSchema(product: any, siteUrl: string) {
-  const urlPath = product.slug || product.id;
-  const schema: any = {
-    '@context': 'https://schema.org',
-    '@type': 'Product',
-    name: product.name,
-    description: product.description,
-    image: product.image,
-    sku: product.sku || undefined,
-    url: `${siteUrl}/products/${urlPath}`,
-    brand: {
-      '@type': 'Brand',
-      name: 'The CrossWild',
-    },
-    offers: {
-      '@type': 'Offer',
-      availability: product.stock > 0 ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock',
-      priceCurrency: 'INR',
-      price: product.price || 0,
-    },
-  };
-
-  // Add aggregate rating if reviews exist
-  if (product.reviews && product.reviews > 0 && product.rating && product.rating > 0) {
-    schema.aggregateRating = {
-      '@type': 'AggregateRating',
-      ratingValue: product.rating,
-      reviewCount: product.reviews,
-      bestRating: 5,
-      worstRating: 1,
-    };
-  }
-
-  return schema;
-}
-
-export function generateBlogSchema(blog: any, siteUrl: string) {
-  const urlPath = blog.slug || blog.id;
-  return {
-    '@context': 'https://schema.org',
-    '@type': 'BlogPosting',
-    headline: blog.title,
-    description: blog.paragraph?.substring(0, 160),
-    image: blog.image,
-    url: `${siteUrl}/blog/${urlPath}`,
-    author: {
-      '@type': 'Person',
-      name: blog.author?.name || 'The CrossWild',
-    },
-    publisher: {
-      '@type': 'Organization',
-      name: 'The CrossWild',
-    },
-    datePublished: blog.createdAt,
-    dateModified: blog.updatedAt,
   };
 }
 

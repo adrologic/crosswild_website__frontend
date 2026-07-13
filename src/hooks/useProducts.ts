@@ -12,20 +12,3 @@ export function useProducts(params?: ProductParams) {
     staleTime: FIVE_MINUTES,
   });
 }
-
-export function useProduct(id: string) {
-  return useQuery({
-    queryKey: ['product', id],
-    queryFn: () => productsAPI.getById(id),
-    enabled: !!id,
-    staleTime: FIVE_MINUTES,
-  });
-}
-
-export function useProductStats() {
-  return useQuery({
-    queryKey: ['product-stats'],
-    queryFn: () => productsAPI.getStats(),
-    staleTime: FIVE_MINUTES,
-  });
-}

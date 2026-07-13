@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Image, { ImageProps } from "next/image";
 import { ImageOff } from "lucide-react";
 
@@ -10,6 +10,11 @@ interface SafeImageProps extends Omit<ImageProps, "onError"> {
 
 const SafeImage = ({ fallbackText = "No Image", alt, ...props }: SafeImageProps) => {
   const [hasError, setHasError] = useState(false);
+
+  // Reset the error state when the source changes (e.g. gallery image switch)
+  useEffect(() => {
+    setHasError(false);
+  }, [props.src]);
 
   if (hasError) {
     return (

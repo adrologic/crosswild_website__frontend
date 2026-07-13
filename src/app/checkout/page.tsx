@@ -51,12 +51,12 @@ export default function CheckoutPage() {
         customerName: formData.fullName,
         customerEmail: formData.email,
         customerPhone: formData.phone,
+        // Keys must match the backend Order schema: { address, city, state, pincode }
         shippingAddress: {
-          street: formData.address,
+          address: formData.address,
           city: formData.city,
           state: formData.state,
-          zipCode: formData.pincode,
-          country: 'India',
+          pincode: formData.pincode,
         },
         items: cart.map((item) => ({
           productId: item.id,
@@ -67,7 +67,7 @@ export default function CheckoutPage() {
           color: item.color,
         })),
         total: getTotalPrice(),
-        paymentMethod: 'COD', // Cash on Delivery
+        paymentMethod: 'cod', // Cash on Delivery (backend enum is lowercase)
         notes: formData.notes,
       };
 
@@ -90,7 +90,8 @@ export default function CheckoutPage() {
           (formData.notes ? `\n\n📝 Notes: ${formData.notes}` : '');
 
         const encodedMessage = encodeURIComponent(message);
-        const whatsappNumber = '+919529626262';
+        // wa.me links must be digits only (no '+')
+        const whatsappNumber = '919529626262';
 
         // Open WhatsApp with pre-filled message
         window.open(`https://wa.me/${whatsappNumber}?text=${encodedMessage}`, '_blank');
@@ -424,9 +425,10 @@ export default function CheckoutPage() {
                     </button>
                     <button
                       onClick={handleSubmit}
-                      className="flex-1 py-3 bg-secondary text-white font-semibold rounded-lg hover:bg-secondary-dark transition-colors"
+                      disabled={submitting}
+                      className="flex-1 py-3 bg-secondary text-white font-semibold rounded-lg hover:bg-secondary-dark transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
                     >
-                      Send Order via {contactMethod === 'whatsapp' ? 'WhatsApp' : 'Email'}
+                      {submitting ? 'Sending…' : `Send Order via ${contactMethod === 'whatsapp' ? 'WhatsApp' : 'Email'}`}
                     </button>
                   </div>
                 </div>

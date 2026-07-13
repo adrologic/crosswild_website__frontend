@@ -72,7 +72,7 @@ export default function TrendingProducts() {
             return (
             <div
               key={product.id}
-              className={`group bg-card-bg dark:bg-gray-800 rounded-[22px] p-[14px] shadow-[0_14px_30px_rgba(22,36,59,0.16)] hover:-translate-y-[5px] hover:shadow-[0_22px_44px_rgba(22,36,59,0.24)] transition-all duration-[220ms] ease-out ${
+              className={`group bg-card-bg rounded-[22px] p-[14px] shadow-[0_14px_30px_rgba(22,36,59,0.16)] hover:-translate-y-[5px] hover:shadow-[0_22px_44px_rgba(22,36,59,0.24)] transition-all duration-[220ms] ease-out ${
                 index === 0 ? 'lg:col-span-2 lg:row-span-2' : ''
               }`}
             >
@@ -139,14 +139,14 @@ export default function TrendingProducts() {
                         target="_blank"
                         rel="noopener noreferrer"
                         aria-label={`Inquire about ${product.name} on WhatsApp`}
-                        className="flex items-center justify-center w-[38px] h-[38px] bg-[#ffffff] dark:bg-gray-700 text-primary rounded-[11px] shadow-[0_3px_8px_rgba(22,36,59,0.10)] hover:bg-primary hover:text-white transition-colors"
+                        className="flex items-center justify-center w-[38px] h-[38px] bg-[#ffffff] text-primary rounded-[11px] shadow-[0_3px_8px_rgba(22,36,59,0.10)] hover:bg-primary hover:text-white transition-colors"
                       >
                         <MessageCircle className="w-5 h-5" aria-hidden="true" />
                       </a>
                       <a
                         href={getEmailLink(product)}
                         aria-label={`Email inquiry about ${product.name}`}
-                        className="flex items-center justify-center w-[38px] h-[38px] bg-[#ffffff] dark:bg-gray-700 text-primary rounded-[11px] shadow-[0_3px_8px_rgba(22,36,59,0.10)] hover:bg-primary hover:text-white transition-colors"
+                        className="flex items-center justify-center w-[38px] h-[38px] bg-[#ffffff] text-primary rounded-[11px] shadow-[0_3px_8px_rgba(22,36,59,0.10)] hover:bg-primary hover:text-white transition-colors"
                       >
                         <Mail className="w-5 h-5" aria-hidden="true" />
                       </a>
@@ -156,7 +156,7 @@ export default function TrendingProducts() {
               ) : (
                 <Link
                   href={`/products/${product.id}`}
-                  className="block relative aspect-[4/3] bg-[#ffffff] dark:bg-gray-700 rounded-2xl shadow-[0_4px_12px_rgba(22,36,59,0.08)] overflow-hidden"
+                  className="block relative aspect-[4/3] bg-[#ffffff] rounded-2xl shadow-[0_4px_12px_rgba(22,36,59,0.08)] overflow-hidden"
                 >
                   {product.image && (
                     <SafeImage
@@ -197,7 +197,7 @@ export default function TrendingProducts() {
               {index !== 0 && (
                 <div className="pt-4 px-2 pb-1.5">
                   {product.category && (
-                    <span className="inline-flex items-center bg-[#ffffff] dark:bg-gray-700 text-primary text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full shadow-[0_2px_6px_rgba(22,36,59,0.08)] mb-2 capitalize">
+                    <span className="inline-flex items-center bg-[#ffffff] text-primary text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full shadow-[0_2px_6px_rgba(22,36,59,0.08)] mb-2 capitalize">
                       {product.category}
                     </span>
                   )}
@@ -227,14 +227,14 @@ export default function TrendingProducts() {
                       target="_blank"
                       rel="noopener noreferrer"
                       aria-label={`Inquire about ${product.name} on WhatsApp`}
-                      className="flex items-center justify-center w-[38px] h-[38px] bg-[#ffffff] dark:bg-gray-700 text-primary rounded-[11px] shadow-[0_3px_8px_rgba(22,36,59,0.10)] hover:bg-primary hover:text-white transition-colors"
+                      className="flex items-center justify-center w-[38px] h-[38px] bg-[#ffffff] text-primary rounded-[11px] shadow-[0_3px_8px_rgba(22,36,59,0.10)] hover:bg-primary hover:text-white transition-colors"
                     >
                       <MessageCircle className="w-4 h-4" aria-hidden="true" />
                     </a>
                     <a
                       href={getEmailLink(product)}
                       aria-label={`Email inquiry about ${product.name}`}
-                      className="flex items-center justify-center w-[38px] h-[38px] bg-[#ffffff] dark:bg-gray-700 text-primary rounded-[11px] shadow-[0_3px_8px_rgba(22,36,59,0.10)] hover:bg-primary hover:text-white transition-colors"
+                      className="flex items-center justify-center w-[38px] h-[38px] bg-[#ffffff] text-primary rounded-[11px] shadow-[0_3px_8px_rgba(22,36,59,0.10)] hover:bg-primary hover:text-white transition-colors"
                     >
                       <Mail className="w-4 h-4" aria-hidden="true" />
                     </a>

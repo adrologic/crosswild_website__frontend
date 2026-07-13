@@ -41,13 +41,29 @@ const getSubImageUrl = (img: string | { url: string }) =>
 const formatSubcategory = (slug: string) =>
   slug.replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
 
-export default function ProductDetailClient({ id }: { id: string }) {
-  const [product, setProduct] = useState<Product | null>(null);
-  const [loading, setLoading] = useState(true);
+export default function ProductDetailClient({
+  id,
+  initialProduct,
+}: {
+  id: string;
+  initialProduct?: Product | null;
+}) {
+  const [product, setProduct] = useState<Product | null>(initialProduct ?? null);
+  const [loading, setLoading] = useState(!initialProduct);
   const [error, setError] = useState<string | null>(null);
   const [selectedImage, setSelectedImage] = useState(0);
 
   useEffect(() => {
+    // Server already provided the product — sync state (the component is NOT
+    // remounted on client-side navigation between two product pages, so the
+    // new initialProduct arrives as a prop change) and skip the client refetch.
+    if (initialProduct) {
+      setProduct(initialProduct);
+      setSelectedImage(0);
+      setError(null);
+      setLoading(false);
+      return;
+    }
     const fetchProduct = async () => {
       try {
         setLoading(true);
@@ -62,7 +78,7 @@ export default function ProductDetailClient({ id }: { id: string }) {
       }
     };
     if (id) fetchProduct();
-  }, [id]);
+  }, [id, initialProduct]);
 
   // ─── Loading State ───
   if (loading) {

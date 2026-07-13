@@ -84,12 +84,12 @@ interface Order {
   customerName: string;
   customerEmail: string;
   customerPhone: string;
+  // Matches the backend Order schema subdocument
   shippingAddress: {
-    street: string;
+    address: string;
     city: string;
     state: string;
-    zipCode: string;
-    country: string;
+    pincode: string;
   };
   items: {
     productId: string;
@@ -122,9 +122,10 @@ interface ProductsResponse {
 
 interface BlogsResponse {
   blogs: Blog[];
-  total: number;
-  page: number;
-  pages: number;
+  // Fields actually returned by the backend (blogController.getAllBlogs)
+  totalBlogs?: number;
+  currentPage?: number;
+  totalPages?: number;
 }
 
 // Helper function to map product _id to id
@@ -252,11 +253,10 @@ export const ordersAPI = {
     customerEmail: string;
     customerPhone: string;
     shippingAddress: {
-      street: string;
+      address: string;
       city: string;
       state: string;
-      zipCode: string;
-      country: string;
+      pincode: string;
     };
     items: {
       productId: string;
@@ -278,36 +278,9 @@ export const ordersAPI = {
       body: JSON.stringify(orderData),
     });
     if (!response.ok) throw new Error('Failed to create order');
-    return response.json();
-  },
-};
-
-// Upload API
-export const uploadAPI = {
-  // Upload image file
-  uploadFile: async (file: File): Promise<{ url: string }> => {
-    const formData = new FormData();
-    formData.append('image', file);
-
-    const response = await fetch(`${API_URL}/upload`, {
-      method: 'POST',
-      body: formData,
-    });
-    if (!response.ok) throw new Error('Failed to upload image');
-    return response.json();
-  },
-
-  // Upload base64 image
-  uploadBase64: async (base64: string): Promise<{ url: string }> => {
-    const response = await fetch(`${API_URL}/upload/base64`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ image: base64 }),
-    });
-    if (!response.ok) throw new Error('Failed to upload image');
-    return response.json();
+    const data = await response.json();
+    // API returns { success: true, message, order: {...} }
+    return data.order || data;
   },
 };
 
@@ -463,95 +436,6 @@ export const categoriesAPI = {
     if (!response.ok) throw new Error('Failed to fetch category');
     return response.json();
   },
-};
-
-// Locations API
-export interface LocationProduct {
-  name: string;
-  slug: string;
-  icon: string;
-  link: string;
-  types: string[];
-  description: string;
-}
-
-export interface LocationContact {
-  address: string;
-  phone: string[];
-  email: string;
-  hours: string;
-  mapLink: string;
-}
-
-export interface LocationPage {
-  _id: string;
-  slug: string;
-  isActive?: boolean;
-
-  // City page fields
-  name?: string;
-  state?: string;
-  isHeadquarters?: boolean;
-  tagline?: string;
-  heroHeading?: string;
-  description?: string;
-  whyChooseUs?: string[];
-  printingMethods?: string[];
-  fabrics?: string[];
-  partners?: string[];
-  products?: LocationProduct[];
-  contact?: LocationContact;
-  image?: string;
-  seo?: {
-    title?: string;
-    description?: string;
-    keywords?: string[];
-    ogImage?: string;
-    canonicalUrl?: string;
-    noIndex?: boolean;
-    noFollow?: boolean;
-  };
-
-  // SEO landing page fields
-  h1?: string;
-  introContent?: string;
-  mainContent?: string;
-  metaTitle?: string;
-  metaDescription?: string;
-  city?: string;
-  category?: string;
-  categoryLabel?: string;
-  branchAddress?: string;
-  branchPhone?: string;
-  branchHours?: string;
-  mapLink?: string;
-  showFabrics?: boolean;
-  showPrintingMethods?: boolean;
-  showSizeChart?: boolean;
-  mapEmbed?: string;
-  pageImages?: string[];
-  sliderImages?: string[];
-}
-
-export const locationsAPI = {
-  getAll: async (): Promise<{ locations: LocationPage[] }> => {
-    const response = await fetch(`${API_URL}/locations?active=true`);
-    if (!response.ok) throw new Error('Failed to fetch locations');
-    return response.json();
-  },
-
-  getBySlug: async (slug: string): Promise<{ location: LocationPage }> => {
-    const response = await fetch(`${API_URL}/locations/${slug}`);
-    if (!response.ok) throw new Error('Location not found');
-    return response.json();
-  },
-};
-
-// Health check
-export const healthCheck = async (): Promise<{ status: string; message: string }> => {
-  const response = await fetch(`${API_URL}/health`);
-  if (!response.ok) throw new Error('API health check failed');
-  return response.json();
 };
 
 // Export types

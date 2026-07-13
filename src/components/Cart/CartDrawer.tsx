@@ -142,7 +142,7 @@ export default function CartDrawer() {
                     <div className="flex items-center gap-2">
                       <div className="flex items-center border border-theme-border rounded-lg overflow-hidden">
                         <button
-                          onClick={() => dispatch(updateQuantity({ id: item.id, quantity: item.quantity - 1 }))}
+                          onClick={() => dispatch(updateQuantity({ id: item.id, size: item.size, color: item.color, quantity: item.quantity - 1 }))}
                           className="px-2 py-1 hover:bg-theme-bg-card transition-colors text-theme-text"
                         >
                           <Minus className="w-3 h-3" />
@@ -151,14 +151,14 @@ export default function CartDrawer() {
                           {item.quantity}
                         </span>
                         <button
-                          onClick={() => dispatch(updateQuantity({ id: item.id, quantity: item.quantity + 1 }))}
+                          onClick={() => dispatch(updateQuantity({ id: item.id, size: item.size, color: item.color, quantity: item.quantity + 1 }))}
                           className="px-2 py-1 hover:bg-theme-bg-card transition-colors text-theme-text"
                         >
                           <Plus className="w-3 h-3" />
                         </button>
                       </div>
                       <button
-                        onClick={() => dispatch(removeFromCart(item.id))}
+                        onClick={() => dispatch(removeFromCart({ id: item.id, size: item.size, color: item.color }))}
                         className="p-1.5 text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors"
                       >
                         <Trash2 className="w-4 h-4" />

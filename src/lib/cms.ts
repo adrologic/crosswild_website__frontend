@@ -135,8 +135,6 @@ export interface HomeProductHighlight { _id: string; title: string; image: strin
 export interface HomeWhyChoose { _id: string; number: string; title: string; description: string; }
 export interface ProcessStep { _id: string; number: string; title: string; description: string; icon?: string; image?: string; page?: string; }
 export interface CategoryHomeCard { _id: string; title: string; description: string; icon: string; link: string; popular: boolean; }
-export interface SizeChartRow { label: string; chest: string; length: string; shoulder: string; }
-export interface SizeChart { name: string; sizes: SizeChartRow[]; }
 
 // ────────────────────────────────────────────────────────────────────────────
 // Fetchers
@@ -213,11 +211,6 @@ export async function getCategoryHomeCards(): Promise<CategoryHomeCard[]> {
   return data.items ?? [];
 }
 
-export async function getSizeChart(name: string = 'default'): Promise<SizeChart | null> {
-  const data = await safeJson<{ chart?: SizeChart }>(`/size-charts/${encodeURIComponent(name)}`, {});
-  return data.chart ?? null;
-}
-
 // Optional: per-page SEO (already exposed by the SEO backend route).
 export interface PageSEO {
   title?: string;
@@ -231,8 +224,9 @@ export interface PageSEO {
   noFollow?: boolean;
 }
 export async function getPageSEO(path: string): Promise<PageSEO | null> {
-  const data = await safeJson<{ seo?: PageSEO }>(`/seo/pages/${encodeURIComponent(path)}`, {});
-  return data.seo ?? null;
+  // Backend responds { success, page } — the SEO doc is under `page`, not `seo`.
+  const data = await safeJson<{ page?: PageSEO }>(`/seo/pages/${encodeURIComponent(path)}`, {});
+  return data.page ?? null;
 }
 
 // ────────────────────────────────────────────────────────────────────────────
@@ -244,35 +238,9 @@ const CLIENT_API =
     ? (process.env.NEXT_PUBLIC_API_URL || `${process.env.NEXT_PUBLIC_BACKEND_URL || 'https://crosswild-backend-p5l3.onrender.com'}/api`)
     : API_URL;
 
-export async function subscribeEmail(email: string, source = 'footer'): Promise<{ success: boolean; message?: string }> {
-  try {
-    const res = await fetch(`${CLIENT_API}/subscribers`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email, source }),
-    });
-    return await res.json();
-  } catch (err: any) {
-    return { success: false, message: err?.message || 'Network error' };
-  }
-}
-
 export async function submitContact(payload: { name: string; email: string; phone?: string; message: string; source?: string }) {
   try {
     const res = await fetch(`${CLIENT_API}/contact-submissions`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload),
-    });
-    return await res.json();
-  } catch (err: any) {
-    return { success: false, message: err?.message || 'Network error' };
-  }
-}
-
-export async function submitQuote(payload: { name: string; email: string; phone?: string; enquiry: string; location?: string; source?: string }) {
-  try {
-    const res = await fetch(`${CLIENT_API}/quote-submissions`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload),

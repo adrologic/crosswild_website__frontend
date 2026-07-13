@@ -5,7 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { blogsAPI, type Blog } from "@/lib/api";
 import Breadcrumb from "@/components/Common/Breadcrumb";
-import { Calendar, User, Tag, ArrowRight, Eye, Search } from "lucide-react";
+import { Calendar, User, ArrowRight, Eye, Search } from "lucide-react";
 import { toPlainText } from "@/lib/text";
 
 const BlogClient = () => {
@@ -20,8 +20,19 @@ const BlogClient = () => {
       try {
         setLoading(true);
         setError(null);
-        const response = await blogsAPI.getAll();
-        setBlogs(response.blogs || []);
+        // Backend caps at 100/page (default 20) — page through everything so
+        // older posts stay reachable from /blog.
+        const all: Blog[] = [];
+        let page = 1;
+        const MAX_PAGES = 50; // safety cap
+        while (page <= MAX_PAGES) {
+          const response = await blogsAPI.getAll({ limit: 100, page });
+          const batch = response.blogs || [];
+          all.push(...batch);
+          if (batch.length < 100 || page >= (response.totalPages ?? page)) break;
+          page += 1;
+        }
+        setBlogs(all);
       } catch (err) {
         console.error('Failed to fetch blogs:', err);
         setError('Failed to load blogs. Please try again later.');
