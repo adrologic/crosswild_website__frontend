@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { productsAPI, type Product } from '@/lib/api';
-import { getCategoryUrl } from '@/lib/categoryUrls';
+import { getCategoryListingUrl } from '@/lib/categoryUrls';
 import SafeImage from '@/components/Common/SafeImage';
 import Link from 'next/link';
 import {
@@ -197,7 +197,7 @@ export default function ProductDetailClient({
                 <>
                   <ChevronRight className="w-3.5 h-3.5 text-theme-text-muted opacity-40" />
                   <Link
-                    href={getCategoryUrl(primaryCategory)}
+                    href={getCategoryListingUrl(primaryCategory)}
                     className="text-theme-text-muted hover:text-primary transition-colors"
                   >
                     {getCategoryName(primaryCategory)}

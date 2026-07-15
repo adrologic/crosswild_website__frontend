@@ -22,3 +22,10 @@ export function getCategoryUrl(slug: string): string {
 export function getSubCategoryUrl(subSlug: string): string {
   return `/category/${subSlug}`;
 }
+
+// Browsable product-listing URL for a category — always /category/<slug>,
+// bypassing the SEO landing-page map above. Use where the user expects to
+// land on a product grid (e.g. product-page breadcrumbs), not marketing copy.
+export function getCategoryListingUrl(slug: string): string {
+  return `/category/${slug}`;
+}
