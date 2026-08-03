@@ -10,22 +10,22 @@
    ============================================ */
 
 :root {
-  /* ── PRIMARY BRAND: Orange-red accent #ff4f20 (headings, links, accents) ── */
-  --brand-primary: #ff4f20;
-  --brand-primary-dark: #e63f14;        /* backward-compat alias */
-  --brand-primary-hover: #e63f14;
-  --brand-primary-active: #c2330f;
-  --brand-primary-light: #ff9c80;
-  --brand-primary-50: #fff1ec;
-  --brand-primary-100: #ffe1d7;
-  --brand-primary-200: #ffc2af;
-  --brand-primary-300: #ff9c80;
-  --brand-primary-400: #ff7550;
-  --brand-primary-500: #ff4f20;
-  --brand-primary-600: #e63f14;
-  --brand-primary-700: #c2330f;
-  --brand-primary-800: #9e2a0e;
-  --brand-primary-900: #7c220c;
+  /* ── PRIMARY BRAND: Maroon accent #9a0822 (headings, links, accents) ── */
+  --brand-primary: #9a0822;
+  --brand-primary-dark: #86071d;        /* backward-compat alias */
+  --brand-primary-hover: #86071d;
+  --brand-primary-active: #6e0618;
+  --brand-primary-light: #e8899a;
+  --brand-primary-50: #fdf2f4;
+  --brand-primary-100: #fbe0e5;
+  --brand-primary-200: #f4bcc5;
+  --brand-primary-300: #e8899a;
+  --brand-primary-400: #cd4a63;
+  --brand-primary-500: #9a0822;
+  --brand-primary-600: #86071d;
+  --brand-primary-700: #6e0618;
+  --brand-primary-800: #560413;
+  --brand-primary-900: #3e030e;
 
   /* ── SECONDARY BRAND: Blue (Add to Cart, links, trust) ── */
   --brand-secondary-blue: #3B82F6;
@@ -60,7 +60,7 @@
   --brand-text-secondary: #2a3a55;
   --brand-text-muted: #5b6b86;
   --brand-text-disabled: #97a3b8;
-  --brand-text-highlight: #ff4f20;
+  --brand-text-highlight: #9a0822;
 
   /* ── BORDERS (Light Mode) ── */
   --brand-border: #cfe0f7;
@@ -82,7 +82,7 @@
   /* ── INPUT FIELDS (Light Mode) ── */
   --brand-input-bg: #FFFFFF;
   --brand-input-border: #cfe0f7;
-  --brand-input-focus: #ff4f20;
+  --brand-input-focus: #9a0822;
   --brand-input-placeholder: #7c8aa3;
   --brand-input-text: #16243b;
 
@@ -99,7 +99,7 @@
   /* ── NAVBAR (Light Mode) — soft-blue bar ── */
   --brand-navbar-bg: #abccff;
   --brand-navbar-border: #93bdf9;
-  --brand-navbar-active: #ff4f20;
+  --brand-navbar-active: #9a0822;
   --brand-navbar-normal: #16243b;
   --brand-navbar-hover: #0f1a2e;
 
@@ -131,11 +131,22 @@
   --brand-text-disabled: #8f6a70;       /* Disabled text */
   --brand-text-highlight: #ff4f20;      /* Highlighted text (orange accent) */
 
-  /* BRAND COLORS — orange accent (same as light) */
+  /* BRAND COLORS — orange accent (dark mode keeps the original orange) */
   --brand-primary: #ff4f20;
   --brand-primary-dark: #e63f14;
   --brand-primary-hover: #e63f14;
   --brand-primary-active: #c2330f;
+  --brand-primary-light: #ff9c80;
+  --brand-primary-50: #fff1ec;
+  --brand-primary-100: #ffe1d7;
+  --brand-primary-200: #ffc2af;
+  --brand-primary-300: #ff9c80;
+  --brand-primary-400: #ff7550;
+  --brand-primary-500: #ff4f20;
+  --brand-primary-600: #e63f14;
+  --brand-primary-700: #c2330f;
+  --brand-primary-800: #9e2a0e;
+  --brand-primary-900: #7c220c;
   --brand-secondary-blue: #3B82F6;
   --brand-secondary-blue-hover: #2563EB;
   --brand-secondary-blue-active: #1D4ED8;
@@ -663,25 +674,25 @@ html:not(.dark) .bg-gray-100 {
   background-color: #dbe8fc !important;
 }
 
-/* ── Primary filled buttons → light-blue bg + orange text ──
+/* ── Primary filled buttons → light-blue bg + maroon text ──
    Matches the `bg-primary` + `text-white` button signature used
-   site-wide. Adds a soft shadow + faint orange outline so buttons
+   site-wide. Adds a soft shadow + faint maroon outline so buttons
    stay visible on the soft-blue navbar and on white sections. */
 html:not(.dark) .bg-primary.text-white {
   background-color: #abccff !important;
-  color: #ff4f20 !important;
+  color: #9a0822 !important;
   box-shadow: 0 6px 16px rgba(171, 204, 255, 0.6),
-              0 0 0 1.5px rgba(255, 79, 32, 0.45);
+              0 0 0 1.5px rgba(154, 8, 34, 0.45);
   transition: background-color 0.2s ease, box-shadow 0.2s ease;
 }
 html:not(.dark) .bg-primary.text-white:hover {
   background-color: #9ec2ff !important;
   box-shadow: 0 8px 20px rgba(171, 204, 255, 0.75),
-              0 0 0 1.5px rgba(255, 79, 32, 0.6);
+              0 0 0 1.5px rgba(154, 8, 34, 0.6);
 }
-/* Icons inside those buttons follow the orange text colour */
+/* Icons inside those buttons follow the maroon text colour */
 html:not(.dark) .bg-primary.text-white svg {
-  color: #ff4f20 !important;
+  color: #9a0822 !important;
 }
 
 /* ── DARK THEME: filled primary buttons → maroon (#9a0822) + white text ── */
@@ -699,11 +710,11 @@ html:not(.dark) .bg-primary.text-white svg {
   color: #ffffff !important;
 }
 
-/* ── Headings → orange accent on light backgrounds ──
+/* ── Headings → maroon accent on light backgrounds ──
    Skips headings that are intentionally white (e.g. footer),
    gradient/clipped text, or already a custom arbitrary colour. */
 html:not(.dark) :is(h1, h2, h3, h4):not([class*="text-white"]):not([class*="text-transparent"]):not([class*="text-["]) {
-  color: #ff4f20;
+  color: #9a0822;
 }
 /* On soft-blue cards, keep headings & prices dark slate for contrast */
 html:not(.dark) .bg-card-bg :is(h1, h2, h3, h4, h5),
@@ -726,4 +737,57 @@ html:not(.dark) .product-media {
 /* ── Sticky header: subtle shadow to separate it from content ── */
 html:not(.dark) header.sticky {
   box-shadow: 0 4px 14px rgba(22, 36, 59, 0.10);
+}
+
+/* ============================================
+   LIGHT THEME: ORANGE → MAROON (#9a0822)
+   Catches the orange that is hard-coded in
+   markup instead of coming from the tokens
+   above. Light mode only — `.dark` keeps its
+   orange accent untouched.
+   ============================================ */
+
+/* ── Hard-coded accent hex in components (badges, hero text) ── */
+html:not(.dark) [class*="bg-[#ff4f20]"] {
+  background-color: #9a0822 !important;
+}
+html:not(.dark) [class*="text-[#ff4f20]"] {
+  color: #9a0822 !important;
+}
+/* Badge glow follows the badge colour */
+html:not(.dark) [class~="shadow-[0_4px_10px_rgba(255,79,32,0.35)]"] {
+  --tw-shadow-color: rgba(154, 8, 34, 0.35);
+}
+
+/* ── Tailwind `orange-*` palette (orange-500 renders as #ff6900) ── */
+html:not(.dark) .bg-orange-50 { background-color: #fdf2f4 !important; }
+html:not(.dark) .bg-orange-100 { background-color: #fbe0e5 !important; }
+html:not(.dark) .bg-orange-200 { background-color: #f4bcc5 !important; }
+html:not(.dark) .bg-orange-400 { background-color: #cd4a63 !important; }
+html:not(.dark) .bg-orange-500 { background-color: #9a0822 !important; }
+html:not(.dark) .bg-orange-600 { background-color: #86071d !important; }
+
+html:not(.dark) .text-orange-400 { color: #cd4a63 !important; }
+html:not(.dark) .text-orange-500 { color: #9a0822 !important; }
+html:not(.dark) .text-orange-600 { color: #86071d !important; }
+html:not(.dark) .text-orange-700 { color: #6e0618 !important; }
+
+html:not(.dark) .border-orange-200 { border-color: #f4bcc5 !important; }
+html:not(.dark) .border-orange-400 { border-color: #cd4a63 !important; }
+html:not(.dark) .border-orange-500 { border-color: #9a0822 !important; }
+
+/* Gradient stops (e.g. `from-primary to-orange-500` CTA buttons) */
+html:not(.dark) .from-orange-400 { --tw-gradient-from: #cd4a63 !important; }
+html:not(.dark) .from-orange-500 { --tw-gradient-from: #9a0822 !important; }
+html:not(.dark) .via-orange-500 { --tw-gradient-via: #9a0822 !important; }
+html:not(.dark) .to-orange-500 { --tw-gradient-to: #9a0822 !important; }
+html:not(.dark) .to-orange-600 { --tw-gradient-to: #86071d !important; }
+
+/* ── Orange glow shadows on the header CTA buttons ── */
+html:not(.dark) [class~="shadow-[0_0_12px_rgba(249,115,22,0.4)]"] {
+  --tw-shadow-color: rgba(154, 8, 34, 0.4);
+}
+html:not(.dark) [class~="hover:shadow-[0_0_12px_rgba(249,115,22,0.4)]"]:hover,
+html:not(.dark) [class~="hover:shadow-[0_0_20px_rgba(249,115,22,0.6)]"]:hover {
+  --tw-shadow-color: rgba(154, 8, 34, 0.55);
 }
