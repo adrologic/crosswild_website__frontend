@@ -19,6 +19,9 @@ import { getSiteSettings, type SiteSettings } from '@/lib/cms';
 import CartDrawer from '@/components/Cart/CartDrawer';
 import ThemeToggle from '@/components/ThemeToggle/ThemeToggle';
 
+// Pre-rebrand logo still stored in Site Settings; treated as "no custom logo".
+const LEGACY_LOGO = '/images/logo/logo-crosswile.jpg';
+
 // Types for nav categories
 interface NavItem { name: string; link: string }
 interface NavCategory { name: string; slug: string; items: NavItem[] }
@@ -265,7 +268,12 @@ export default function CrosswildHeader() {
     { label: 'Blog', href: '/blog' },
     { label: 'Gallery', href: '/image-gallery' },
   ];
-  const logoSrc = header?.logo || '/images/logo/logo-crosswile.jpg';
+  // Brand logo ships as a light/dark pair, which the single CMS `header.logo`
+  // field can't express — so the pair lives in code. A custom upload in Site
+  // Settings still wins (for both themes); the legacy default counts as unset.
+  const cmsLogo = header?.logo && header.logo !== LEGACY_LOGO ? header.logo : null;
+  const logoLight = cmsLogo || '/images/logo/light-logo.png';
+  const logoDark = cmsLogo || '/images/logo/dark-logo.png';
   const logoAlt = header?.logoAlt || 'The CrossWild';
   const customizeCTA = header?.customizeCTA;
   const promoTicker = header?.promoTicker?.length ? header.promoTicker : [
@@ -401,8 +409,11 @@ export default function CrosswildHeader() {
           <div className="flex items-center justify-between h-20">
             {/* Logo */}
             <Link href="/" className="flex items-center gap-2 flex-shrink-0">
-              <Image src={logoSrc} alt={logoAlt}
-                width={160} height={50} className="h-12 w-auto dark:brightness-90" priority />
+              {/* Light/dark pair swapped in CSS so it survives SSR without a flash */}
+              <Image src={logoLight} alt={logoAlt}
+                width={459} height={320} className="h-12 w-auto dark:hidden" priority />
+              <Image src={logoDark} alt={logoAlt}
+                width={459} height={320} className="hidden h-12 w-auto dark:block" priority />
             </Link>
 
             {/* Desktop Search Bar */}

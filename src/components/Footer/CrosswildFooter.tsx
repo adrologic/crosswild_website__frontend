@@ -11,6 +11,9 @@ import {
   type Menu,
 } from '@/lib/cms';
 
+// Pre-rebrand logo still stored in Site Settings; treated as "no custom logo".
+const LEGACY_LOGO = '/images/logo/logo-crosswile.jpg';
+
 const SOCIAL_ICONS: Record<string, React.ReactElement> = {
   facebook: (
     <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor"><path d="M24 12.073C24 5.405 18.627 0 12 0S0 5.405 0 12.073C0 18.1 4.388 23.094 10.125 24v-8.437H7.078v-3.49h3.047V9.41c0-3.025 1.792-4.697 4.533-4.697 1.312 0 2.686.236 2.686.236v2.97h-1.513c-1.491 0-1.956.93-1.956 1.886v2.267h3.328l-.532 3.49h-2.796V24C19.612 23.094 24 18.1 24 12.073z" /></svg>
@@ -57,6 +60,13 @@ export default function CrosswildFooter() {
   const contact = settings?.contact;
   const social = settings?.social;
 
+  // The footer sits on a dark surface in both themes, so it always takes the
+  // dark-background logo. A custom upload in Site Settings still wins; the
+  // legacy pre-rebrand default counts as unset. Uploads keep the invert filter
+  // (they're assumed to be dark-on-light artwork); our own logo does not.
+  const cmsLogo = footer?.logo && footer.logo !== LEGACY_LOGO ? footer.logo : null;
+  const logoSrc = cmsLogo || '/images/logo/dark-logo.png';
+
   const year = new Date().getFullYear();
   const services = servicesMenu?.items || footer?.servicesLinks || [];
   const quick = quickLinks?.items || footer?.quickLinks || [];
@@ -68,15 +78,13 @@ export default function CrosswildFooter() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-8">
           {/* Company Info */}
           <div className="sm:col-span-2 lg:col-span-3 xl:col-span-2">
-            {footer?.logo ? (
-              <Image
-                src={footer.logo}
-                alt="The CrossWild"
-                width={150}
-                height={40}
-                className="h-10 w-auto mb-4 brightness-0 invert"
-              />
-            ) : null}
+            <Image
+              src={logoSrc}
+              alt="The CrossWild"
+              width={459}
+              height={320}
+              className={`h-10 w-auto mb-4 ${cmsLogo ? 'brightness-0 invert' : ''}`}
+            />
             <p className="text-gray-400 dark:text-[#8C7F6E] mb-6 leading-relaxed">
               {footer?.companyDescription || "India's leading custom printing and merchandise company."}
             </p>
