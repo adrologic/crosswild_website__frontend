@@ -43,23 +43,34 @@ export default function CartDrawer() {
 
   if (!shouldRender) return null;
 
+  // Bulk items are quoted per buyer and carry no price, so the money lines are
+  // dropped entirely when nothing in the shortlist has one.
+  const hasPricing = totalPrice > 0;
+
+  const describeItem = (item: (typeof cart)[number]) =>
+    `${item.sku ? `[${item.sku}] ` : ''}${item.name}` +
+    `${item.size ? ` (Size: ${item.size})` : ''}` +
+    `${item.color ? ` (Color: ${item.color})` : ''} ×${item.quantity}`;
+
   const getWhatsAppOrderLink = () => {
-    const itemsList = cart.map(item =>
-      `• ${item.name}${item.size ? ` (Size: ${item.size})` : ''}${item.color ? ` (Color: ${item.color})` : ''} ×${item.quantity}`
-    ).join('\n');
+    const itemsList = cart.map(item => `• ${describeItem(item)}`).join('\n');
     const message = encodeURIComponent(
-      `Hi! I'd like to place an order:\n\n*Order Summary:*\n${itemsList}\n\n*Total: ₹${totalPrice.toLocaleString()}*\n\nPlease confirm availability and delivery details. Thank you!`
+      `Hi! I'd like to enquire about these products:\n\n*My list:*\n${itemsList}\n\n` +
+      `${hasPricing ? `*Total: ₹${totalPrice.toLocaleString()}*\n\n` : ''}` +
+      `Please share pricing and availability. Thank you!`
     );
     return `https://wa.me/${WHATSAPP_NUMBER}?text=${message}`;
   };
 
   const getEmailOrderLink = () => {
-    const subject = encodeURIComponent('New Order Request - The CrossWild');
+    const subject = encodeURIComponent('Bulk enquiry - The CrossWild');
     const itemsList = cart.map(item =>
-      `- ${item.name}${item.size ? ` (Size: ${item.size})` : ''}${item.color ? ` (Color: ${item.color})` : ''} ×${item.quantity} = ₹${(item.price * item.quantity).toLocaleString()}`
+      `- ${describeItem(item)}${item.price > 0 ? ` = ₹${(item.price * item.quantity).toLocaleString()}` : ''}`
     ).join('\n');
     const body = encodeURIComponent(
-      `Hi The CrossWild Team,\n\nI'd like to place the following order:\n\n${itemsList}\n\nSubtotal: ₹${totalPrice.toLocaleString()}\n\nPlease confirm availability, pricing, and delivery details.\n\nThank you!`
+      `Hi The CrossWild Team,\n\nI'd like a quote for the following:\n\n${itemsList}\n\n` +
+      `${hasPricing ? `Subtotal: ₹${totalPrice.toLocaleString()}\n\n` : ''}` +
+      `Please confirm availability, pricing, and delivery details.\n\nThank you!`
     );
     return `mailto:${EMAIL}?subject=${subject}&body=${body}`;
   };
@@ -130,6 +141,12 @@ export default function CartDrawer() {
                   <div className="flex-1 min-w-0">
                     <h3 className="font-semibold text-sm text-theme-text line-clamp-2 mb-1">{item.name}</h3>
 
+                    {item.sku && (
+                      <div className="font-mono text-[11px] font-semibold text-theme-text-secondary mb-1">
+                        {item.sku}
+                      </div>
+                    )}
+
                     {(item.size || item.color) && (
                       <div className="flex gap-2 text-xs text-theme-text-muted mb-1">
                         {item.size && <span>Size: {item.size}</span>}
@@ -137,7 +154,11 @@ export default function CartDrawer() {
                       </div>
                     )}
 
-                    <div className="text-primary font-bold text-sm mb-2">₹{item.price.toLocaleString()}</div>
+                    {item.price > 0 ? (
+                      <div className="text-primary font-bold text-sm mb-2">₹{item.price.toLocaleString()}</div>
+                    ) : (
+                      <div className="text-xs text-theme-text-muted mb-2">Quoted on enquiry</div>
+                    )}
 
                     <div className="flex items-center gap-2">
                       <div className="flex items-center border border-theme-border rounded-lg overflow-hidden">
@@ -175,13 +196,17 @@ export default function CartDrawer() {
         {cart.length > 0 && (
           <div className="border-t border-theme-border px-5 py-4 space-y-4 bg-theme-bg">
             <div className="flex justify-between items-center">
-              <span className="text-theme-text-secondary font-medium">Subtotal</span>
-              <span className="text-xl font-bold text-primary">₹{totalPrice.toLocaleString()}</span>
+              <span className="text-theme-text-secondary font-medium">
+                {hasPricing ? 'Subtotal' : `${totalItems} ${totalItems === 1 ? 'item' : 'items'}`}
+              </span>
+              <span className="text-xl font-bold text-primary">
+                {hasPricing ? `₹${totalPrice.toLocaleString()}` : 'Quote on request'}
+              </span>
             </div>
 
             <div>
               <p className="text-xs text-theme-text-muted text-center mb-2 font-medium uppercase tracking-wide">
-                Place Order via
+                Send your list via
               </p>
               <div className="grid grid-cols-2 gap-2">
                 <a

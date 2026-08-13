@@ -1,0 +1,472 @@
+[
+  {
+    "source": "/products/royal-blue-laptop-messenger-bag",
+    "destination": "/products/cobalt-blue-padded-messenger-bag",
+    "permanent": true
+  },
+  {
+    "source": "/products/charcoal-crossbody-sling-bag",
+    "destination": "/products/graphite-melange-vertical-sling-bag",
+    "permanent": true
+  },
+  {
+    "source": "/products/navy-crossbody-sling-bag",
+    "destination": "/products/navy-blue-tablet-crossbody-sling",
+    "permanent": true
+  },
+  {
+    "source": "/products/black-casual-laptop-backpack",
+    "destination": "/products/black-multi-pocket-laptop-backpack",
+    "permanent": true
+  },
+  {
+    "source": "/products/blue-vertical-sling-bag",
+    "destination": "/products/textured-navy-utility-sling-bag",
+    "permanent": true
+  },
+  {
+    "source": "/products/teal-crossbody-sling-bag",
+    "destination": "/products/teal-blue-crossbody-sling-bag",
+    "permanent": true
+  },
+  {
+    "source": "/products/spiderman-kids-school-backpack",
+    "destination": "/products/orange-comic-print-school-backpack",
+    "permanent": true
+  },
+  {
+    "source": "/products/motu-patlu-kids-school-backpack",
+    "destination": "/products/red-cartoon-print-school-backpack",
+    "permanent": true
+  },
+  {
+    "source": "/products/pre-school-kids-backpack",
+    "destination": "/products/pink-pre-school-kids-backpack",
+    "permanent": true
+  },
+  {
+    "source": "/products/barbie-kids-school-backpack",
+    "destination": "/products/red-princess-print-school-backpack",
+    "permanent": true
+  },
+  {
+    "source": "/products/black-laptop-office-bag",
+    "destination": "/products/black-padded-handle-laptop-bag",
+    "permanent": true
+  },
+  {
+    "source": "/products/corporate-branded-backpack",
+    "destination": "/products/navy-grey-piped-school-backpack",
+    "permanent": true
+  },
+  {
+    "source": "/products/gym-duffel-barrel-bag",
+    "destination": "/products/navy-yellow-zip-round-gym-duffel",
+    "permanent": true
+  },
+  {
+    "source": "/products/insulated-food-delivery-bag",
+    "destination": "/products/black-insulated-food-delivery-bag",
+    "permanent": true
+  },
+  {
+    "source": "/products/sports-gym-duffel-bag",
+    "destination": "/products/black-printed-round-gym-duffel",
+    "permanent": true
+  },
+  {
+    "source": "/products/office-laptop-messenger-bag",
+    "destination": "/products/grey-melange-laptop-office-bag",
+    "permanent": true
+  },
+  {
+    "source": "/products/black-laptop-briefcase-bag",
+    "destination": "/products/black-nylon-slim-laptop-briefcase",
+    "permanent": true
+  },
+  {
+    "source": "/products/brown-leatherette-office-bag",
+    "destination": "/products/brown-leatherette-laptop-briefcase",
+    "permanent": true
+  },
+  {
+    "source": "/products/grey-slim-laptop-sleeve-bag",
+    "destination": "/products/grey-melange-laptop-sleeve",
+    "permanent": true
+  },
+  {
+    "source": "/products/black-tan-messenger-bag",
+    "destination": "/products/tan-trim-black-messenger-bag",
+    "permanent": true
+  },
+  {
+    "source": "/products/custom-two-tone-embroidered-dad-cap",
+    "destination": "/products/lilac-two-tone-slogan-cap",
+    "permanent": true
+  },
+  {
+    "source": "/products/custom-embroidered-mesh-back-baseball-cap",
+    "destination": "/products/black-mesh-gold-embroidered-cap",
+    "permanent": true
+  },
+  {
+    "source": "/products/custom-solid-5-panel-cotton-baseball-cap",
+    "destination": "/products/maroon-five-panel-plain-cap",
+    "permanent": true
+  },
+  {
+    "source": "/products/custom-imported-tech-fabric-baseball-cap",
+    "destination": "/products/classic-red-plain-cap",
+    "permanent": true
+  },
+  {
+    "source": "/products/custom-multi-decoration-corporate-baseball-cap",
+    "destination": "/products/black-peak-badge-corporate-cap",
+    "permanent": true
+  },
+  {
+    "source": "/products/custom-camo-wide-brim-boonie-bucket-hat",
+    "destination": "/products/camouflage-wide-brim-bucket-hat",
+    "permanent": true
+  },
+  {
+    "source": "/products/custom-two-tone-corduroy-baseball-cap",
+    "destination": "/products/cream-corduroy-two-tone-cap",
+    "permanent": true
+  },
+  {
+    "source": "/products/custom-full-mesh-embroidered-patch-cap",
+    "destination": "/products/white-airmesh-crest-cap",
+    "permanent": true
+  },
+  {
+    "source": "/products/custom-3d-puff-embroidered-cotton-cap",
+    "destination": "/products/black-multicolour-embroidered-logo-cap",
+    "permanent": true
+  },
+  {
+    "source": "/products/custom-promotional-campaign-print-cap",
+    "destination": "/products/white-printed-campaign-cap",
+    "permanent": true
+  },
+  {
+    "source": "/products/custom-imported-fabric-service-cap",
+    "destination": "/products/maroon-satin-uniform-cap",
+    "permanent": true
+  },
+  {
+    "source": "/products/custom-woven-texture-fedora-hat",
+    "destination": "/products/black-woven-trilby-hat",
+    "permanent": true
+  },
+  {
+    "source": "/products/custom-multi-colour-embroidery-cotton-cap",
+    "destination": "/products/orange-festival-embroidered-cap",
+    "permanent": true
+  },
+  {
+    "source": "/products/custom-regimental-embroidered-commemorative-cap",
+    "destination": "/products/black-gold-leaf-ceremonial-cap",
+    "permanent": true
+  },
+  {
+    "source": "/products/custom-wool-twill-heritage-sports-cap",
+    "destination": "/products/navy-crest-embroidered-cap",
+    "permanent": true
+  },
+  {
+    "source": "/products/custom-camo-cotton-heritage-cap",
+    "destination": "/products/woodland-camouflage-patch-cap",
+    "permanent": true
+  },
+  {
+    "source": "/products/custom-laser-perforated-imported-sports-cap",
+    "destination": "/products/beige-perforated-sports-cap",
+    "permanent": true
+  },
+  {
+    "source": "/products/custom-floral-embroidered-heritage-cap",
+    "destination": "/products/pink-floral-souvenir-cap",
+    "permanent": true
+  },
+  {
+    "source": "/products/custom-two-tone-3d-monogram-baseball-cap",
+    "destination": "/products/yellow-black-varsity-cap",
+    "permanent": true
+  },
+  {
+    "source": "/products/custom-two-tone-motorsport-sponsor-cap",
+    "destination": "/products/blue-racing-team-cap",
+    "permanent": true
+  },
+  {
+    "source": "/products/custom-full-mesh-dual-layer-travel-cap",
+    "destination": "/products/navy-mesh-travel-cap",
+    "permanent": true
+  },
+  {
+    "source": "/products/custom-two-tone-security-uniform-cap",
+    "destination": "/products/yellow-peak-black-security-cap",
+    "permanent": true
+  },
+  {
+    "source": "/products/custom-faux-suede-embroidered-cap",
+    "destination": "/products/tan-suede-mountain-explorer-cap",
+    "permanent": true
+  },
+  {
+    "source": "/products/custom-heritage-city-embroidered-cap",
+    "destination": "/products/navy-heritage-embroidered-cotton-cap",
+    "permanent": true
+  },
+  {
+    "source": "/products/custom-decorative-embroidered-cotton-cap",
+    "destination": "/products/beige-sun-motif-cotton-cap",
+    "permanent": true
+  },
+  {
+    "source": "/products/custom-trucker-cap-with-3d-mascot-embroidery",
+    "destination": "/products/black-white-ram-trucker-cap",
+    "permanent": true
+  },
+  {
+    "source": "/products/custom-flat-brim-snapback-with-japanese-embroidery",
+    "destination": "/products/black-gold-flat-brim-cap",
+    "permanent": true
+  },
+  {
+    "source": "/products/custom-sun-visor-with-service-crest",
+    "destination": "/products/navy-embroidered-sun-visor-cap",
+    "permanent": true
+  },
+  {
+    "source": "/products/custom-suede-front-trucker-cap",
+    "destination": "/products/cream-suede-navy-mesh-cap",
+    "permanent": true
+  },
+  {
+    "source": "/products/custom-plain-5-panel-promotional-cap",
+    "destination": "/products/plain-white-promotional-cap",
+    "permanent": true
+  },
+  {
+    "source": "/products/custom-wide-brim-cotton-safari-bucket-hat",
+    "destination": "/products/dark-brown-wide-brim-hat",
+    "permanent": true
+  },
+  {
+    "source": "/products/custom-two-tone-wide-brim-ceremonial-hat",
+    "destination": "/products/sky-blue-banded-bucket-hat",
+    "permanent": true
+  },
+  {
+    "source": "/products/custom-wide-brim-cricket-sun-hat",
+    "destination": "/products/yellow-cricket-sun-hat",
+    "permanent": true
+  },
+  {
+    "source": "/products/custom-service-anniversary-embroidered-cap",
+    "destination": "/products/navy-sandwich-peak-baseball-cap",
+    "permanent": true
+  },
+  {
+    "source": "/products/custom-all-over-print-cotton-cap",
+    "destination": "/products/aqua-floral-print-cap",
+    "permanent": true
+  },
+  {
+    "source": "/products/custom-patch-embroidered-cotton-dad-cap",
+    "destination": "/products/butter-yellow-soft-crown-cap",
+    "permanent": true
+  },
+  {
+    "source": "/products/custom-oversized-heavy-cotton-round-neck-t-shirt",
+    "destination": "/products/red-varsity-print-oversized-t-shirt",
+    "permanent": true
+  },
+  {
+    "source": "/products/custom-oversized-cotton-streetwear-t-shirt",
+    "destination": "/products/olive-green-oversized-drop-shoulder-tee",
+    "permanent": true
+  },
+  {
+    "source": "/products/heavy-oversized-multi-placement-print-t-shirt",
+    "destination": "/products/off-white-floral-back-oversized-t-shirt",
+    "permanent": true
+  },
+  {
+    "source": "/products/custom-oversized-graphic-print-cotton-t-shirt",
+    "destination": "/products/red-burst-graphic-oversized-t-shirt",
+    "permanent": true
+  },
+  {
+    "source": "/products/custom-heather-polo-t-shirt-corporate-uniform",
+    "destination": "/products/grey-melange-cotton-polo-t-shirt",
+    "permanent": true
+  },
+  {
+    "source": "/products/custom-solid-colour-cotton-piqu-polo-t-shirt",
+    "destination": "/products/bright-orange-collared-polo-t-shirt",
+    "permanent": true
+  },
+  {
+    "source": "/products/custom-sublimation-sports-jersey-t-shirt",
+    "destination": "/products/white-printed-sports-jersey-tee",
+    "permanent": true
+  },
+  {
+    "source": "/products/custom-solid-cotton-round-neck-t-shirt",
+    "destination": "/products/navy-blue-round-neck-sports-t-shirt",
+    "permanent": true
+  },
+  {
+    "source": "/products/custom-athletic-fit-dry-fit-round-neck-t-shirt",
+    "destination": "/products/bright-yellow-dry-fit-sports-t-shirt",
+    "permanent": true
+  },
+  {
+    "source": "/products/custom-honeycomb-piqu-sports-polo",
+    "destination": "/products/red-dry-fit-polo-t-shirt",
+    "permanent": true
+  },
+  {
+    "source": "/products/custom-boxy-oversized-cotton-t-shirt",
+    "destination": "/products/black-round-neck-cotton-t-shirt",
+    "permanent": true
+  },
+  {
+    "source": "/products/custom-twin-tipped-cotton-piqu-polo",
+    "destination": "/products/maroon-tipped-collar-polo-t-shirt",
+    "permanent": true
+  },
+  {
+    "source": "/products/custom-embroidered-cotton-polo-with-contrast-tipping",
+    "destination": "/products/white-blue-tipped-corporate-polo-t-shirt",
+    "permanent": true
+  },
+  {
+    "source": "/products/custom-heather-twin-tipped-cotton-polo",
+    "destination": "/products/denim-blue-melange-polo-t-shirt",
+    "permanent": true
+  },
+  {
+    "source": "/products/custom-solid-pastel-cotton-polo",
+    "destination": "/products/sky-blue-pique-polo-t-shirt",
+    "permanent": true
+  },
+  {
+    "source": "/products/custom-white-tipped-cotton-polo",
+    "destination": "/products/white-red-tipped-polo-t-shirt",
+    "permanent": true
+  },
+  {
+    "source": "/products/custom-solid-cotton-piqu-polo-active-wear",
+    "destination": "/products/bright-red-pique-polo-t-shirt",
+    "permanent": true
+  },
+  {
+    "source": "/products/custom-polyester-sublimation-blank-t-shirt",
+    "destination": "/products/plain-white-round-neck-t-shirt",
+    "permanent": true
+  },
+  {
+    "source": "/products/custom-multi-sponsor-cotton-polo-for-tournament-kits",
+    "destination": "/products/red-multi-logo-event-polo",
+    "permanent": true
+  },
+  {
+    "source": "/products/custom-white-cotton-polo-with-black-tipping",
+    "destination": "/products/white-black-tipped-collar-polo",
+    "permanent": true
+  },
+  {
+    "source": "/products/custom-solid-red-cotton-piqu-polo",
+    "destination": "/products/classic-red-pique-polo",
+    "permanent": true
+  },
+  {
+    "source": "/products/custom-sky-blue-cotton-piqu-polo",
+    "destination": "/products/sky-blue-uniform-polo",
+    "permanent": true
+  },
+  {
+    "source": "/products/custom-lavender-dry-fit-polo-t-shirt",
+    "destination": "/products/lilac-fine-knit-polo-shirt",
+    "permanent": true
+  },
+  {
+    "source": "/products/custom-raglan-sleeve-slogan-t-shirt",
+    "destination": "/products/white-slogan-print-crop-tee",
+    "permanent": true
+  },
+  {
+    "source": "/products/custom-polyester-mesh-sports-vest",
+    "destination": "/products/neon-green-bull-print-vest",
+    "permanent": true
+  },
+  {
+    "source": "/products/custom-sublimated-sports-polo-with-contrast-collar",
+    "destination": "/products/orange-navy-sublimated-sports-polo",
+    "permanent": true
+  },
+  {
+    "source": "/products/custom-sublimated-round-neck-team-jersey",
+    "destination": "/products/pink-diamond-print-sports-jersey",
+    "permanent": true
+  },
+  {
+    "source": "/products/custom-sublimated-sports-round-neck-t-shirt",
+    "destination": "/products/navy-yellow-streak-sports-jersey",
+    "permanent": true
+  },
+  {
+    "source": "/products/premium-acid-wash-heavy-oversized-t-shirt",
+    "destination": "/products/grey-washed-oversized-t-shirt",
+    "permanent": true
+  },
+  {
+    "source": "/products/custom-bright-polyester-polo-t-shirt",
+    "destination": "/products/yellow-mesh-panel-polo-t-shirt",
+    "permanent": true
+  },
+  {
+    "source": "/products/custom-oversized-cotton-blank-t-shirt",
+    "destination": "/products/classic-white-round-neck-t-shirt",
+    "permanent": true
+  },
+  {
+    "source": "/products/custom-pocket-polo-with-branded-dtf-print",
+    "destination": "/products/sage-grey-pocket-polo-t-shirt",
+    "permanent": true
+  },
+  {
+    "source": "/products/custom-teal-dry-fit-polo-with-striped-neck-tape",
+    "destination": "/products/turquoise-sports-polo-t-shirt",
+    "permanent": true
+  },
+  {
+    "source": "/products/heavy-oversized-graphic-streetwear-t-shirt",
+    "destination": "/products/black-washed-skull-graphic-t-shirt",
+    "permanent": true
+  },
+  {
+    "source": "/products/custom-embroidered-oversized-cotton-t-shirt",
+    "destination": "/products/black-chest-logo-round-neck-tee",
+    "permanent": true
+  },
+  {
+    "source": "/products/custom-polyester-print-ready-round-neck-t-shirt",
+    "destination": "/products/white-crew-neck-sports-t-shirt",
+    "permanent": true
+  },
+  {
+    "source": "/products/custom-dry-fit-v-neck-sports-t-shirt",
+    "destination": "/category/tshirts",
+    "permanent": true
+  },
+  {
+    "source": "/products/custom-striped-texture-piqu-polo-t-shirt",
+    "destination": "/category/tshirts",
+    "permanent": true
+  }
+]

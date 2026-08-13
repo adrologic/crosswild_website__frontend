@@ -10,6 +10,8 @@ interface Product {
   id: string; // For compatibility with frontend
   name: string;
   title?: string;
+  /** Public product code, e.g. "CW1482". Issued by the backend, permanent. */
+  sku?: string;
   tagline?: string;
   description: string;
   shortDescription?: string;
@@ -18,8 +20,15 @@ interface Product {
   stock: number;
   category: string;
   image: string;
+  /** ~500px version of `image` for cards, grids and menus. */
+  imageThumb?: string;
+  /** ~1KB inline placeholder shown instantly while the real photo loads. */
+  imageBlur?: string;
   imageTrackingCode?: string;
-  subImages?: Array<string | { url: string; trackingCode?: string; publicId?: string }>;
+  subImages?: Array<
+    | string
+    | { url: string; thumbUrl?: string; blurData?: string; trackingCode?: string; publicId?: string }
+  >;
   images?: string[]; // Legacy: Multiple images
   sizes?: string[];
   colors?: string[];

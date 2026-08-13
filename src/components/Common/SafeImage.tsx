@@ -16,6 +16,11 @@ const SafeImage = ({ fallbackText = "No Image", alt, ...props }: SafeImageProps)
     setHasError(false);
   }, [props.src]);
 
+  // Turn on the blur placeholder only when there is real blur data to show.
+  // next/image throws if placeholder="blur" is set on a remote image without a
+  // blurDataURL, and products uploaded before this feature have none.
+  const hasBlur = typeof props.blurDataURL === "string" && props.blurDataURL.length > 0;
+
   if (hasError) {
     return (
       <div className="absolute inset-0 flex flex-col items-center justify-center bg-theme-bg-soft text-theme-text-muted">
@@ -28,6 +33,7 @@ const SafeImage = ({ fallbackText = "No Image", alt, ...props }: SafeImageProps)
   return (
     <Image
       {...props}
+      placeholder={hasBlur ? "blur" : props.placeholder}
       alt={alt}
       onError={() => setHasError(true)}
     />

@@ -24,6 +24,28 @@ async function getProduct(idOrSlug: string): Promise<any | 'not-found' | null> {
   }
 }
 
+// Same primary category, current product excluded. Failures are silent — a
+// missing "you may also like" strip must never take the product page down.
+async function getRelatedProducts(product: any): Promise<any[]> {
+  const category = product?.productCategories?.[0]?.category || product?.category;
+  if (!category) return [];
+  try {
+    const response = await fetch(
+      `${API_URL}/api/products?category=${encodeURIComponent(category)}&limit=12`,
+      { next: { revalidate: 300 }, signal: AbortSignal.timeout(15000) }
+    );
+    if (!response.ok) return [];
+    const data = await response.json();
+    const products = Array.isArray(data.products) ? data.products : [];
+    return products
+      .map((p: any) => ({ ...p, id: p._id || p.id }))
+      .filter((p: any) => p.id !== product.id)
+      .slice(0, 8);
+  } catch {
+    return [];
+  }
+}
+
 export async function generateMetadata({
   params,
 }: {
@@ -58,5 +80,12 @@ export default async function ProductDetailPage({
   const product = await getProduct(id);
   // Real 404 from the backend → serve an actual 404 (was a soft-404 before).
   if (product === 'not-found') notFound();
-  return <ProductDetailClient id={id} initialProduct={product} />;
+  const relatedProducts = product ? await getRelatedProducts(product) : [];
+  return (
+    <ProductDetailClient
+      id={id}
+      initialProduct={product}
+      relatedProducts={relatedProducts}
+    />
+  );
 }

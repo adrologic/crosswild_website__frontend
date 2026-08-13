@@ -3,6 +3,8 @@
 import React, { useMemo } from 'react';
 import Link from 'next/link';
 import SafeImage from '@/components/Common/SafeImage';
+import { productImage } from '@/lib/productImage';
+import ProductCodeBadge from '@/components/Common/ProductCodeBadge';
 import { Product } from '@/lib/api';
 import { useProducts } from '@/hooks/useProducts';
 import { Star, Zap, ArrowRight, Loader2, MessageCircle, Mail, ChevronRight } from 'lucide-react';
@@ -82,7 +84,7 @@ export default function TrendingProducts() {
                   <Link href={`/products/${product.id}`} className="block absolute inset-0">
                     {product.image && (
                       <SafeImage
-                        src={product.image}
+                        {...productImage(product)}
                         alt={product.name}
                         fill
                         className={`object-contain p-3 group-hover:scale-105 transition-all duration-500 ${hoverImage ? 'group-hover:opacity-0' : ''}`}
@@ -102,8 +104,9 @@ export default function TrendingProducts() {
                     <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
                   </Link>
 
-                  {/* Badges */}
-                  <div className="absolute top-[14px] left-[14px] flex flex-col gap-2 z-10 pointer-events-none">
+                  {/* Badges — product code first so it reads top-left of the photo */}
+                  <div className="absolute top-[14px] left-[14px] right-[14px] flex flex-wrap items-start gap-2 z-10 pointer-events-none">
+                    <ProductCodeBadge code={product.sku} inline />
                     {product.newArrival && (
                       <span className="inline-flex items-center gap-1 px-3 py-1.5 bg-[#ff4f20] text-white text-[11px] font-bold rounded-full shadow-[0_4px_10px_rgba(255,79,32,0.35)]">
                         New
@@ -160,7 +163,7 @@ export default function TrendingProducts() {
                 >
                   {product.image && (
                     <SafeImage
-                      src={product.image}
+                      {...productImage(product)}
                       alt={product.name}
                       fill
                       className={`object-contain p-[22px] transition-all duration-500 group-hover:scale-105 ${hoverImage ? 'group-hover:opacity-0' : ''}`}
@@ -177,8 +180,9 @@ export default function TrendingProducts() {
                     />
                   )}
 
-                  {/* Badges */}
-                  <div className="absolute top-[14px] left-[14px] flex flex-col gap-2">
+                  {/* Badges — product code first so it reads top-left of the photo */}
+                  <div className="absolute top-[14px] left-[14px] right-[14px] flex flex-wrap items-start gap-2">
+                    <ProductCodeBadge code={product.sku} inline />
                     {product.newArrival && (
                       <span className="inline-flex items-center gap-1 px-3 py-1.5 bg-[#ff4f20] text-white text-[11px] font-bold rounded-full shadow-[0_4px_10px_rgba(255,79,32,0.35)]">
                         New

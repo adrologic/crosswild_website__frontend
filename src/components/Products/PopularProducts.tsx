@@ -3,6 +3,8 @@
 import React from 'react';
 import Link from 'next/link';
 import SafeImage from '@/components/Common/SafeImage';
+import { productImage } from '@/lib/productImage';
+import ProductCodeBadge from '@/components/Common/ProductCodeBadge';
 import { Product } from '@/lib/api';
 import { useProducts } from '@/hooks/useProducts';
 import { Star, TrendingUp, Eye, Loader2, MessageCircle, Mail, ChevronRight } from 'lucide-react';
@@ -71,7 +73,7 @@ export default function PopularProducts() {
               <Link href={`/products/${product.id}`} className="relative aspect-[4/3] bg-[#ffffff] rounded-2xl shadow-[0_4px_12px_rgba(22,36,59,0.08)] overflow-hidden block">
                 {product.image && (
                   <SafeImage
-                    src={product.image}
+                    {...productImage(product)}
                     alt={product.name}
                     fill
                     className={`object-contain p-[22px] transition-all duration-500 group-hover:scale-105 ${hoverImage ? 'group-hover:opacity-0' : ''}`}
@@ -88,8 +90,9 @@ export default function PopularProducts() {
                   />
                 )}
 
-                {/* Badges */}
-                <div className="absolute top-[14px] left-[14px] flex flex-col gap-2">
+                {/* Badges — product code first so it reads top-left of the photo */}
+                <div className="absolute top-[14px] left-[14px] right-[14px] flex flex-wrap items-start gap-2">
+                  <ProductCodeBadge code={product.sku} inline />
                   {product.bestSeller && (
                     <span className="inline-flex items-center gap-1 px-3 py-1.5 bg-[#ff4f20] text-white text-[11px] font-bold rounded-full shadow-[0_4px_10px_rgba(255,79,32,0.35)]">
                       Best Seller

@@ -4,6 +4,7 @@ import React, { useState, useRef, useCallback } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { Product } from '@/lib/api';
+import { productImage } from '@/lib/productImage';
 import { useProducts } from '@/hooks/useProducts';
 import { getCategoryUrl } from '@/lib/categoryUrls';
 import { Star, ChevronLeft, ChevronRight, ArrowRight, Loader2, Grid3X3, MessageCircle, Mail } from 'lucide-react';
@@ -117,7 +118,7 @@ export default function ShopByCategory() {
                   <Link href={`/products/${product.id}`} className="relative aspect-[4/3] bg-[#ffffff] rounded-2xl shadow-[0_4px_12px_rgba(22,36,59,0.08)] overflow-hidden block">
                     {product.image && (
                       <Image
-                        src={product.image}
+                        {...productImage(product)}
                         alt={product.name}
                         fill
                         className={`object-contain p-[22px] transition-all duration-500 group-hover:scale-105 ${hoverImage ? 'group-hover:opacity-0' : ''}`}

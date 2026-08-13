@@ -3,22 +3,22 @@
 import { useState, useEffect } from 'react';
 import { productsAPI, type Product } from '@/lib/api';
 import { getCategoryListingUrl } from '@/lib/categoryUrls';
-import SafeImage from '@/components/Common/SafeImage';
+import { productImage, subImage } from '@/lib/productImage';
 import Link from 'next/link';
 import {
   ArrowLeft,
   Package,
-  MessageCircle,
-  Mail,
   ChevronRight,
   Star,
   Info,
   Sparkles,
+  Layers,
+  MessagesSquare,
 } from 'lucide-react';
 import { ProductSEO } from '@/components/SEO/SEOHead';
-
-const WHATSAPP_NUMBER = '+919529626262';
-const EMAIL_ADDRESS = 'orders@thecrosswild.com';
+import ProductGallery from './ProductGallery';
+import EnquiryActions from './EnquiryActions';
+import RelatedProducts from './RelatedProducts';
 
 const CATEGORY_NAMES: Record<string, string> = {
   tshirts: 'T-Shirts',
@@ -35,23 +35,32 @@ const CATEGORY_NAMES: Record<string, string> = {
 
 const getCategoryName = (slug: string) => CATEGORY_NAMES[slug] || slug;
 
-const getSubImageUrl = (img: string | { url: string }) =>
-  typeof img === 'string' ? img : img.url;
+// A gallery slide: the full-size photo plus its ~1KB inline placeholder, so a
+// slow connection paints something immediately instead of an empty frame.
+type Slide = { src: string; blurDataURL?: string };
 
 const formatSubcategory = (slug: string) =>
   slug.replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
 
+// Facts about how this business actually works — no delivery or stock claims.
+const TRUST_POINTS = [
+  { icon: Sparkles, text: 'Custom branding — printing and embroidery on every piece' },
+  { icon: Layers, text: 'Built for bulk: sampling, size sets and repeat orders' },
+  { icon: MessagesSquare, text: 'Quoted per enquiry — no online payment, no hidden charges' },
+];
+
 export default function ProductDetailClient({
   id,
   initialProduct,
+  relatedProducts = [],
 }: {
   id: string;
   initialProduct?: Product | null;
+  relatedProducts?: Product[];
 }) {
   const [product, setProduct] = useState<Product | null>(initialProduct ?? null);
   const [loading, setLoading] = useState(!initialProduct);
   const [error, setError] = useState<string | null>(null);
-  const [selectedImage, setSelectedImage] = useState(0);
 
   useEffect(() => {
     // Server already provided the product — sync state (the component is NOT
@@ -59,7 +68,6 @@ export default function ProductDetailClient({
     // new initialProduct arrives as a prop change) and skip the client refetch.
     if (initialProduct) {
       setProduct(initialProduct);
-      setSelectedImage(0);
       setError(null);
       setLoading(false);
       return;
@@ -117,19 +125,16 @@ export default function ProductDetailClient({
   }
 
   // ─── Build gallery images ───
-  const galleryImages: string[] = [];
-  if (product.image) galleryImages.push(product.image);
+  // Every image, never a slice: capping the list silently hides photos on
+  // exactly the products that have the most of them.
+  const galleryImages: Slide[] = [];
+  if (product.image) galleryImages.push(productImage(product, 'full'));
   if (product.subImages && product.subImages.length > 0) {
     product.subImages.forEach(img => {
-      const url = getSubImageUrl(img);
-      if (url) galleryImages.push(url);
+      const slide = subImage(img, 'full');
+      if (slide.src) galleryImages.push(slide);
     });
   }
-
-  // ─── WhatsApp & Email ───
-  const whatsappMessage = `Hi, I am interested in this product: ${product.name}`;
-  const whatsappLink = `https://wa.me/${WHATSAPP_NUMBER.replace(/[^0-9]/g, '')}?text=${encodeURIComponent(whatsappMessage)}`;
-  const emailLink = `mailto:${EMAIL_ADDRESS}?subject=${encodeURIComponent(`Inquiry for ${product.name}`)}`;
 
   // Primary category for breadcrumb
   const primaryCategory = product.productCategories?.[0]?.category || product.category || '';
@@ -160,6 +165,7 @@ export default function ProductDetailClient({
   }
 
   // Collect data flags
+  const hasCode = !!product.sku;
   const hasCategories = product.productCategories && product.productCategories.length > 0;
   const hasSizes = product.sizes && product.sizes.length > 0;
   const hasColors = product.colors && product.colors.length > 0;
@@ -168,7 +174,7 @@ export default function ProductDetailClient({
   const hasDetails = detailEntries.length > 0;
   const hasProductType = !!product.productType?.name;
   const hasMinOrder = product.minOrderQuantity && product.minOrderQuantity > 1;
-  const hasSpecsTable = hasProductType || hasCategories || hasSizes || hasColors || hasMinOrder || hasDetails || hasCustomFields;
+  const hasSpecsTable = hasCode || hasProductType || hasCategories || hasSizes || hasColors || hasMinOrder || hasDetails || hasCustomFields;
 
   return (
     <>
@@ -216,61 +222,18 @@ export default function ProductDetailClient({
         <section className="max-w-7xl mx-auto px-5 py-8 md:py-12">
           <div className="grid md:grid-cols-2 gap-8 lg:gap-14 items-start">
 
-            {/* ════════ LEFT — Image Gallery (Sticky) ════════ */}
-            <div className="md:sticky md:top-24 space-y-3">
-              {/* Main Image */}
-              <div className="relative bg-theme-bg-card border border-theme-border rounded-2xl overflow-hidden aspect-square w-full">
-                {galleryImages.length > 0 ? (
-                  <SafeImage
-                    src={galleryImages[selectedImage]}
-                    alt={`${product.name} - Image ${selectedImage + 1}`}
-                    fill
-                    className="object-contain p-6"
-                    priority
-                  />
-                ) : (
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <Package className="w-20 h-20 text-theme-text-muted opacity-20" />
-                  </div>
-                )}
-
-                {/* Best Seller badge overlay */}
-                {product.bestSeller && (
-                  <div className="absolute top-4 left-4">
-                    <span className="px-3 py-1 bg-primary text-white text-xs font-bold rounded-full shadow-sm">
-                      Best Seller
-                    </span>
-                  </div>
-                )}
-              </div>
-
-              {/* Thumbnail Strip */}
-              {galleryImages.length > 1 && (
-                <div className="flex gap-2 overflow-x-auto pb-1">
-                  {galleryImages.map((img, idx) => (
-                    <button
-                      key={idx}
-                      onClick={() => setSelectedImage(idx)}
-                      className={`relative flex-shrink-0 w-16 h-16 md:w-20 md:h-20 rounded-xl border-2 overflow-hidden transition-all ${
-                        selectedImage === idx
-                          ? 'border-primary ring-2 ring-primary/20'
-                          : 'border-theme-border hover:border-theme-text-muted'
-                      }`}
-                    >
-                      <SafeImage
-                        src={img}
-                        alt={`Thumbnail ${idx + 1}`}
-                        fill
-                        className="object-cover"
-                      />
-                    </button>
-                  ))}
-                </div>
-              )}
+            {/* ════════ LEFT — Gallery (sticky on desktop) ════════ */}
+            <div className="md:sticky md:top-24">
+              <ProductGallery
+                key={product.id}
+                images={galleryImages}
+                productName={product.name}
+                sku={product.sku}
+              />
             </div>
 
             {/* ════════ RIGHT — Product Info ════════ */}
-            <div className="space-y-6">
+            <div className="space-y-5">
               {/* Product Type */}
               {hasProductType && (
                 <span className="inline-block px-3 py-1 bg-secondary-blue/10 text-secondary-blue text-xs font-medium rounded-full">
@@ -283,6 +246,40 @@ export default function ProductDetailClient({
                 {product.name}
               </h1>
 
+              {/* Product code + rating */}
+              <div className="flex flex-wrap items-center justify-between gap-3">
+                {hasCode && (
+                  <p className="text-sm text-theme-text-muted">
+                    Product code:{' '}
+                    <span className="font-mono font-semibold tracking-wide text-theme-text">
+                      {product.sku}
+                    </span>
+                  </p>
+                )}
+
+                {product.rating > 0 && (
+                  <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-0.5">
+                      {[1, 2, 3, 4, 5].map(star => (
+                        <Star
+                          key={star}
+                          className={`w-4 h-4 ${
+                            star <= product.rating
+                              ? 'text-yellow-400 fill-yellow-400'
+                              : 'text-theme-text-muted opacity-30'
+                          }`}
+                        />
+                      ))}
+                    </div>
+                    {product.reviews > 0 && (
+                      <span className="text-xs text-theme-text-muted">
+                        ({product.reviews} {product.reviews === 1 ? 'review' : 'reviews'})
+                      </span>
+                    )}
+                  </div>
+                )}
+              </div>
+
               {/* Tagline */}
               {product.tagline && (
                 <p className="text-base md:text-lg text-theme-text-secondary leading-relaxed">
@@ -290,7 +287,15 @@ export default function ProductDetailClient({
                 </p>
               )}
 
-              {/* Price */}
+              {/* Short Description */}
+              {product.shortDescription && (
+                <div
+                  className="rich-text text-sm text-theme-text-secondary leading-7 max-w-prose"
+                  dangerouslySetInnerHTML={{ __html: product.shortDescription }}
+                />
+              )}
+
+              {/* Price — most bulk products carry none and are quoted per buyer */}
               {product.price > 0 && (
                 <p className="text-2xl font-bold text-primary">
                   ₹{product.price.toLocaleString('en-IN')}
@@ -302,71 +307,29 @@ export default function ProductDetailClient({
                 </p>
               )}
 
-              {/* Min Order Quantity (when no price) */}
-              {(!product.price || product.price === 0) && hasMinOrder && (
-                <p className="text-sm text-theme-text-secondary">
-                  Minimum Order Quantity: <span className="font-semibold text-theme-text">{product.minOrderQuantity} pcs</span>
-                </p>
-              )}
+              {/* ─── Enquiry actions ─── */}
+              <div className="pt-1">
+                <EnquiryActions product={product} />
+              </div>
 
-              {/* Rating */}
-              {product.rating > 0 && (
-                <div className="flex items-center gap-2">
-                  <div className="flex items-center gap-0.5">
-                    {[1, 2, 3, 4, 5].map(star => (
-                      <Star
-                        key={star}
-                        className={`w-4 h-4 ${
-                          star <= product.rating
-                            ? 'text-yellow-400 fill-yellow-400'
-                            : 'text-theme-text-muted opacity-30'
-                        }`}
-                      />
-                    ))}
-                  </div>
-                  {product.reviews > 0 && (
-                    <span className="text-xs text-theme-text-muted">
-                      ({product.reviews} {product.reviews === 1 ? 'review' : 'reviews'})
-                    </span>
-                  )}
-                </div>
-              )}
+              {/* ─── Trust bullets ─── */}
+              <ul className="space-y-2.5 border-t border-theme-border pt-5">
+                {TRUST_POINTS.map(({ icon: Icon, text }) => (
+                  <li key={text} className="flex items-start gap-2.5">
+                    <Icon className="mt-0.5 h-4 w-4 flex-shrink-0 text-primary" aria-hidden="true" />
+                    <span className="text-sm leading-relaxed text-theme-text-secondary">{text}</span>
+                  </li>
+                ))}
+              </ul>
 
-              {/* Short Description */}
-              {product.shortDescription && (
-                <div
-                  className="rich-text text-sm text-theme-text-secondary leading-7 max-w-prose"
-                  dangerouslySetInnerHTML={{ __html: product.shortDescription }}
-                />
-              )}
-
-              {/* Description (only if no shortDescription) */}
+              {/* Full description (only when the short one is already shown above
+                  the fold it would otherwise duplicate) */}
               {!product.shortDescription && product.description && (
                 <div
                   className="rich-text text-sm text-theme-text-secondary leading-7 max-w-prose"
                   dangerouslySetInnerHTML={{ __html: product.description }}
                 />
               )}
-
-              {/* ─── CTA Buttons ─── */}
-              <div className="flex flex-col sm:flex-row gap-3 pt-2">
-                <a
-                  href={whatsappLink}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex-1 inline-flex items-center justify-center gap-2.5 px-6 py-3.5 bg-[#25D366] hover:bg-[#1eba59] text-white font-semibold rounded-xl transition-colors text-sm shadow-sm"
-                >
-                  <MessageCircle className="w-5 h-5" />
-                  WhatsApp Inquiry
-                </a>
-                <a
-                  href={emailLink}
-                  className="flex-1 inline-flex items-center justify-center gap-2.5 px-6 py-3.5 bg-primary hover:bg-primary/90 text-white font-semibold rounded-xl transition-colors text-sm shadow-sm"
-                >
-                  <Mail className="w-5 h-5" />
-                  Email Inquiry
-                </a>
-              </div>
 
               {/* ─── Customization Note ─── */}
               <div className="flex items-start gap-3 p-4 bg-primary/5 border border-primary/15 rounded-xl">
@@ -406,6 +369,12 @@ export default function ProductDetailClient({
                     <h2 className="text-lg font-bold text-theme-text">Product Details</h2>
                   </div>
                   <div className="divide-y divide-theme-border">
+                    {hasCode && (
+                      <div className="flex items-start py-3 first:pt-0 last:pb-0">
+                        <span className="w-2/5 text-sm font-medium text-theme-text-muted flex-shrink-0">Product Code</span>
+                        <span className="text-sm font-mono font-semibold text-theme-text">{product.sku}</span>
+                      </div>
+                    )}
                     {hasProductType && (
                       <div className="flex items-start py-3 first:pt-0 last:pb-0">
                         <span className="w-2/5 text-sm font-medium text-theme-text-muted flex-shrink-0">Type</span>
@@ -487,6 +456,9 @@ export default function ProductDetailClient({
             </div>
           </section>
         )}
+
+        {/* ─── RELATED PRODUCTS ─── */}
+        <RelatedProducts products={relatedProducts} />
 
         {/* ─── BACK BUTTON ─── */}
         <div className="max-w-7xl mx-auto px-5 pb-10 pt-2">

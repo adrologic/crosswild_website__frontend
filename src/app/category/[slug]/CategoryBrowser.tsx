@@ -3,6 +3,8 @@
 import { useState, useMemo, useEffect } from 'react';
 import Link from 'next/link';
 import SafeImage from '@/components/Common/SafeImage';
+import { productImage } from '@/lib/productImage';
+import ProductCodeBadge from '@/components/Common/ProductCodeBadge';
 import { productsAPI, type Product } from '@/lib/api';
 import { getCategoryUrl, getSubCategoryUrl } from '@/lib/categoryUrls';
 import { toPlainText } from '@/lib/text';
@@ -26,15 +28,20 @@ const EMAIL_ADDRESS = 'orders@thecrosswild.com';
 
 const getWhatsAppLink = (product: Product) => {
   const message = encodeURIComponent(
-    `Hi! I'm interested in:\n\n*${product.name}*\nCategory: ${product.category}\n\nPlease share pricing and availability.`
+    `Hi! I'm interested in:\n\n*${product.name}*\n` +
+    `${product.sku ? `Product code: ${product.sku}\n` : ''}` +
+    `Category: ${product.category}\n\nPlease share pricing and availability.`
   );
   return `https://wa.me/${WHATSAPP_NUMBER.replace(/[^0-9]/g, '')}?text=${message}`;
 };
 
 const getEmailLink = (product: Product) => {
-  const subject = encodeURIComponent(`Inquiry: ${product.name}`);
+  const subject = encodeURIComponent(
+    `Inquiry: ${product.name}${product.sku ? ` (${product.sku})` : ''}`
+  );
   const body = encodeURIComponent(
-    `Hi,\n\nI'm interested in "${product.name}".\n\nPlease share pricing and availability details.\n\nThank you!`
+    `Hi,\n\nI'm interested in "${product.name}"${product.sku ? ` (product code ${product.sku})` : ''}.` +
+    `\n\nPlease share pricing and availability details.\n\nThank you!`
   );
   return `mailto:${EMAIL_ADDRESS}?subject=${subject}&body=${body}`;
 };
@@ -98,6 +105,8 @@ export default function CategoryBrowser({ category, parent, subcategories, topCa
       const q = searchQuery.toLowerCase();
       filtered = filtered.filter(p =>
         p.name.toLowerCase().includes(q) ||
+        // Match the product code too — see the same filter in ProductsClient.
+        (p.sku || '').toLowerCase().includes(q) ||
         p.description.toLowerCase().includes(q)
       );
     }
@@ -127,7 +136,7 @@ export default function CategoryBrowser({ category, parent, subcategories, topCa
           {product.image ? (
             <>
               <SafeImage
-                src={product.image}
+                {...productImage(product)}
                 alt={product.name}
                 fill
                 className={`object-contain p-[22px] transition-all duration-500 group-hover:scale-105 ${hoverImage ? 'group-hover:opacity-0' : ''}`}
@@ -148,7 +157,9 @@ export default function CategoryBrowser({ category, parent, subcategories, topCa
               <Package className="w-16 h-16 text-gray-300" />
             </div>
           )}
-          <div className="absolute top-[14px] left-[14px] flex flex-col gap-2">
+          {/* Badges — product code first so it reads top-left of the photo */}
+          <div className="absolute top-[14px] left-[14px] right-[14px] flex flex-wrap items-start gap-2">
+            <ProductCodeBadge code={product.sku} inline />
             {product.featured && (
               <span className="inline-flex items-center gap-1 px-3 py-1.5 bg-[#ff4f20] text-white text-[11px] font-bold rounded-full shadow-[0_4px_10px_rgba(255,79,32,0.35)]">
                 <Sparkles className="w-3 h-3" />Featured
@@ -209,13 +220,14 @@ export default function CategoryBrowser({ category, parent, subcategories, topCa
       <Link href={`/products/${product.id}`} className="relative w-32 sm:w-44 md:w-56 flex-shrink-0">
         <div className="absolute inset-0 bg-[#ffffff] rounded-2xl shadow-[0_4px_12px_rgba(22,36,59,0.08)] overflow-hidden">
           {product.image ? (
-            <SafeImage src={product.image} alt={product.name} fill
+            <SafeImage {...productImage(product)} alt={product.name} fill
               className="object-contain p-4 group-hover:scale-105 transition-transform duration-500"
               sizes="(max-width: 768px) 30vw, 20vw" />
           ) : (
             <div className="absolute inset-0 flex items-center justify-center"><Package className="w-12 h-12 text-gray-300" /></div>
           )}
         </div>
+        <ProductCodeBadge code={product.sku} className="left-[14px] top-[14px]" />
       </Link>
       <div className="flex-1 p-6 flex flex-col">
         <div className="flex-1">

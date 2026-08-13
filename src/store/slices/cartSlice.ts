@@ -4,6 +4,9 @@ import type { RootState } from '../index';
 export interface CartItem {
   id: string;
   name: string;
+  /** Public product code ("CW1482") — travels into the enquiry message so
+   *  staff can find the product from a WhatsApp thread. */
+  sku?: string;
   price: number;
   quantity: number;
   image: string;

@@ -439,6 +439,17 @@
   animation-play-state: paused;
 }
 
+/* Scroll-snap carousels (product gallery, thumbnail strip) still need to
+   scroll on desktop — they just shouldn't show a scrollbar over the photo. */
+.no-scrollbar {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
 /* ============================================
    GLOBAL DARK MODE OVERRIDES
    Maps legacy Tailwind utility classes to the

@@ -4,6 +4,7 @@ import React, { useState, useEffect, useRef, useCallback } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import SafeImage from '@/components/Common/SafeImage';
+import { productImage } from '@/lib/productImage';
 import { usePathname, useRouter } from 'next/navigation';
 import { Search, ShoppingCart, Menu, X, ChevronDown, Phone, Mail, Home, MessageCircle, Loader2, Tag, MapPin } from 'lucide-react';
 import { LOCATIONS, FOOTER_LOCATION_ITEMS } from '@/data/locations';
@@ -191,16 +192,19 @@ function SearchBox({
                   className="w-full flex items-center gap-3 px-4 py-3 hover:bg-theme-bg-soft dark:hover:bg-[#26211A] transition-colors text-left">
                   {product.image ? (
                     <div className="relative w-10 h-10 rounded-lg overflow-hidden flex-shrink-0 bg-theme-bg-soft">
-                      <SafeImage src={product.image} alt={product.name} fill className="object-contain" />
+                      <SafeImage {...productImage(product)} alt={product.name} fill className="object-contain" />
                     </div>
                   ) : (
                     <div className="w-10 h-10 rounded-lg bg-theme-bg-soft flex-shrink-0" />
                   )}
                   <div className="min-w-0">
                     <div className="text-sm font-medium text-theme-text truncate">{product.title || product.name}</div>
-                    {product.category && (
-                      <div className="text-xs text-theme-text-muted capitalize">{product.category}</div>
-                    )}
+                    <div className="flex items-center gap-2 text-xs text-theme-text-muted">
+                      {product.sku && (
+                        <span className="font-mono font-semibold text-theme-text-secondary">{product.sku}</span>
+                      )}
+                      {product.category && <span className="capitalize">{product.category}</span>}
+                    </div>
                   </div>
                 </button>
               ))}

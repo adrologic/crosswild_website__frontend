@@ -235,12 +235,22 @@ export default function SEOHead({
 
 // Product SEO component
 export function ProductSEO({ product, breadcrumbItems }: { product: any; breadcrumbItems?: { name: string; url: string }[] }) {
+  // Every gallery image, main first — Google uses the list, and the detail page
+  // already renders them all.
+  const images = [
+    product.image,
+    ...(Array.isArray(product.subImages)
+      ? product.subImages.map((img: any) => (typeof img === 'string' ? img : img?.url))
+      : []),
+  ].filter(Boolean);
+
   const structuredData = {
     '@context': 'https://schema.org',
     '@type': 'Product',
     name: product.name,
     description: product.description,
-    image: product.image,
+    image: images.length > 0 ? images : product.image,
+    ...(product.sku ? { sku: product.sku, mpn: product.sku } : {}),
     brand: {
       '@type': 'Brand',
       name: 'The CrossWild',
