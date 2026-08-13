@@ -3,18 +3,23 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { ArrowRight, ChevronLeft, ChevronRight } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
 import { getSiteSettings } from '@/lib/cms';
 
-const DEFAULT_SLIDES = [
-  { src: '/images/hero/hero-1.webp', alt: 'Custom T-shirt Manufacturer Jaipur' },
-  { src: '/images/hero/hero-2.webp', alt: 'Custom Bags Manufacturer Jaipur' },
-  { src: '/images/hero/hero-3.webp', alt: 'Custom Caps Manufacturer Jaipur' },
-  { src: '/images/hero/hero-4.webp', alt: 'Promotional Products India' },
-  { src: '/images/hero/hero-5.jpg', alt: 'Custom Printing Services Jaipur' },
-];
+/**
+ * Home hero banner — one designed image per theme. Both are 2939x1088 (~2.70:1)
+ * with the headline and logo running edge-to-edge, so the container is locked to
+ * that exact ratio: any crop would cut off the logo or the wordmark.
+ *
+ * Set in code rather than the CMS on purpose — the `home/hero` section in the
+ * database still holds the old 5-slide carousel, which is now unused.
+ */
+const HERO_BANNER = {
+  light: '/banners/homePage/heroLight.png',
+  dark: '/banners/homePage/heroDark.png',
+  alt: 'The CrossWild — custom t-shirt, bag and cap manufacturers and printers in Jaipur',
+};
 
-interface Slide { src: string; alt: string }
 interface HeroContent {
   tagline?: string;
   h1?: string;
@@ -25,94 +30,45 @@ interface HeroContent {
   cta1Url?: string;
   cta2Text?: string;
   cta2Url?: string;
-  slides?: Slide[];
 }
 
 interface Props { content?: HeroContent }
 
 export default function CrosswildHero({ content }: Props) {
-  const slides: Slide[] = content?.slides?.length ? content.slides : DEFAULT_SLIDES;
-  const [current, setCurrent] = useState(0);
   const [trustBadges, setTrustBadges] = useState<string[]>(['Unmatched Customization', 'Affordable Bulk Orders', 'Fast Turnaround']);
   useEffect(() => {
     getSiteSettings().then((s) => {
       if (s?.trustBadges?.length) setTrustBadges(s.trustBadges);
     });
   }, []);
-  // Defer rendering slides 2..N until after the LCP slide has painted, so they
-  // don't compete with slide 0 for bandwidth in the critical path.
-  const [showAllSlides, setShowAllSlides] = useState(false);
-
-  useEffect(() => {
-    type IdleWindow = Window & {
-      requestIdleCallback?: (cb: () => void, opts?: { timeout: number }) => number;
-    };
-    const w = window as IdleWindow;
-    if (typeof w.requestIdleCallback === 'function') {
-      w.requestIdleCallback(() => setShowAllSlides(true), { timeout: 2000 });
-    } else {
-      const t = setTimeout(() => setShowAllSlides(true), 1500);
-      return () => clearTimeout(t);
-    }
-  }, []);
-
-  useEffect(() => {
-    if (!showAllSlides || slides.length < 2) return;
-    const timer = setInterval(() => setCurrent((p) => (p + 1) % slides.length), 4000);
-    return () => clearInterval(timer);
-  }, [slides.length, showAllSlides]);
-
-  const prev = () => setCurrent((c) => (c - 1 + slides.length) % slides.length);
-  const next = () => setCurrent((c) => (c + 1) % slides.length);
 
   return (
     <section className="bg-theme-bg">
 
-      {/* ── TOP: Full-width image slider ── */}
-      <div className="relative w-full aspect-video sm:aspect-auto sm:h-[500px] md:h-[620px] lg:h-[750px] overflow-hidden bg-gray-900">
-        {slides.map((slide, idx) => {
-          if (idx !== 0 && !showAllSlides) return null;
-          return (
-            <Image
-              key={idx}
-              src={slide.src}
-              alt={slide.alt}
-              fill
-              sizes="100vw"
-              className={`object-contain sm:object-cover transition-opacity duration-700 ${idx === current ? 'opacity-100' : 'opacity-0'}`}
-              priority={idx === 0}
-              fetchPriority={idx === 0 ? 'high' : 'auto'}
-            />
-          );
-        })}
-
-        {/* Prev / Next */}
-        <button
-          onClick={prev}
-          className="absolute left-3 top-1/2 -translate-y-1/2 z-10 bg-white/80 hover:bg-white rounded-full p-2 shadow-md transition"
-          aria-label="Previous slide"
-        >
-          <ChevronLeft className="w-5 h-5 text-gray-800" />
-        </button>
-        <button
-          onClick={next}
-          className="absolute right-3 top-1/2 -translate-y-1/2 z-10 bg-white/80 hover:bg-white rounded-full p-2 shadow-md transition"
-          aria-label="Next slide"
-        >
-          <ChevronRight className="w-5 h-5 text-gray-800" />
-        </button>
-
-        {/* Dots */}
-        <div className="absolute bottom-3 left-1/2 -translate-x-1/2 z-10 flex gap-2">
-          {slides.map((_, idx) => (
-            <button
-              key={idx}
-              onClick={() => setCurrent(idx)}
-              className={`h-2 rounded-full transition-all duration-300 ${idx === current ? 'bg-white w-5' : 'bg-white/60 w-2'}`}
-              aria-label={`Go to slide ${idx + 1}`}
-            />
-          ))}
-        </div>
+      {/* ── TOP: Full-width hero banner ── */}
+      {/* Ratio matches the artwork exactly so nothing is cropped. The two
+          variants are swapped with CSS (not `useTheme`) so the correct one is
+          in the markup on first paint — next-themes sets `.dark` on <html>
+          before hydration, so there is no flash and no layout shift. */}
+      <div className="relative w-full aspect-[2939/1088] overflow-hidden bg-[#A9CBFF] dark:bg-[#9E0B25]">
+        <Image
+          src={HERO_BANNER.light}
+          alt={HERO_BANNER.alt}
+          fill
+          sizes="100vw"
+          className="object-cover dark:hidden"
+          priority
+          fetchPriority="high"
+        />
+        <Image
+          src={HERO_BANNER.dark}
+          alt={HERO_BANNER.alt}
+          fill
+          sizes="100vw"
+          className="hidden object-cover dark:block"
+          priority
+          fetchPriority="high"
+        />
       </div>
 
       {/* ── BOTTOM: Text + Actions ── */}

@@ -9,6 +9,15 @@ import TrustSection from "@/components/Features/TrustSection";
 import ScrollUp from "@/components/Common/ScrollUp";
 import HomeBrandContent from "@/components/Home/HomeBrandContent";
 import PromoBanner from "@/components/Promotions/PromoBanner";
+import ThemeBanner from "@/components/Common/ThemeBanner";
+
+/** "Grow your Business with us" band — one designed image per theme (7000x3937). */
+const GROW_BANNER = {
+  light: '/banners/homePage/growLight.png',
+  dark: '/banners/homePage/growDark.png',
+  aspectRatio: '7000 / 3937',
+  alt: 'Grow your business with us — big or small, we give our best to every order',
+};
 
 // Below-the-fold components — lazy loaded for faster initial page render
 const PopularProducts = dynamic(() => import("@/components/Products/PopularProducts"));
@@ -50,6 +59,15 @@ export default async function Home() {
 
       {/* Best Sellers & New Arrivals */}
       <BestSellersAndNewArrivals />
+
+      {/* "Grow your Business with us" banner — below the fold, so not priority */}
+      <ThemeBanner
+        light={GROW_BANNER.light}
+        dark={GROW_BANNER.dark}
+        alt={GROW_BANNER.alt}
+        aspectRatio={GROW_BANNER.aspectRatio}
+        bgClass="bg-[#AACBFE] dark:bg-[#861424]"
+      />
 
       {/* Our Most Popular Products */}
       <PopularProducts />
