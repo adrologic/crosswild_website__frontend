@@ -233,9 +233,13 @@ export async function getPageSEO(path: string): Promise<PageSEO | null> {
 // Public submission endpoints (client-side fetch from forms)
 // ────────────────────────────────────────────────────────────────────────────
 
+// Resolved the same way as API_URL above: in the browser fall back to `/api`,
+// which next.config.js rewrites to BACKEND_URL. Falling back to a hardcoded
+// backend here would post form submissions to a different backend than the rest
+// of the site reads from — i.e. enquiries landing in the wrong database.
 const CLIENT_API =
   typeof window !== 'undefined'
-    ? (process.env.NEXT_PUBLIC_API_URL || `${process.env.NEXT_PUBLIC_BACKEND_URL || 'https://crosswild-backend-p5l3.onrender.com'}/api`)
+    ? (process.env.NEXT_PUBLIC_API_URL || '/api')
     : API_URL;
 
 export async function submitContact(payload: { name: string; email: string; phone?: string; message: string; source?: string }) {

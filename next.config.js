@@ -1,5 +1,9 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  // The parent folder has its own package-lock.json, so Next guesses the
+  // workspace root is one level up. Pin it to this app instead — otherwise file
+  // tracing walks the whole `Crosswild ` folder (including the image archives).
+  outputFileTracingRoot: __dirname,
   reactStrictMode: false,
   async redirects() {
     return [
@@ -101,6 +105,13 @@ const nextConfig = {
       {
         protocol: "https",
         hostname: "res.cloudinary.com",
+      },
+      {
+        // Cloudflare R2 — where the backend uploads images (STORAGE_DRIVER=r2).
+        // Matches R2_PUBLIC_BASE in the backend env; pinned to this bucket rather
+        // than **.r2.dev so the image optimizer can't be pointed at other buckets.
+        protocol: "https",
+        hostname: "pub-e632e16b74374ce8bb6fc4f36b6e36a7.r2.dev",
       },
       {
         protocol: "https",

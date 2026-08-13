@@ -114,7 +114,11 @@ export default async function RootLayout({
 
         {/* DNS prefetch only — preconnect was flagged as unused on pages that don't hit these origins during initial render. dns-prefetch is essentially free even when unused. */}
         <link rel="dns-prefetch" href="https://www.thecrosswild.com" />
-        <link rel="dns-prefetch" href="https://crosswild-backend-p5l3.onrender.com" />
+        {/* Follows BACKEND_URL so the hint points at the backend actually in use. */}
+        <link
+          rel="dns-prefetch"
+          href={process.env.BACKEND_URL || 'https://crosswild-backend-p5l3.onrender.com'}
+        />
 
         {/* Organization Schema — dynamic from admin */}
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationSchema) }} />
