@@ -83,17 +83,14 @@ const AboutSectionOne = ({ content }: Props) => {
             </div>
             <div className="w-full px-4 lg:w-1/2">
               <div className="relative mx-auto aspect-25/24 max-w-[500px] lg:mr-0">
+                {/* One image for both themes. Dark mode used to swap in the
+                    starter template's stock illustration, which had nothing to
+                    do with this business. */}
                 <Image
                   src="/images/about/aboutPage/vv.png"
-                  alt="about-image"
+                  alt="The CrossWild manufacturing team at work"
                   fill
-                  className="mx-auto max-w-full drop-shadow-three dark:hidden dark:drop-shadow-none lg:mr-0"
-                />
-                <Image
-                  src="/images/about/about-image-dark.svg"
-                  alt="about-image"
-                  fill
-                  className="mx-auto hidden max-w-full drop-shadow-three dark:block dark:drop-shadow-none lg:mr-0"
+                  className="mx-auto max-w-full object-contain drop-shadow-three dark:drop-shadow-none lg:mr-0"
                 />
               </div>
             </div>

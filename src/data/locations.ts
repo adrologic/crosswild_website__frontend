@@ -43,5 +43,15 @@ export const FOOTER_LOCATION_ITEMS = LOCATIONS.map((l) => ({
   citySlug: l.slug,
 }));
 
-// No longer needed (old city pages removed) — kept as empty array to avoid import errors
-export const OFFICE_CITIES: string[] = [];
+// Cities shown in the header's "available near you" ticker. Plain labels, not
+// links — the list is about reach, and several of these cities have no landing
+// page of their own yet.
+export const OFFICE_CITIES: string[] = [
+  'Jaipur',
+  'Jodhpur',
+  'Indore',
+  'Udaipur',
+  'Kota',
+  'Ajmer',
+  'Ahmedabad',
+];

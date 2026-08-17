@@ -4,6 +4,8 @@ import Link from 'next/link';
 import { generateCategoryMetadata, generateCategorySchema, generateBreadcrumbSchema, getGlobalSEO } from '@/lib/seo';
 import { ChevronRight } from 'lucide-react';
 import CategoryBrowser from './CategoryBrowser';
+import ThemeBanner from '@/components/Common/ThemeBanner';
+import { getCategoryBanner } from '@/data/categoryBanners';
 import { toPlainText } from '@/lib/text';
 
 const API_URL = (process.env.BACKEND_URL || 'https://crosswild-backend-p5l3.onrender.com') + '/api';
@@ -107,6 +109,7 @@ export default async function CategoryPage({
 
   const categorySchema = generateCategorySchema(category, subcategories, siteUrl);
   const breadcrumbSchema = generateBreadcrumbSchema(breadcrumbs);
+  const categoryBanner = getCategoryBanner(category.id, parent?.id);
 
   return (
     <>
@@ -145,6 +148,17 @@ export default async function CategoryPage({
           </nav>
         </div>
       </div>
+
+      {/* Category banner — a sub-category with none of its own inherits the
+          parent's, so /category/laptop-bags still gets the Bags artwork. */}
+      {categoryBanner && (
+        <ThemeBanner
+          light={categoryBanner.src}
+          alt={categoryBanner.alt}
+          aspectRatio={categoryBanner.aspectRatio}
+          priority
+        />
+      )}
 
       <CategoryBrowser
         category={{ id: category.id, name: category.name, seoUrl: category.seoUrl }}

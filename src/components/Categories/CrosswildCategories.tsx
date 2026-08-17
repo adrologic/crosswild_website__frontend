@@ -2,8 +2,10 @@
 
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { ArrowRight } from 'lucide-react';
 import { getCategoryHomeCards, type CategoryHomeCard } from '@/lib/cms';
+import { getBannerForTitle } from '@/data/categoryBanners';
 import { toPlainText } from '@/lib/text';
 
 const FALLBACK: CategoryHomeCard[] = [
@@ -49,31 +51,56 @@ export default function CrosswildCategories() {
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
           {items.map((category, idx) => {
             const color = COLORS[idx % COLORS.length];
+            const banner = getBannerForTitle(category.title);
             return (
               <Link
                 key={category._id}
                 href={category.link || '#'}
-                className="group relative bg-white rounded-2xl p-6 shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-100 hover:border-primary/50 overflow-hidden"
+                className="group relative bg-white rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-100 hover:border-primary/50 overflow-hidden"
               >
-                {category.popular && (
-                  <div className="absolute top-3 right-3 bg-yellow-400 text-yellow-900 text-xs font-bold px-2 py-1 rounded-full">
-                    Popular
+                {/* The category's own banner photo, cropped to a tile. Cards
+                    added in the admin panel carry a label rather than a category
+                    id, so the photo is matched on the title and falls back to
+                    the emoji when nothing matches. */}
+                {banner ? (
+                  <div className="relative aspect-16/10 overflow-hidden bg-gray-100">
+                    <Image
+                      src={banner.src}
+                      alt={category.title}
+                      fill
+                      sizes="(max-width: 768px) 50vw, (max-width: 1024px) 33vw, 25vw"
+                      className="object-cover transition-transform duration-500 group-hover:scale-105"
+                    />
+                    {category.popular && (
+                      <div className="absolute top-3 right-3 bg-yellow-400 text-yellow-900 text-xs font-bold px-2 py-1 rounded-full">
+                        Popular
+                      </div>
+                    )}
+                  </div>
+                ) : (
+                  <div className="relative flex aspect-16/10 items-center justify-center bg-gray-100">
+                    <span className="text-5xl transition-transform duration-300 group-hover:scale-110">
+                      {category.icon}
+                    </span>
+                    {category.popular && (
+                      <div className="absolute top-3 right-3 bg-yellow-400 text-yellow-900 text-xs font-bold px-2 py-1 rounded-full">
+                        Popular
+                      </div>
+                    )}
                   </div>
                 )}
 
-                <div className={`absolute inset-0 bg-gradient-to-br ${color} opacity-0 group-hover:opacity-5 transition-opacity duration-300`}></div>
-
-                <div className="relative z-10">
-                  <div className="text-5xl mb-4 transform group-hover:scale-110 transition-transform duration-300">
-                    {category.icon}
-                  </div>
-                  <h3 className="font-bold text-lg mb-2 text-gray-900 group-hover:text-primary transition-colors">
-                    {category.title}
-                  </h3>
-                  <p className="text-sm text-gray-600 mb-4">{toPlainText(category.description)}</p>
-                  <div className="flex items-center text-primary text-sm font-semibold">
-                    <span className="group-hover:mr-2 transition-all">Shop Now</span>
-                    <ArrowRight className="w-4 h-4 opacity-0 group-hover:opacity-100 transition-all" />
+                <div className="relative p-5">
+                  <div className={`absolute inset-0 bg-gradient-to-br ${color} opacity-0 group-hover:opacity-5 transition-opacity duration-300`}></div>
+                  <div className="relative z-10">
+                    <h3 className="font-bold text-lg mb-1.5 text-gray-900 group-hover:text-primary transition-colors">
+                      {category.title}
+                    </h3>
+                    <p className="text-sm text-gray-600 mb-3 line-clamp-2">{toPlainText(category.description)}</p>
+                    <div className="flex items-center text-primary text-sm font-semibold">
+                      <span className="group-hover:mr-2 transition-all">Shop Now</span>
+                      <ArrowRight className="w-4 h-4 opacity-0 group-hover:opacity-100 transition-all" />
+                    </div>
                   </div>
                 </div>
               </Link>

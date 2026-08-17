@@ -6,8 +6,12 @@ import Image from 'next/image';
 import SafeImage from '@/components/Common/SafeImage';
 import { productImage } from '@/lib/productImage';
 import { usePathname, useRouter } from 'next/navigation';
-import { Search, ShoppingCart, Menu, X, ChevronDown, Phone, Mail, Home, MessageCircle, Loader2, Tag, MapPin } from 'lucide-react';
-import { LOCATIONS, FOOTER_LOCATION_ITEMS } from '@/data/locations';
+import {
+  Search, ShoppingCart, Menu, X, ChevronDown, ChevronRight, Phone, Mail, Home,
+  MessageCircle, Loader2, Tag, MapPin, LayoutGrid, Sparkles, Workflow, Info,
+  Newspaper, Images,
+} from 'lucide-react';
+import { LOCATIONS, FOOTER_LOCATION_ITEMS, OFFICE_CITIES } from '@/data/locations';
 import { useAppSelector, useAppDispatch } from '@/store/hooks';
 import { selectTotalItems } from '@/store/slices/cartSlice';
 import {
@@ -22,6 +26,17 @@ import ThemeToggle from '@/components/ThemeToggle/ThemeToggle';
 
 // Pre-rebrand logo still stored in Site Settings; treated as "no custom logo".
 const LEGACY_LOGO = '/images/logo/logo-crosswile.jpg';
+
+// Company pages, shown as a tile grid in the burger menu. Same set and order as
+// the desktop top bar.
+const MOBILE_INFO_LINKS = [
+  { href: '/services',      label: 'Services',     Icon: Sparkles },
+  { href: '/our_process',   label: 'How It Works', Icon: Workflow },
+  { href: '/about-us',      label: 'About Us',     Icon: Info },
+  { href: '/contact-us',    label: 'Contact Us',   Icon: Phone },
+  { href: '/blog',          label: 'Blog',         Icon: Newspaper },
+  { href: '/image-gallery', label: 'Gallery',      Icon: Images },
+];
 
 // Types for nav categories
 interface NavItem { name: string; link: string }
@@ -103,6 +118,36 @@ function buildNavCategories(tree: any[]): { nav: NavCategory[]; flat: FlatCatego
   }
 
   return { nav: mainCats, flat };
+}
+
+// Scrolling "we're near you" strip. Rendered twice: once above the nav, and
+// again pinned to the top of the open burger menu — the page-level one sits
+// above the sticky header, so it's off-screen exactly when the menu is open.
+// Two identical halves keep the -50% slide of `animate-scroll` seamless, and
+// each half repeats the phrase enough times to stay filled on a wide desktop.
+function LocationTicker() {
+  return (
+    <div className="bg-primary text-white overflow-hidden py-1.5">
+      <div className="flex animate-scroll pause-animation whitespace-nowrap" style={{ animationDuration: '25s' }}>
+        {[0, 1].map((half) => (
+          <span key={half} className="flex flex-shrink-0 items-center" aria-hidden={half === 1}>
+            {[0, 1, 2, 3].map((rep) => (
+              <span key={rep} className="flex items-center gap-2 px-5 text-[11px] sm:text-xs font-semibold tracking-wide">
+                <MapPin className="w-3.5 h-3.5 flex-shrink-0" />
+                <span>We are available near you</span>
+                {OFFICE_CITIES.map((city) => (
+                  <React.Fragment key={city}>
+                    <span className="opacity-50">•</span>
+                    <span>{city}</span>
+                  </React.Fragment>
+                ))}
+              </span>
+            ))}
+          </span>
+        ))}
+      </div>
+    </div>
+  );
 }
 
 function SearchBox({
@@ -280,14 +325,10 @@ export default function CrosswildHeader() {
   const logoDark = cmsLogo || '/images/logo/dark-logo.png';
   const logoAlt = header?.logoAlt || 'The CrossWild';
   const customizeCTA = header?.customizeCTA;
-  const promoTicker = header?.promoTicker?.length ? header.promoTicker : [
-    '🎉 Get 20% OFF on Bulk Orders! BULK20',
-    '🚚 Free Delivery on Orders Above ₹999',
-    '👕 Custom T-Shirts Starting ₹199',
-    '🏆 Premium Quality Printing & Merchandise',
-    '📦 Pan India Fast Delivery',
-    '✨ Uniforms, Gifts & Promotional Items',
-  ];
+  // The promo ticker that used to sit at the foot of the burger menu is gone —
+  // the locations strip at the top of the header is the only marquee now. Its
+  // `header.promoTicker` CMS field is left in place, unused, so the saved
+  // messages survive if it's ever brought back.
 
   const desktopSearchRef = useRef<HTMLDivElement>(null);
   const mobileBarSearchRef = useRef<HTMLDivElement>(null);
@@ -386,6 +427,7 @@ export default function CrosswildHeader() {
         }`}
       />
 
+
       {/* Top Bar */}
       <div className="bg-primary-800 dark:bg-[#1E1A14] text-white dark:text-[#C8B99A] text-sm py-2 hidden lg:block">
         <div className="w-full px-6 lg:px-12 flex items-center justify-between">
@@ -409,6 +451,11 @@ export default function CrosswildHeader() {
       <header className={`sticky top-0 z-50 bg-navbar-bg border-b border-navbar-border transition-shadow duration-300 ${
         isScrolled ? 'shadow-md dark:shadow-[0_4px_12px_rgba(0,0,0,0.4)]' : 'shadow-sm'
       }`}>
+        {/* Locations strip lives inside the sticky header, so it stays pinned
+            above the nav — including while the burger menu is open, where the
+            header's z-50 keeps it clear of the backdrop blur. */}
+        <LocationTicker />
+
         <div className="w-full px-6 lg:px-12">
           <div className="flex items-center justify-between h-20">
             {/* Logo */}
@@ -578,161 +625,159 @@ export default function CrosswildHeader() {
           </nav>
         </div>
 
-        {/* Mobile Menu */}
+        {/* Mobile Menu — a drawer that fills the space under the sticky header:
+            the nav scrolls inside it while the contact bar stays pinned to the
+            bottom, so Call/WhatsApp never sit buried under the whole category
+            list. 6.75rem is the header above it (locations strip + nav row). */}
         <div className={`lg:hidden bg-theme-bg overflow-hidden transition-all duration-300 ease-in-out ${
-          isMenuOpen ? 'max-h-[900px] border-t border-theme-border opacity-100' : 'max-h-0 opacity-0 border-t-0'
+          isMenuOpen ? 'max-h-[calc(100dvh-6.75rem)] border-t border-theme-border opacity-100' : 'max-h-0 opacity-0 border-t-0'
         }`}>
-          <div className="px-4 py-4 space-y-4 overflow-y-auto max-h-[75vh]">
-            <div className="space-y-2">
-              <Link href="/products" onClick={() => dispatch(closeMenu())}
-                className={`block py-2 font-semibold transition-colors ${
-                  isProductsPage ? 'text-primary' : 'text-theme-text hover:text-primary'
-                }`}>All Products</Link>
+          <div className="flex flex-col max-h-[calc(100dvh-6.75rem)]">
+            <div className="flex-1 min-h-0 overflow-y-auto px-3 py-3">
+              <div className="space-y-1">
+                {/* Quick actions */}
+                <div className="flex gap-2 pb-1">
+                  <Link href="/" onClick={() => dispatch(closeMenu())}
+                    className={`flex-1 flex items-center justify-center gap-2 rounded-xl py-2.5 text-sm font-semibold transition-colors ${
+                      isHomePage ? 'bg-primary text-white' : 'bg-theme-bg-soft dark:bg-[#26211A] text-theme-text hover:bg-primary/10'
+                    }`}>
+                    <Home className="w-4 h-4" />Home
+                  </Link>
+                  <button onClick={() => { dispatch(openCart()); dispatch(closeMenu()); }}
+                    className="relative flex-1 flex items-center justify-center gap-2 rounded-xl py-2.5 text-sm font-semibold bg-theme-bg-soft dark:bg-[#26211A] text-theme-text hover:bg-primary/10 transition-colors">
+                    <ShoppingCart className="w-4 h-4" />Cart
+                    {totalItems > 0 && (
+                      <span className="absolute -top-1.5 -right-1.5 bg-primary text-white text-[10px] font-bold rounded-full h-5 min-w-[1.25rem] px-1 flex items-center justify-center">
+                        {totalItems}
+                      </span>
+                    )}
+                  </button>
+                </div>
+
+                <p className="px-3 pt-3 pb-1 text-[11px] font-bold uppercase tracking-wider text-theme-text-muted">Shop</p>
+
+                <Link href="/products" onClick={() => dispatch(closeMenu())}
+                  className={`flex items-center justify-between rounded-xl px-3 py-3 font-semibold transition-colors ${
+                    isProductsPage ? 'bg-primary/10 text-primary' : 'text-theme-text hover:bg-theme-bg-soft dark:hover:bg-[#26211A]'
+                  }`}>
+                  <span className="flex items-center gap-2.5"><LayoutGrid className="w-4 h-4 text-primary" />All Products</span>
+                  <ChevronRight className="w-4 h-4 opacity-40" />
+                </Link>
               {categories.map((category, idx) => {
                 const isExpanded = activeDropdown === `mobile-${category.name}`;
                 return (
-                  <div key={idx} className="border-t border-theme-border pt-2">
+                  <div key={idx}>
                     <button
                       onClick={() => setActiveDropdown(isExpanded ? null : `mobile-${category.name}`)}
-                      className="w-full flex items-center justify-between py-2 font-semibold text-theme-text hover:text-primary transition-colors"
+                      className={`w-full flex items-center justify-between rounded-xl px-3 py-3 font-semibold transition-colors ${
+                        isExpanded ? 'bg-theme-bg-soft dark:bg-[#26211A] text-primary' : 'text-theme-text hover:bg-theme-bg-soft dark:hover:bg-[#26211A]'
+                      }`}
                     >
                       {category.name}
-                      <ChevronDown className={`w-4 h-4 transition-transform ${isExpanded ? 'rotate-180' : ''}`} />
+                      <ChevronDown className={`w-4 h-4 opacity-60 transition-transform ${isExpanded ? 'rotate-180' : ''}`} />
                     </button>
                     <div className={`overflow-hidden transition-all duration-300 ease-in-out ${
                       isExpanded ? 'max-h-[500px] opacity-100' : 'max-h-0 opacity-0'
                     }`}>
-                      {category.slug && (
-                        <Link href={getCategoryUrl(category.slug)} onClick={() => dispatch(closeMenu())}
-                          className="block py-1.5 pl-4 text-sm font-semibold text-primary hover:text-primary-dark transition-colors">
-                          View All {category.name}
-                        </Link>
-                      )}
-                      {category.items.map((item, i) => (
-                        <Link key={i} href={item.link} onClick={() => dispatch(closeMenu())}
-                          className="block py-1.5 pl-4 text-sm text-theme-text-secondary hover:text-primary transition-colors">
-                          {item.name}
-                        </Link>
-                      ))}
+                      {/* Rule down the left ties the sub-items to their parent */}
+                      <div className="ml-4 border-l border-theme-border pl-2 py-1 space-y-0.5">
+                        {category.slug && (
+                          <Link href={getCategoryUrl(category.slug)} onClick={() => dispatch(closeMenu())}
+                            className="block rounded-lg px-3 py-2 text-sm font-semibold text-primary hover:bg-primary/10 transition-colors">
+                            View All {category.name}
+                          </Link>
+                        )}
+                        {category.items.map((item, i) => (
+                          <Link key={i} href={item.link} onClick={() => dispatch(closeMenu())}
+                            className="block rounded-lg px-3 py-2 text-sm text-theme-text-secondary hover:bg-theme-bg-soft dark:hover:bg-[#26211A] hover:text-primary transition-colors">
+                            {item.name}
+                          </Link>
+                        ))}
+                      </div>
                     </div>
                   </div>
                 );
               })}
 
 
-              <Link href="/services" onClick={() => dispatch(closeMenu())}
-                className={`block py-2 font-medium border-t border-theme-border pt-2 transition-colors ${
-                  pathname === '/services' ? 'text-primary' : 'text-theme-text hover:text-primary'
-                }`}>Services</Link>
-
-              <Link href="/our_process" onClick={() => dispatch(closeMenu())}
-                className={`block py-2 font-medium border-t border-theme-border pt-2 transition-colors ${
-                  pathname === '/our_process' ? 'text-primary' : 'text-theme-text hover:text-primary'
-                }`}>How It Works</Link>
-
-              <Link href="/about-us" onClick={() => dispatch(closeMenu())}
-                className={`block py-2 font-medium border-t border-theme-border pt-2 transition-colors ${
-                  pathname === '/about-us' ? 'text-primary' : 'text-theme-text hover:text-primary'
-                }`}>About Us</Link>
-
-              <Link href="/contact-us" onClick={() => dispatch(closeMenu())}
-                className={`block py-2 font-medium border-t border-theme-border pt-2 transition-colors ${
-                  pathname === '/contact-us' ? 'text-primary' : 'text-theme-text hover:text-primary'
-                }`}>Contact Us</Link>
-
-              <Link href="/blog" onClick={() => dispatch(closeMenu())}
-                className={`block py-2 font-medium border-t border-theme-border pt-2 transition-colors ${
-                  isBlogPage ? 'text-primary' : 'text-theme-text hover:text-primary'
-                }`}>Blog</Link>
-
-              <Link href="/image-gallery" onClick={() => dispatch(closeMenu())}
-                className={`block py-2 font-medium border-t border-theme-border pt-2 transition-colors ${
-                  pathname === '/image-gallery' ? 'text-primary' : 'text-theme-text hover:text-primary'
-                }`}>Gallery</Link>
-
               {/* Locations — mobile expandable */}
-              <div className="border-t border-theme-border pt-2">
+              <div>
                 <button
                   onClick={() => setActiveDropdown(activeDropdown === 'mobile-locations' ? null : 'mobile-locations')}
-                  className="w-full flex items-center justify-between py-2 font-semibold text-theme-text hover:text-blue-500 transition-colors"
+                  className={`w-full flex items-center justify-between rounded-xl px-3 py-3 font-semibold transition-colors ${
+                    activeDropdown === 'mobile-locations' ? 'bg-theme-bg-soft dark:bg-[#26211A] text-blue-500' : 'text-theme-text hover:bg-theme-bg-soft dark:hover:bg-[#26211A]'
+                  }`}
                 >
-                  <span className="flex items-center gap-2"><MapPin className="w-4 h-4 text-blue-500" />Locations</span>
-                  <ChevronDown className={`w-4 h-4 transition-transform ${activeDropdown === 'mobile-locations' ? 'rotate-180' : ''}`} />
+                  <span className="flex items-center gap-2.5"><MapPin className="w-4 h-4 text-blue-500" />Locations</span>
+                  <ChevronDown className={`w-4 h-4 opacity-60 transition-transform ${activeDropdown === 'mobile-locations' ? 'rotate-180' : ''}`} />
                 </button>
                 <div className={`overflow-hidden transition-all duration-300 ease-in-out ${
                   activeDropdown === 'mobile-locations' ? 'max-h-[400px] opacity-100' : 'max-h-0 opacity-0'
                 }`}>
-                  {LOCATIONS.map((loc) => (
-                    <Link
-                      key={loc.slug}
-                      href={`/${loc.slug}`}
-                      onClick={() => dispatch(closeMenu())}
-                      className="flex items-center gap-2 py-1.5 pl-4 text-sm text-theme-text-secondary hover:text-blue-500 transition-colors"
-                    >
-                      <MapPin className="w-3.5 h-3.5 text-blue-400" />
-                      {loc.categoryLabel} — {loc.city}
+                  <div className="ml-4 border-l border-theme-border pl-2 py-1 space-y-0.5">
+                    {LOCATIONS.map((loc) => (
+                      <Link
+                        key={loc.slug}
+                        href={`/${loc.slug}`}
+                        onClick={() => dispatch(closeMenu())}
+                        className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-theme-text-secondary hover:bg-theme-bg-soft dark:hover:bg-[#26211A] hover:text-blue-500 transition-colors"
+                      >
+                        <MapPin className="w-3.5 h-3.5 text-blue-400 flex-shrink-0" />
+                        {loc.categoryLabel} — {loc.city}
+                      </Link>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              {/* The company pages read better as a tile grid than as six more
+                  rows identical to the category ones above. */}
+              <p className="px-3 pt-4 pb-1 text-[11px] font-bold uppercase tracking-wider text-theme-text-muted">Explore</p>
+              <div className="grid grid-cols-2 gap-2">
+                {MOBILE_INFO_LINKS.map(({ href, label, Icon }) => {
+                  const active = href === '/blog' ? isBlogPage : pathname === href;
+                  return (
+                    <Link key={href} href={href} onClick={() => dispatch(closeMenu())}
+                      className={`flex items-center gap-2 rounded-xl border px-3 py-2.5 text-sm font-medium transition-colors ${
+                        active
+                          ? 'border-primary/40 bg-primary/10 text-primary'
+                          : 'border-theme-border text-theme-text hover:bg-theme-bg-soft dark:hover:bg-[#26211A]'
+                      }`}>
+                      <Icon className={`w-4 h-4 flex-shrink-0 ${active ? 'text-primary' : 'text-theme-text-muted'}`} />
+                      {label}
                     </Link>
-                  ))}
+                  );
+                })}
+              </div>
+            </div>
+
+              {/* Custom Product CTA */}
+              <div className="mt-4 rounded-xl border border-theme-border bg-theme-bg-soft dark:bg-[#26211A] p-3">
+                <p className="text-sm font-semibold text-theme-text">Need something custom?</p>
+                <p className="mt-0.5 text-xs text-theme-text-muted">Send your design or idea — we&apos;ll quote it.</p>
+                <div className="mt-2.5 flex gap-2">
+                  <a href="https://wa.me/919529626262?text=Hello%2C%20I%20want%20to%20create%20a%20custom%20product." target="_blank" rel="noopener noreferrer"
+                    className="flex items-center gap-1.5 px-3 py-2 bg-green-500 text-white rounded-full hover:bg-green-600 transition-colors text-xs font-semibold">
+                    <MessageCircle className="w-3.5 h-3.5" />WhatsApp
+                  </a>
+                  <a href="mailto:info@thecrosswild.com?subject=Custom%20Product%20Inquiry&body=Hello%2C%20I%20want%20to%20create%20a%20custom%20product.%20Please%20share%20the%20details."
+                    className="flex items-center gap-1.5 px-3 py-2 bg-gradient-to-r from-primary to-orange-500 text-white rounded-full hover:shadow-[0_0_12px_rgba(249,115,22,0.4)] transition-all text-xs font-semibold">
+                    <Mail className="w-3.5 h-3.5" />Email
+                  </a>
                 </div>
               </div>
             </div>
 
-            {/* Custom Product CTA — compact */}
-            <div className="border-t border-theme-border pt-3 flex items-center gap-2">
-              <span className="text-xs font-bold uppercase tracking-wide text-theme-text-muted">Customize</span>
-              <a href="https://wa.me/919529626262?text=Hello%2C%20I%20want%20to%20create%20a%20custom%20product." target="_blank" rel="noopener noreferrer"
-                className="flex items-center gap-1.5 px-3 py-2 bg-green-500 text-white rounded-full hover:bg-green-600 transition-colors text-xs font-semibold">
-                <MessageCircle className="w-3.5 h-3.5" />WhatsApp
-              </a>
-              <a href="mailto:info@thecrosswild.com?subject=Custom%20Product%20Inquiry&body=Hello%2C%20I%20want%20to%20create%20a%20custom%20product.%20Please%20share%20the%20details."
-                className="flex items-center gap-1.5 px-3 py-2 bg-gradient-to-r from-primary to-orange-500 text-white rounded-full hover:shadow-[0_0_12px_rgba(249,115,22,0.4)] transition-all text-xs font-semibold">
-                <Mail className="w-3.5 h-3.5" />Email
-              </a>
-            </div>
-
-            <div className="flex gap-2 border-t border-theme-border pt-4">
+            {/* Pinned contact bar */}
+            <div className="flex-shrink-0 flex gap-2 border-t border-theme-border bg-theme-bg px-3 py-3">
               <a href="https://wa.me/919529626262" target="_blank" rel="noopener noreferrer"
-                className="flex-1 flex items-center justify-center gap-2 py-3 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors">
+                className="flex-1 flex items-center justify-center gap-2 py-3 bg-green-500 text-white rounded-xl font-semibold hover:bg-green-600 transition-colors">
                 <MessageCircle className="w-5 h-5" />WhatsApp
               </a>
               <a href="tel:+919529626262"
-                className="flex-1 flex items-center justify-center gap-2 py-3 bg-yellow-500 text-white rounded-lg hover:bg-yellow-600 transition-colors">
+                className="flex-1 flex items-center justify-center gap-2 py-3 bg-primary text-white rounded-xl font-semibold hover:bg-primary-dark transition-colors">
                 <Phone className="w-5 h-5" />Call Now
               </a>
-            </div>
-
-            <div className="flex gap-2 pt-2">
-              <Link href="/" onClick={() => dispatch(closeMenu())}
-                className={`flex-1 flex items-center justify-center gap-2 py-3 rounded-lg transition-colors ${
-                  isHomePage ? 'bg-primary text-white' : 'border border-theme-border text-theme-text hover:bg-theme-bg-soft dark:hover:bg-[#2C2C2C]'
-                }`}>
-                <Home className="w-5 h-5" />Home
-              </Link>
-              <button onClick={() => { dispatch(openCart()); dispatch(closeMenu()); }}
-                className="flex-1 flex items-center justify-center gap-2 py-3 bg-primary text-white rounded-lg hover:bg-primary-dark transition-colors relative">
-                <ShoppingCart className="w-5 h-5" />Cart
-                {totalItems > 0 && (
-                  <span className="absolute -top-1 -right-1 bg-red-500 text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center text-white">
-                    {totalItems}
-                  </span>
-                )}
-              </button>
-            </div>
-          </div>
-
-          {/* Scrolling Promo Ticker */}
-          <div className="border-t border-primary/30 bg-primary overflow-hidden py-2.5">
-            <div className="flex animate-scroll pause-animation whitespace-nowrap" style={{ animationDuration: '12s' }}>
-              {[0, 1].map((i) => (
-                <span key={i} className="flex items-center gap-6 text-white text-xs font-semibold px-6">
-                  {promoTicker.map((msg, idx) => (
-                    <React.Fragment key={idx}>
-                      <span className="flex items-center gap-2">{msg}</span>
-                      <span className="opacity-40">•</span>
-                    </React.Fragment>
-                  ))}
-                </span>
-              ))}
             </div>
           </div>
         </div>

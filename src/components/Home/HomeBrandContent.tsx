@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { CheckCircle2 } from 'lucide-react';
+import { ArrowRight, CheckCircle2 } from 'lucide-react';
 import {
   getHomeCapabilities,
   getHomeWhyChoose,
@@ -34,9 +34,9 @@ const FALLBACK_HIGHLIGHTS: HomeProductHighlight[] = [
 ];
 
 const CAPABILITY_COLORS = [
-  { bg: 'bg-blue-50 dark:bg-blue-900/20 border-blue-200 dark:border-blue-800', title: 'text-blue-700 dark:text-blue-400' },
-  { bg: 'bg-orange-50 dark:bg-orange-900/20 border-orange-200 dark:border-orange-800', title: 'text-orange-700 dark:text-orange-400' },
-  { bg: 'bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800', title: 'text-green-700 dark:text-green-400' },
+  { bg: 'bg-blue-50 dark:bg-blue-900/20 border-blue-200 dark:border-blue-800', title: 'text-blue-700 dark:text-blue-400', rule: 'bg-blue-200/80 dark:bg-blue-800/70' },
+  { bg: 'bg-orange-50 dark:bg-orange-900/20 border-orange-200 dark:border-orange-800', title: 'text-orange-700 dark:text-orange-400', rule: 'bg-orange-200/80 dark:bg-orange-800/70' },
+  { bg: 'bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800', title: 'text-green-700 dark:text-green-400', rule: 'bg-green-200/80 dark:bg-green-800/70' },
 ];
 
 const WHY_CHOOSE_COLORS = [
@@ -82,9 +82,10 @@ export default function HomeBrandContent({ content }: Props = {}) {
   }, []);
 
   // Text resolved from CMS with sensible defaults so the section never blanks.
-  const introBadge = content?.introBadge || 'Drive Brand Success with Cross Wild Manufacturing';
-  const introHeading = content?.introHeading || 'Custom T-Shirts, Bags, and Caps Manufacturer in Jaipur, India';
-  const introParagraph = content?.introParagraph || 'Founded in 2016, The Cross Wild has grown into one of the most trusted names in custom product printing and manufacturing in India. Based in Jaipur, we are proud to be a leading t-shirt manufacturer, bag manufacturer, and custom cap manufacturer with a rapidly expanding presence across India and internationally. Our goal is to be the ultimate one-stop shop for all customized product manufacturing and printing needs, offering unmatched quality and service.';
+  // The intro badge/heading/paragraph that used to open this section were
+  // removed — the hero already carries the same headline and paragraph, so it
+  // read as the page saying itself twice. Their CMS fields (`introBadge`,
+  // `introHeading`, `introParagraph`) are left defined but unused.
   const capabilitiesHeading = content?.capabilitiesHeading || 'Explore Our Capabilities';
   // `customizeHeading` / `customizeParagraph` map onto the legacy `heading` / `description`
   // fields that the existing admin "Customize & Promote Section" already uses.
@@ -99,23 +100,13 @@ export default function HomeBrandContent({ content }: Props = {}) {
       {/* ── Intro + Capabilities ─────────────────────────── */}
       <section className="py-16 md:py-20 bg-theme-bg">
         <div className="w-full px-6 lg:px-12">
-          <div className="max-w-4xl mx-auto text-center mb-14">
-            <p className="inline-block text-xs font-bold uppercase tracking-widest text-primary bg-primary/10 px-4 py-1.5 rounded-full mb-4">
-              {introBadge}
-            </p>
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-6 leading-tight">
-              {introHeading}
-            </h2>
-            <p className="text-base md:text-lg text-gray-600 dark:text-gray-300 leading-relaxed">
-              {introParagraph}
-            </p>
-          </div>
-
-          {/* Explore Our Capabilities */}
-          <div>
-            <h3 className="text-2xl font-bold text-gray-900 dark:text-white text-center mb-8">
+          {/* Explore Our Capabilities — capped width so the three cards stay a
+              readable group instead of stretching across a wide desktop. */}
+          <div className="mx-auto max-w-6xl">
+            <h3 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white text-center">
               {capabilitiesHeading}
             </h3>
+            <div className="mx-auto mt-4 mb-10 h-1 w-16 rounded-full bg-primary" />
             <div className="grid sm:grid-cols-3 gap-6">
               {capabilities.map((cat, idx) => {
                 const c = CAPABILITY_COLORS[idx % CAPABILITY_COLORS.length];
@@ -123,14 +114,22 @@ export default function HomeBrandContent({ content }: Props = {}) {
                   <Link
                     key={cat._id}
                     href={cat.link || '#'}
-                    className={`group rounded-xl border p-6 transition-all duration-300 hover:shadow-lg hover:-translate-y-1 ${c.bg}`}
+                    className={`group flex flex-col rounded-2xl border p-6 md:p-7 transition-all duration-300 hover:shadow-xl hover:-translate-y-1 ${c.bg}`}
                   >
-                    <h4 className={`text-lg font-bold mb-4 ${c.title}`}>{cat.title}</h4>
-                    <ul className="space-y-2">
+                    {/* Arrow only on hover — these cards are links, which the
+                        old flat panels gave no sign of. */}
+                    <div className="flex items-center justify-between gap-3">
+                      <h4 className={`text-lg md:text-xl font-bold ${c.title}`}>{cat.title}</h4>
+                      <ArrowRight
+                        className={`h-5 w-5 flex-shrink-0 -translate-x-1 opacity-0 transition-all duration-300 group-hover:translate-x-0 group-hover:opacity-100 ${c.title}`}
+                      />
+                    </div>
+                    <span className={`mt-4 mb-5 block h-px w-full ${c.rule}`} />
+                    <ul className="space-y-3">
                       {(cat.items || []).map((item) => (
-                        <li key={item} className="flex items-start gap-2 text-sm text-gray-700 dark:text-gray-300">
-                          <CheckCircle2 className="w-4 h-4 mt-0.5 flex-shrink-0 text-current opacity-70" />
-                          {item}
+                        <li key={item} className="flex items-start gap-2.5 text-sm md:text-[15px] text-gray-700 dark:text-gray-300">
+                          <CheckCircle2 className={`w-4 h-4 mt-0.5 flex-shrink-0 ${c.title}`} />
+                          <span>{item}</span>
                         </li>
                       ))}
                     </ul>
@@ -145,13 +144,19 @@ export default function HomeBrandContent({ content }: Props = {}) {
       {/* ── Customize & Promote ──────────────────────────── */}
       <section className="py-16 md:py-20 bg-theme-bg-soft">
         <div className="w-full px-6 lg:px-12">
-          <div className="max-w-4xl mx-auto text-center">
-            <h2 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white mb-6">
+          {/* Narrower column, and the copy set left rather than centred — eight
+              centred lines give the eye no fixed edge to return to. Same words,
+              same tags. */}
+          <div className="max-w-3xl mx-auto">
+            <h2 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white text-center">
               {customizeHeading}
             </h2>
-            <p className="text-base md:text-lg text-gray-600 dark:text-gray-300 leading-relaxed whitespace-pre-line">
-              {customizeParagraph}
-            </p>
+            <div className="mx-auto mt-4 mb-8 h-1 w-16 rounded-full bg-primary" />
+            <div className="rounded-2xl border border-theme-border bg-theme-bg-card p-6 md:p-9 shadow-sm">
+              <p className="text-base md:text-lg text-gray-600 dark:text-gray-300 leading-8 whitespace-pre-line">
+                {customizeParagraph}
+              </p>
+            </div>
           </div>
         </div>
       </section>

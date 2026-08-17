@@ -65,7 +65,10 @@ export default function CrosswildFooter() {
   // legacy pre-rebrand default counts as unset. Uploads keep the invert filter
   // (they're assumed to be dark-on-light artwork); our own logo does not.
   const cmsLogo = footer?.logo && footer.logo !== LEGACY_LOGO ? footer.logo : null;
-  const logoSrc = cmsLogo || '/images/logo/dark-logo.png';
+  // Not the header's dark logo: that one's peaks are black so they read against
+  // the maroon navbar, and black on this near-black footer would disappear.
+  // This copy is the same mark with white peaks.
+  const logoSrc = cmsLogo || '/images/logo/footer-logo.png';
 
   const year = new Date().getFullYear();
   const services = servicesMenu?.items || footer?.servicesLinks || [];
@@ -86,7 +89,7 @@ export default function CrosswildFooter() {
               className={`h-10 w-auto mb-4 ${cmsLogo ? 'brightness-0 invert' : ''}`}
             />
             <p className="text-gray-400 dark:text-[#8C7F6E] mb-6 leading-relaxed">
-              {footer?.companyDescription || "India's leading custom printing and merchandise company."}
+              {footer?.companyDescription || "India's leading manufacturers & printers of custom T-Shirts, Bags, Caps & Uniforms."}
             </p>
 
             <div className="space-y-3">

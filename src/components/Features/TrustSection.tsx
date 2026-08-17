@@ -1,8 +1,7 @@
 "use client";
 
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { Truck, Shield, Headphones, Award, Clock, ThumbsUp } from 'lucide-react';
-import { getSiteSettings, type StatItem } from '@/lib/cms';
 
 const ICON_MAP: Record<string, React.ElementType> = { Truck, Shield, Headphones, Award, Clock, ThumbsUp };
 const COLORS = ['bg-blue-100 text-blue-600', 'bg-green-100 text-green-600', 'bg-purple-100 text-purple-600', 'bg-orange-100 text-orange-600', 'bg-red-100 text-red-600', 'bg-teal-100 text-teal-600'];
@@ -25,21 +24,14 @@ interface Props {
   };
 }
 
-const DEFAULT_STATS: StatItem[] = [
-  { label: 'Happy Customers', value: '5000+' },
-  { label: 'Orders Delivered', value: '50K+' },
-  { label: 'Satisfaction Rate', value: '99%' },
-  { label: 'Support Available', value: '24hrs' },
-];
-
+// The 5000+ / 50K+ / 99% / 24hrs figures used to repeat here as a band under
+// the tiles. Every page that renders this section also renders <Brands />,
+// which draws the same four numbers from the same `siteSettings.stats` — so the
+// visitor met them twice on one scroll. The band there is the one kept.
 export default function TrustSection({ content }: Props) {
   const heading = content?.heading || 'Why Choose The CrossWild?';
   const subheading = content?.subheading || "We're committed to delivering excellence in every order";
   const features: Feature[] = content?.features?.length ? content.features : DEFAULT_FEATURES;
-  const [stats, setStats] = useState<StatItem[]>(DEFAULT_STATS);
-  useEffect(() => {
-    getSiteSettings().then((s) => { if (s?.stats?.length) setStats(s.stats); });
-  }, []);
 
   return (
     <section className="py-16 bg-theme-bg-soft">
@@ -68,16 +60,6 @@ export default function TrustSection({ content }: Props) {
           })}
         </div>
 
-        <div className="mt-16 bg-gradient-to-r from-primary to-primary-dark rounded-2xl p-8 md:p-12">
-          <div className={`grid gap-8 text-center text-white grid-cols-2 md:grid-cols-${Math.min(stats.length, 4)}`}>
-            {stats.map((s) => (
-              <div key={s.label}>
-                <div className="text-4xl md:text-5xl font-black mb-2">{s.value}</div>
-                <div className="text-white/80">{s.label}</div>
-              </div>
-            ))}
-          </div>
-        </div>
       </div>
     </section>
   );

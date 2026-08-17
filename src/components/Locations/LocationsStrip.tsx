@@ -24,11 +24,15 @@ export default function LocationsStrip() {
             <MapPin className="w-4 h-4" />
             Serving Across India
           </div>
+          {/* The city names stay in the H2 and the line under it — they are the
+              terms these pages are searched by ("t-shirt manufacturer in
+              Jodhpur"), and this section is what links out to each city page. */}
           <h2 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-4">
-            Available Products by Location
+            Our Office Locations Across India
           </h2>
           <p className="text-lg text-gray-500 dark:text-gray-400 max-w-2xl mx-auto">
-            T-Shirts, Bags, Caps and Uniforms — manufactured and delivered across Jodhpur, Indore, Udaipur, Kota &amp; Sikar.
+            T-Shirts, Bags, Caps and Uniforms — manufactured and delivered across Jaipur,
+            Jodhpur, Indore, Udaipur, Kota, Sikar, Ajmer and Ahmedabad.
           </p>
         </div>
 

@@ -5,10 +5,8 @@ import { getPageContent } from "@/lib/content";
 import CrosswildHero from "@/components/Hero/CrosswildHero";
 import OurNetworkSection from "@/components/Locations/OurNetworkSection";
 import CrosswildCategories from "@/components/Categories/CrosswildCategories";
-import TrustSection from "@/components/Features/TrustSection";
 import ScrollUp from "@/components/Common/ScrollUp";
 import HomeBrandContent from "@/components/Home/HomeBrandContent";
-import PromoBanner from "@/components/Promotions/PromoBanner";
 import ThemeBanner from "@/components/Common/ThemeBanner";
 
 /** "Grow your Business with us" band — one designed image per theme (7000x3937). */
@@ -17,6 +15,27 @@ const GROW_BANNER = {
   dark: '/banners/homePage/growDark.png',
   aspectRatio: '7000 / 3937',
   alt: 'Grow your business with us — big or small, we give our best to every order',
+};
+
+/** "What We Do" band — manufacturing, printing & embroidery, customisation. */
+const WHAT_WE_DO_BANNER = {
+  light: '/banners/homePage/whatWeDoLight.webp',
+  dark: '/banners/homePage/whatWeDoDark.webp',
+  aspectRatio: '7001 / 3938',
+  alt:
+    'What we do — manufacturing of premium t-shirts, polos, hoodies, bags, caps and uniforms; ' +
+    'printing and embroidery including screen printing, DTF, DTG, puff and more; and ' +
+    'customisation with your own design and branding',
+};
+
+/** "Who We Work With" band — the buyer types this catalogue is built for. */
+const WHO_WE_WORK_WITH_BANNER = {
+  light: '/banners/homePage/whoWeWorkWithLight.webp',
+  dark: '/banners/homePage/whoWeWorkWithDark.webp',
+  aspectRatio: '7000 / 3938',
+  alt:
+    'Who we work with — startups, brands, corporates, schools, events, gyms and fitness, ' +
+    'restaurants and resellers',
 };
 
 // Below-the-fold components — lazy loaded for faster initial page render
@@ -51,23 +70,37 @@ export default async function Home() {
       {/* Hero Section with Promotional Banner */}
       <CrosswildHero content={content?.hero} />
 
-      {/* Our Network — office locations, controlled via admin panel */}
-      <OurNetworkSection />
-
-      {/* Product Categories - Crosswild Style */}
-      <CrosswildCategories />
-
-      {/* Best Sellers & New Arrivals */}
-      <BestSellersAndNewArrivals />
-
-      {/* "Grow your Business with us" banner — below the fold, so not priority */}
+      {/* "Grow your Business with us" band — sits directly under the hero, so it
+          is near the fold and loads with priority rather than lazily. */}
       <ThemeBanner
         light={GROW_BANNER.light}
         dark={GROW_BANNER.dark}
         alt={GROW_BANNER.alt}
         aspectRatio={GROW_BANNER.aspectRatio}
         bgClass="bg-[#AACBFE] dark:bg-[#861424]"
+        priority
       />
+
+      {/* Our Network — office locations, controlled via admin panel */}
+      <OurNetworkSection />
+
+      {/* Product Categories - Crosswild Style */}
+      <CrosswildCategories />
+
+      {/* "What We Do" band — sits straight after the categories so a first-time
+          visitor learns what the business actually offers before the product
+          rails start. */}
+      <ThemeBanner
+        light={WHAT_WE_DO_BANNER.light}
+        dark={WHAT_WE_DO_BANNER.dark}
+        alt={WHAT_WE_DO_BANNER.alt}
+        aspectRatio={WHAT_WE_DO_BANNER.aspectRatio}
+        bgClass="bg-[#AACBFE] dark:bg-[#861424]"
+        href="/services"
+      />
+
+      {/* Best Sellers & New Arrivals */}
+      <BestSellersAndNewArrivals />
 
       {/* Our Most Popular Products */}
       <PopularProducts />
@@ -78,6 +111,17 @@ export default async function Home() {
       {/* Shop by Category - Products per Category */}
       <ShopByCategory />
 
+      {/* "Who We Work With" band — social proof after the buyer has seen the
+          range, and its drawn-in CTA leads to the contact page. */}
+      <ThemeBanner
+        light={WHO_WE_WORK_WITH_BANNER.light}
+        dark={WHO_WE_WORK_WITH_BANNER.dark}
+        alt={WHO_WE_WORK_WITH_BANNER.alt}
+        aspectRatio={WHO_WE_WORK_WITH_BANNER.aspectRatio}
+        bgClass="bg-[#AACBFE] dark:bg-[#861424]"
+        href="/contact-us"
+      />
+
       {/* Deals & Promotions Section */}
       <DealsSection />
 
@@ -85,11 +129,16 @@ export default async function Home() {
       {/* Admin → Page Content → Home → "Customize & Promote Section" (home/why-choose) */}
       <HomeBrandContent content={content?.['why-choose']} />
 
-      {/* Promo Banner — Digital Printing / Brand Promotion, managed via admin panel */}
-      <PromoBanner content={content?.['promo-banner']} />
+      {/* The "Digital Printing / Brand Promotion" promo banner used to render
+          here. Taken off the page; its artwork and the `home/promo-banner`
+          section are still in the admin panel, so it can be put back by
+          restoring <PromoBanner content={content?.['promo-banner']} />. */}
 
-      {/* Trust & Features Section */}
-      <TrustSection content={content?.trust} />
+      {/* The six-tile trust section rendered a second "Why Choose The CrossWild"
+          H2 here, duplicating the numbered one in HomeBrandContent above. Its
+          tiles were the generic half of the pair (Fast Delivery, 24/7 Support),
+          so the keyword-carrying section is the one kept. Data untouched in
+          `home/trust`, and the section still renders on the location pages. */}
 
       {/* Manufacturing Process */}
       <Process />

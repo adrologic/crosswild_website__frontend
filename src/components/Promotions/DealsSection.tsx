@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { Tag, Clock, TrendingUp, Zap } from 'lucide-react';
-import { getDeals, getSiteSettings, type Deal } from '@/lib/cms';
+import { getDeals, type Deal } from '@/lib/cms';
 import { toPlainText } from '@/lib/text';
 
 const COLORS = [
@@ -14,40 +14,43 @@ const COLORS = [
 ];
 const ICONS = [TrendingUp, Zap, Tag];
 
+// Mirrors the three deals stored in the CMS so the section reads the same if
+// the API is unreachable — keep the two in step when the offers change.
 const FALLBACK: Deal[] = [
-  { _id: '1', title: 'Bulk Order Special', discountLabel: '20% OFF', description: 'Orders above 100 pieces', link: '/product/customize-promotional-t-shirt-manufacturer-in-Jaipur' },
-  { _id: '2', title: 'Flash Sale', discountLabel: '15% OFF', description: 'Limited time offer', badge: 'Ending Soon', link: '/product/mug-printing-in-Jaipur' },
-  { _id: '3', title: 'First Order', discountLabel: '10% OFF', description: 'New customers only', link: '/products' },
+  { _id: '1', title: 'Bulk Order Special', discountLabel: '10% OFF', description: 'On orders above 1,000 pieces', link: '/product/customize-promotional-t-shirt-manufacturer-in-Jaipur' },
+  { _id: '2', title: 'First Order', discountLabel: '5% OFF', description: 'On your first order with us', link: '/products' },
+  { _id: '3', title: 'Loyal Customers', discountLabel: 'Up to 10% OFF', description: 'For our repeat customers', link: '/products' },
 ];
 
+// The "Need Help Choosing? Talk to Our Experts!" gradient CTA that closed this
+// section was the same banner, in the same colours, as the one ending
+// LocationsStrip further down the page. That one is kept — it closes the page —
+// and the deal cards here carry their own "Claim Now" links. Dropping it also
+// took the site-settings phone lookup this component only needed for its
+// "Call Us Now" button.
 export default function DealsSection() {
   const [deals, setDeals] = useState<Deal[]>(FALLBACK);
-  const [callPhone, setCallPhone] = useState('+91-9529626262');
 
   useEffect(() => {
     getDeals().then((d) => { if (d.length) setDeals(d); });
-    getSiteSettings().then((s) => {
-      const p = s?.contact?.primaryPhone || s?.floatingButtons?.call?.phone;
-      if (p) setCallPhone(p);
-    });
   }, []);
 
-  const telHref = `tel:${callPhone.replace(/[^+\d]/g, '')}`;
-
   return (
-    <section className="py-12 bg-theme-bg overflow-hidden">
+    <section className="py-8 md:py-12 bg-theme-bg overflow-hidden">
       <div className="w-full px-6 lg:px-12">
-        <div className="text-center mb-8">
-          <div className="inline-flex items-center gap-2 bg-red-100 text-red-700 px-4 py-2 rounded-full font-semibold mb-4">
-            <Clock className="w-4 h-4" />
+        <div className="text-center mb-5 md:mb-8">
+          <div className="inline-flex items-center gap-1.5 bg-red-100 text-red-700 px-3 py-1 rounded-full text-sm font-semibold mb-2 md:mb-3">
+            <Clock className="w-3.5 h-3.5" />
             Limited Time Offers
           </div>
-          <h2 className="text-3xl md:text-4xl font-bold text-gray-900">
+          <h2 className="text-2xl md:text-4xl font-bold text-gray-900">
             Special Deals & Discounts
           </h2>
         </div>
 
-        <div className="grid md:grid-cols-3 gap-6">
+        {/* On a phone these become one swipeable row instead of three
+            full-width cards stacked, which was most of the section's height. */}
+        <div className="no-scrollbar -mx-6 flex snap-x snap-mandatory gap-4 overflow-x-auto px-6 pb-1 md:mx-0 md:grid md:grid-cols-3 md:gap-6 md:overflow-visible md:px-0">
           {deals.map((deal, idx) => {
             const Icon = ICONS[idx % ICONS.length];
             const color = COLORS[idx % COLORS.length];
@@ -55,22 +58,22 @@ export default function DealsSection() {
               <Link
                 key={deal._id}
                 href={deal.link || '#'}
-                className="group relative bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden border-2 border-gray-100 hover:border-transparent"
+                className="group relative w-[78%] flex-none snap-center overflow-hidden rounded-2xl border-2 border-gray-100 bg-white shadow-lg transition-all duration-300 hover:border-transparent hover:shadow-2xl sm:w-[46%] md:w-auto"
               >
                 <div className={`absolute inset-0 bg-gradient-to-br ${color} opacity-90 group-hover:opacity-100 transition-opacity`}></div>
-                <div className="relative z-10 p-8 text-white">
+                <div className="relative z-10 p-5 text-white md:p-6">
                   {deal.badge && (
-                    <div className="absolute top-4 right-4 bg-yellow-400 text-yellow-900 text-xs font-bold px-3 py-1 rounded-full animate-pulse">
+                    <div className="absolute top-3 right-3 bg-yellow-400 text-yellow-900 text-[10px] font-bold px-2 py-0.5 rounded-full animate-pulse">
                       {deal.badge}
                     </div>
                   )}
-                  <Icon className="w-12 h-12 mb-4 opacity-80" />
-                  <h3 className="text-xl font-bold mb-2">{deal.title}</h3>
-                  <div className="text-4xl font-black mb-2">{deal.discountLabel}</div>
-                  <p className="text-white/90 mb-6">{toPlainText(deal.description)}</p>
-                  <div className="inline-flex items-center gap-2 bg-white/20 hover:bg-white/30 px-4 py-2 rounded-lg backdrop-blur-sm transition-colors">
+                  <Icon className="w-8 h-8 mb-2 opacity-80 md:w-10 md:h-10 md:mb-3" />
+                  <h3 className="text-base font-bold mb-0.5 md:text-lg">{deal.title}</h3>
+                  <div className="text-3xl font-black mb-1 md:text-4xl">{deal.discountLabel}</div>
+                  <p className="text-sm text-white/90 mb-4 line-clamp-2">{toPlainText(deal.description)}</p>
+                  <div className="inline-flex items-center gap-1.5 bg-white/20 hover:bg-white/30 px-3 py-1.5 rounded-lg text-sm backdrop-blur-sm transition-colors">
                     <span className="font-semibold">Claim Now</span>
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                     </svg>
                   </div>
@@ -81,31 +84,6 @@ export default function DealsSection() {
           })}
         </div>
 
-        <div className="mt-12 bg-gradient-to-r from-purple-500 to-pink-500 rounded-2xl p-8 md:p-12 text-white text-center">
-          <h3 className="text-2xl md:text-3xl font-bold mb-4">
-            Need Help Choosing? Talk to Our Experts!
-          </h3>
-          <p className="text-lg mb-6 opacity-90">
-            Get free consultation and design assistance from our team
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <a
-              href={telHref}
-              className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-white text-purple-600 font-semibold rounded-lg hover:bg-gray-100 transition-colors"
-            >
-              <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                <path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.773a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z" />
-              </svg>
-              Call Us Now
-            </a>
-            <Link
-              href="/contact-us"
-              className="inline-flex items-center justify-center gap-2 px-8 py-4 border-2 border-white text-white font-semibold rounded-lg hover:bg-white/10 transition-colors"
-            >
-              Request Callback
-            </Link>
-          </div>
-        </div>
       </div>
     </section>
   );

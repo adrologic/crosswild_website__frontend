@@ -86,7 +86,7 @@ export default function CrosswildHero({ content }: Props) {
               {content?.h1Suffix || 'in Jaipur, India'}
             </h1>
             <p className="text-base md:text-lg text-gray-500 dark:text-gray-400 leading-relaxed">
-              {content?.description || 'Founded in 2016, The Cross Wild is one of the most trusted names in custom product printing and manufacturing in India.'}
+              {content?.description || 'Founded in 2016 by Mr. Mahendra Choudhary, The Cross Wild is one of the most trusted names in custom product printing and manufacturing in India.'}
             </p>
           </div>
 

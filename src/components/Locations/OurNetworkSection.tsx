@@ -133,7 +133,7 @@ export default async function OurNetworkSection() {
         <div className="w-full px-6 lg:px-12">
 
           <h2 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white text-center mb-8">
-            Our Network
+            Our Offices
           </h2>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
