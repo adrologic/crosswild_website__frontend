@@ -1,7 +1,9 @@
 import { MetadataRoute } from 'next';
+import { SITE_URL } from '@/lib/blog';
 
 const API_URL = process.env.BACKEND_URL || 'https://crosswild-backend-p5l3.onrender.com';
-const baseUrl = 'https://www.thecrosswild.com';
+// Production origin, overridable via NEXT_PUBLIC_SITE_URL — never a preview host.
+const baseUrl = SITE_URL;
 
 export const revalidate = 3600; // Refresh every hour
 

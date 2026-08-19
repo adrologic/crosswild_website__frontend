@@ -3,6 +3,13 @@ import { toPlainText } from './text';
 
 const API_URL = (process.env.BACKEND_URL || 'https://crosswild-backend-p5l3.onrender.com') + '/api';
 
+/**
+ * Canonical production origin. Overridable per environment, but never the
+ * Vercel preview domain — canonicals and JSON-LD must always point at the real
+ * site, whichever deployment renders them.
+ */
+export const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.thecrosswild.com';
+
 // Default SEO values (fallback if API fails)
 const defaultSEO = {
   siteName: 'The Cross Wild',
@@ -80,7 +87,8 @@ export async function generatePageMetadata(
   const ogImage = pageSEO?.ogImage || customData?.image || globalSEO.defaultOgImage;
   const noIndex = pageSEO?.noIndex ?? customData?.noIndex ?? false;
 
-  const siteUrl = globalSEO.siteUrl || defaultSEO.siteUrl;
+  // Env-pinned so canonicals never follow a preview deployment.
+  const siteUrl = SITE_URL;
   const canonicalUrl = pageSEO?.canonicalUrl || `${siteUrl}${path}`;
 
   return {
@@ -208,8 +216,12 @@ export async function generateBlogMetadata(blog: {
   title: string;
   paragraph: string;
   image?: string;
-  author?: { name: string };
+  author?: { name?: string };
   tags?: string[];
+  /** ISO 8601 — emitted as article:published_time. */
+  publishedTime?: string;
+  /** ISO 8601 — emitted as article:modified_time. */
+  modifiedTime?: string;
   seo?: {
     title?: string;
     description?: string;
@@ -221,7 +233,9 @@ export async function generateBlogMetadata(blog: {
   };
 }): Promise<Metadata> {
   const globalSEO = await getGlobalSEO();
-  const siteUrl = globalSEO.siteUrl || defaultSEO.siteUrl;
+  // Env-pinned, not backend-supplied: a misconfigured CMS value must never be
+  // able to point a canonical at a preview deployment.
+  const siteUrl = SITE_URL;
 
   // Use slug for URL if available, otherwise fallback to ID
   const urlPath = blog.slug || blog.id;
@@ -249,6 +263,10 @@ export async function generateBlogMetadata(blog: {
       siteName: globalSEO.siteName || defaultSEO.siteName,
       title,
       description,
+      publishedTime: blog.publishedTime,
+      modifiedTime: blog.modifiedTime || blog.publishedTime,
+      authors: blog.author?.name ? [blog.author.name] : undefined,
+      tags: blog.tags,
       images: image ? [
         {
           url: image.startsWith('http') ? image : `${siteUrl}${image}`,

@@ -1,18 +1,44 @@
-"use client";
+// Server component on purpose.
+//
+// This footer used to fetch its menus in a useEffect, so every page on the site
+// shipped three empty column headings and zero links in its HTML — including
+// the "Blog" link that is a crawl path into the article set. Awaiting the CMS
+// here puts the real links in the server-rendered markup instead. Nothing in
+// the footer is interactive, so there is nothing to keep on the client.
 
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { Mail, Phone, MapPin } from 'lucide-react';
 import {
   getSiteSettings,
   getMenu,
-  type SiteSettings,
-  type Menu,
+  type Link as CmsLink,
 } from '@/lib/cms';
 
 // Pre-rebrand logo still stored in Site Settings; treated as "no custom logo".
 const LEGACY_LOGO = '/images/logo/logo-crosswile.jpg';
+
+/**
+ * Rendered when the CMS menus are unavailable, so the footer never degrades to
+ * bare headings. Mirrors the menus configured in the admin panel.
+ */
+const FALLBACK_QUICK_LINKS: CmsLink[] = [
+  { label: 'Home', href: '/' },
+  { label: 'About Us', href: '/about-us' },
+  { label: 'Our Process', href: '/our_process' },
+  { label: 'Blog', href: '/blog' },
+  { label: 'Our Gallery', href: '/image-gallery' },
+  { label: 'Contact Us', href: '/contact-us' },
+];
+
+const FALLBACK_SERVICES: CmsLink[] = [
+  { label: 'T-Shirt Manufacturing', href: '/product/customize-promotional-t-shirt-manufacturer-in-Jaipur' },
+  { label: 'Bag Manufacturing', href: '/product/school-laptop-bag-manufacturer-in-Jaipur' },
+  { label: 'Cap Printing', href: '/product/cap-printing-manufacturer-in-jaipur' },
+  { label: 'Staff Uniforms', href: '/product/staff-uniform-manufacturer' },
+  { label: 'All Products', href: '/products' },
+];
 
 const SOCIAL_ICONS: Record<string, React.ReactElement> = {
   facebook: (
@@ -35,27 +61,15 @@ const SOCIAL_ICONS: Record<string, React.ReactElement> = {
   ),
 };
 
-export default function CrosswildFooter() {
-  const [settings, setSettings] = useState<SiteSettings | null>(null);
-  const [servicesMenu, setServicesMenu] = useState<Menu | null>(null);
-  const [quickLinks, setQuickLinks] = useState<Menu | null>(null);
-  const [bottomLinks, setBottomLinks] = useState<Menu | null>(null);
+export default async function CrosswildFooter() {
+  const [settings, servicesMenu, quickLinks, bottomLinks] = await Promise.all([
+    getSiteSettings(),
+    getMenu('footer-services'),
+    getMenu('footer-quick-links'),
+    getMenu('footer-bottom'),
+  ]);
 
-  useEffect(() => {
-    Promise.all([
-      getSiteSettings(),
-      getMenu('footer-services'),
-      getMenu('footer-quick-links'),
-      getMenu('footer-bottom'),
-    ]).then(([s, services, quick, bottom]) => {
-      setSettings(s);
-      setServicesMenu(services);
-      setQuickLinks(quick);
-      setBottomLinks(bottom);
-    });
-  }, []);
-
-  // Sensible defaults so the footer renders before/if backend is unavailable
+  // Sensible defaults so the footer renders even if the backend is unavailable
   const footer = settings?.footer;
   const contact = settings?.contact;
   const social = settings?.social;
@@ -71,8 +85,21 @@ export default function CrosswildFooter() {
   const logoSrc = cmsLogo || '/images/logo/footer-logo.png';
 
   const year = new Date().getFullYear();
-  const services = servicesMenu?.items || footer?.servicesLinks || [];
-  const quick = quickLinks?.items || footer?.quickLinks || [];
+  const services = servicesMenu?.items?.length
+    ? servicesMenu.items
+    : footer?.servicesLinks?.length
+      ? footer.servicesLinks
+      : FALLBACK_SERVICES;
+  const quickFromCms = quickLinks?.items?.length
+    ? quickLinks.items
+    : footer?.quickLinks?.length
+      ? footer.quickLinks
+      : FALLBACK_QUICK_LINKS;
+  // /blog is the only crawl path from the site chrome into the articles, so it
+  // is guaranteed here rather than left to whatever the CMS menu happens to say.
+  const quick = quickFromCms.some((l) => l.href === '/blog')
+    ? quickFromCms
+    : [...quickFromCms, { label: 'Blog', href: '/blog' }];
   const bottom = bottomLinks?.items || footer?.bottomLinks || [];
 
   return (

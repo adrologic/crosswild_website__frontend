@@ -6,12 +6,23 @@
 // the new route's data is ready, so a click feels frozen for 1-2s. With it, the
 // transition is instant: the persistent header/footer stay put and this shows in
 // the content area while the page streams in.
+//
+// Purely visual on purpose. Next streams this fallback into the initial HTML
+// ahead of the real content, so any text here ends up in what a crawler reads —
+// a stray "Loading…" used to leak onto every page. The spinner carries its
+// meaning through ARIA instead, which assistive tech announces and indexers
+// ignore.
 export default function Loading() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900 pt-24">
-      <div className="flex flex-col items-center gap-4">
+      <div
+        role="status"
+        aria-live="polite"
+        aria-label="Loading content"
+        className="flex flex-col items-center gap-4"
+      >
         <div className="h-12 w-12 rounded-full border-4 border-primary border-t-transparent animate-spin" />
-        <p className="text-sm text-gray-500 dark:text-gray-400">Loading…</p>
+        <div className="h-2 w-24 rounded-full bg-gray-200 dark:bg-gray-700 animate-pulse" />
       </div>
     </div>
   );

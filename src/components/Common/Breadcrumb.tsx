@@ -4,6 +4,7 @@ const Breadcrumb = ({
   pageName,
   description,
   asH1 = false,
+  trail = [],
 }: {
   pageName: string;
   description: string;
@@ -14,6 +15,12 @@ const Breadcrumb = ({
    * Either way, exactly one h1 per page.
    */
   asH1?: boolean;
+  /**
+   * Intermediate crawlable steps between Home and the current page, e.g.
+   * `[{ name: 'Blog', href: '/blog' }]` on a post page so the trail reads
+   * Home › Blog › {Post Title}. Each one renders as a real <a>.
+   */
+  trail?: { name: string; href: string }[];
 }) => {
   const TitleTag = asH1 ? 'h1' : 'p';
   return (
@@ -43,6 +50,17 @@ const Breadcrumb = ({
                     </Link>
                     <span className="mr-3 block h-2 w-2 rotate-45 border-r-2 border-t-2 border-body-color"></span>
                   </li>
+                  {trail.map((step) => (
+                    <li key={step.href} className="flex items-center">
+                      <Link
+                        href={step.href}
+                        className="pr-1 text-base font-medium text-body-color hover:text-primary"
+                      >
+                        {step.name}
+                      </Link>
+                      <span className="mr-3 block h-2 w-2 rotate-45 border-r-2 border-t-2 border-body-color"></span>
+                    </li>
+                  ))}
                   <li className="text-base font-medium text-primary">
                     {pageName}
                   </li>
