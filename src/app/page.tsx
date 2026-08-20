@@ -9,12 +9,14 @@ import ScrollUp from "@/components/Common/ScrollUp";
 import HomeBrandContent from "@/components/Home/HomeBrandContent";
 import ThemeBanner from "@/components/Common/ThemeBanner";
 
-/** "Grow your Business with us" band — one designed image per theme (7000x3937). */
+/** "Grow your Business with us" band — one designed image per theme (7000x3937).
+ *  The artwork has a "Start" button drawn into it, so the band links out. */
 const GROW_BANNER = {
   light: '/banners/homePage/growLight.png',
   dark: '/banners/homePage/growDark.png',
   aspectRatio: '7000 / 3937',
   alt: 'Grow your business with us — big or small, we give our best to every order',
+  href: '/contact-us',
 };
 
 /** "What We Do" band — manufacturing, printing & embroidery, customisation. */
@@ -78,6 +80,7 @@ export default async function Home() {
         alt={GROW_BANNER.alt}
         aspectRatio={GROW_BANNER.aspectRatio}
         bgClass="bg-[#AACBFE] dark:bg-[#861424]"
+        href={GROW_BANNER.href}
         priority
       />
 

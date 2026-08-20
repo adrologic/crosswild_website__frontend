@@ -120,14 +120,19 @@ function buildNavCategories(tree: any[]): { nav: NavCategory[]; flat: FlatCatego
   return { nav: mainCats, flat };
 }
 
-// Scrolling "we're near you" strip. Rendered twice: once above the nav, and
-// again pinned to the top of the open burger menu — the page-level one sits
-// above the sticky header, so it's off-screen exactly when the menu is open.
+// Scrolling "we're near you" strip, pinned above the nav inside the sticky
+// header. The whole bar is a link to /contact-us — a visitor who reads that we
+// cover their city is being invited to get in touch, so the strip should take
+// them there rather than just scroll past.
 // Two identical halves keep the -50% slide of `animate-scroll` seamless, and
 // each half repeats the phrase enough times to stay filled on a wide desktop.
 function LocationTicker() {
   return (
-    <div className="bg-primary text-white overflow-hidden py-1.5">
+    <Link
+      href="/contact-us"
+      aria-label="We are available near you — contact us"
+      className="block bg-primary text-white overflow-hidden py-1.5 hover:brightness-110 transition-[filter] duration-200"
+    >
       <div className="flex animate-scroll pause-animation whitespace-nowrap" style={{ animationDuration: '25s' }}>
         {[0, 1].map((half) => (
           <span key={half} className="flex flex-shrink-0 items-center" aria-hidden={half === 1}>
@@ -146,7 +151,7 @@ function LocationTicker() {
           </span>
         ))}
       </div>
-    </div>
+    </Link>
   );
 }
 

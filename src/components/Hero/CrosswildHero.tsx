@@ -18,6 +18,12 @@ const HERO_BANNER = {
   light: '/banners/homePage/heroLight.png',
   dark: '/banners/homePage/heroDark.png',
   alt: 'The CrossWild — custom t-shirt, bag and cap manufacturers and printers in Jaipur',
+  /**
+   * The artwork has a "Get Started" button drawn into it, so the whole band is
+   * a link — there is no real button to attach a handler to. Same treatment as
+   * the other designed bands on this page.
+   */
+  href: '/products',
 };
 
 interface HeroContent {
@@ -50,7 +56,11 @@ export default function CrosswildHero({ content }: Props) {
           variants are swapped with CSS (not `useTheme`) so the correct one is
           in the markup on first paint — next-themes sets `.dark` on <html>
           before hydration, so there is no flash and no layout shift. */}
-      <div className="relative w-full aspect-[2939/1088] overflow-hidden bg-[#A9CBFF] dark:bg-[#9E0B25]">
+      <Link
+        href={HERO_BANNER.href}
+        aria-label="Get started — browse our products"
+        className="relative block w-full aspect-[2939/1088] overflow-hidden bg-[#A9CBFF] dark:bg-[#9E0B25]"
+      >
         <Image
           src={HERO_BANNER.light}
           alt={HERO_BANNER.alt}
@@ -69,7 +79,7 @@ export default function CrosswildHero({ content }: Props) {
           priority
           fetchPriority="high"
         />
-      </div>
+      </Link>
 
       {/* ── BOTTOM: Text + Actions ── */}
       <div className="w-full px-6 lg:px-12 py-6 border-b border-theme-border">

@@ -51,7 +51,6 @@ export const OFFICE_CITIES: string[] = [
   'Jodhpur',
   'Indore',
   'Udaipur',
-  'Kota',
   'Ajmer',
   'Ahmedabad',
 ];
