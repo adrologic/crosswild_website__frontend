@@ -1,6 +1,4 @@
-"use client";
-
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { ArrowRight, CheckCircle2 } from 'lucide-react';
@@ -14,11 +12,16 @@ import {
 } from '@/lib/cms';
 import { toPlainText } from '@/lib/text';
 
-// Fallbacks so the section never blanks out during the first paint or backend outage.
+// Last-resort content, used only when the CMS returns an empty list — an
+// unreachable backend or an emptied collection. The database is the source of
+// truth for this section and its wording is what gets server-rendered, so edits
+// in admin → Home Capabilities / Why Choose / Product Highlights are what a
+// crawler reads. These constants exist so an outage degrades to a full section
+// rather than a hole in the page.
 const FALLBACK_CAPABILITIES: HomeCapability[] = [
-  { _id: 'c1', title: 'T-Shirts', items: ['Custom Corporate Tees', 'Budget-Friendly Printing', 'Event-Specific Designs'], link: '/product/customize-promotional-t-shirt-manufacturer-in-Jaipur', image: '' },
-  { _id: 'c2', title: 'Bags', items: ['Custom Gym Bags', 'Wholesale Tote Suppliers', 'Laptop Bags (India)'], link: '/product/school-laptop-bag-manufacturer-in-Jaipur', image: '' },
-  { _id: 'c3', title: 'Caps', items: ['Branded & Embroidered Caps', 'Baseball & Trucker Styles', 'Eco-Friendly Options'], link: '/product/cap-printing-manufacturer-in-jaipur', image: '' },
+  { _id: 'c1', title: 'T-Shirts', items: ['Custom Fabrics and Types', 'All T-Shirt Styles and Fits', 'Custom Designs at Budget-Friendly Prices'], link: '/product/customize-promotional-t-shirt-manufacturer-in-Jaipur', image: '' },
+  { _id: 'c2', title: 'Bags', items: ['Custom Office, School and Gym Bags', 'Wholesale Tote Suppliers', 'Laptop Bags'], link: '/product/school-laptop-bag-manufacturer-in-Jaipur', image: '' },
+  { _id: 'c3', title: 'Caps', items: ['Bulk Orders', 'Custom Hats and Caps', 'Personalized Designs for All Cap Types'], link: '/product/cap-printing-manufacturer-in-jaipur', image: '' },
 ];
 
 const FALLBACK_WHY_CHOOSE: HomeWhyChoose[] = [
@@ -70,16 +73,19 @@ interface BrandTextContent {
 
 interface Props { content?: BrandTextContent }
 
-export default function HomeBrandContent({ content }: Props = {}) {
-  const [capabilities, setCapabilities] = useState<HomeCapability[]>(FALLBACK_CAPABILITIES);
-  const [whyChoose, setWhyChoose] = useState<HomeWhyChoose[]>(FALLBACK_WHY_CHOOSE);
-  const [highlights, setHighlights] = useState<HomeProductHighlight[]>(FALLBACK_HIGHLIGHTS);
+export default async function HomeBrandContent({ content }: Props = {}) {
+  // Fetched here rather than in an effect so the CMS copy is in the HTML a
+  // crawler reads. In parallel: each helper can spend 15s + a retry on a cold
+  // backend, and three of those in series would be a minute of render time.
+  const [cmsCapabilities, cmsWhyChoose, cmsHighlights] = await Promise.all([
+    getHomeCapabilities(),
+    getHomeWhyChoose(),
+    getHomeProductHighlights(),
+  ]);
 
-  useEffect(() => {
-    getHomeCapabilities().then((d) => { if (d.length) setCapabilities(d); });
-    getHomeWhyChoose().then((d) => { if (d.length) setWhyChoose(d); });
-    getHomeProductHighlights().then((d) => { if (d.length) setHighlights(d); });
-  }, []);
+  const capabilities = cmsCapabilities.length ? cmsCapabilities : FALLBACK_CAPABILITIES;
+  const whyChoose = cmsWhyChoose.length ? cmsWhyChoose : FALLBACK_WHY_CHOOSE;
+  const highlights = cmsHighlights.length ? cmsHighlights : FALLBACK_HIGHLIGHTS;
 
   // Text resolved from CMS with sensible defaults so the section never blanks.
   // The intro badge/heading/paragraph that used to open this section were
@@ -204,7 +210,7 @@ export default function HomeBrandContent({ content }: Props = {}) {
               return (
                 <Link
                   key={item._id}
-                  href={item.link || '#'}
+                  href={item.link || '/contact-us'}
                   className="group relative h-64 rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 hover:-translate-y-1"
                 >
                   {item.image && (
