@@ -97,6 +97,7 @@ export default function EnquiryActions({ product }: { product: Product }) {
         price: product.price || 0,
         image: product.image,
         quantity,
+        minOrderQuantity: minQty,
       })
     );
     setAdded(true);
@@ -145,8 +146,7 @@ export default function EnquiryActions({ product }: { product: Product }) {
 
         {minQty > 1 && (
           <p className="text-sm text-theme-text-secondary">
-            Minimum order quantity:{' '}
-            <span className="font-semibold text-theme-text">{minQty} pieces</span>
+            Minimum <span className="font-semibold text-theme-text">{minQty} pieces</span>
           </p>
         )}
       </div>

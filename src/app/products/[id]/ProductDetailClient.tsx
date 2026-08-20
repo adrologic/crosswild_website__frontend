@@ -299,11 +299,19 @@ export default function ProductDetailClient({
               {product.price > 0 && (
                 <p className="text-2xl font-bold text-primary">
                   ₹{product.price.toLocaleString('en-IN')}
-                  {hasMinOrder && (
-                    <span className="text-sm font-normal text-theme-text-muted ml-2">
-                      (Min. order: {product.minOrderQuantity} pcs)
-                    </span>
-                  )}
+                </p>
+              )}
+
+              {/* The minimum used to sit inside the price line above, so it was
+                  invisible on the quote-only products that are most of this
+                  catalogue. It stands on its own now. */}
+              {hasMinOrder && (
+                <p className="text-sm text-theme-text-secondary">
+                  Minimum acceptable order quantity is{' '}
+                  <span className="font-semibold text-theme-text">
+                    {product.minOrderQuantity} pieces
+                  </span>
+                  . No maximum.
                 </p>
               )}
 
@@ -411,6 +419,12 @@ export default function ProductDetailClient({
                       <div className="flex items-start py-3 first:pt-0 last:pb-0">
                         <span className="w-2/5 text-sm font-medium text-theme-text-muted flex-shrink-0">Min. Order Quantity</span>
                         <span className="text-sm text-theme-text">{product.minOrderQuantity} pcs</span>
+                      </div>
+                    )}
+                    {hasMinOrder && (
+                      <div className="flex items-start py-3 first:pt-0 last:pb-0">
+                        <span className="w-2/5 text-sm font-medium text-theme-text-muted flex-shrink-0">Max. Order Quantity</span>
+                        <span className="text-sm text-theme-text">No limit</span>
                       </div>
                     )}
                     {detailEntries.map(([key, value]) => (

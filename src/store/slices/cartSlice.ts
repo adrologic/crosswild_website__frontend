@@ -9,6 +9,10 @@ export interface CartItem {
   sku?: string;
   price: number;
   quantity: number;
+  /** The product's minimum order quantity, carried so the drawer's stepper can
+   *  enforce it. Without this the floor applied on the product page is lost the
+   *  moment the item reaches the cart. */
+  minOrderQuantity?: number;
   image: string;
   size?: string;
   color?: string;
@@ -84,13 +88,16 @@ const cartSlice = createSlice({
       state.items = state.items.filter((i) => !matchesLineItem(i, key));
       saveToStorage(state.items);
     },
+    // Clamped to the line's own minimum: a 100-piece product must not be walked
+    // down to 1 here after the product page enforced the floor. Removal is the
+    // trash button's job, so 0 or less still deletes the line.
     updateQuantity(state, action: PayloadAction<{ id: string; size?: string; color?: string; quantity: number }>) {
       const { quantity, ...key } = action.payload;
       if (quantity <= 0) {
         state.items = state.items.filter((i) => !matchesLineItem(i, key));
       } else {
         const item = state.items.find((i) => matchesLineItem(i, key));
-        if (item) item.quantity = quantity;
+        if (item) item.quantity = Math.max(quantity, item.minOrderQuantity || 1);
       }
       saveToStorage(state.items);
     },
