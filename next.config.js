@@ -20,9 +20,17 @@ const nextConfig = {
       // Typo fix: old URL was /desclaimer — now /disclaimer (308 permanent redirect)
       { source: '/desclaimer',     destination: '/disclaimer',    permanent: true },
       // ── Case-sensitivity fixes (old site used uppercase letters in slugs) ──
-      { source: '/bags-manufacturer-in-Jodhpur',              destination: '/bags-manufacturer-in-jodhpur',              permanent: true },
-      { source: '/tshirt-manufacturer-wholesaler-in-Kota',    destination: '/tshirt-manufacturer-wholesaler-in-kota',    permanent: true },
-      { source: '/bags-manufacturing-company-in-Kota',        destination: '/bags-manufacturing-company-in-kota',        permanent: true },
+      // These live in src/middleware.ts, not here. `source` matching is
+      // case-insensitive, so a rule sending /...-in-Kota to /...-in-kota also
+      // matched the lowercase target and redirected it to itself — both Kota
+      // pages and /bags-manufacturer-in-jodhpur served an infinite 308 loop and
+      // could not be crawled at all. The middleware compares the path exactly,
+      // so only the capitalised spelling is redirected.
+
+      // ── Blog posts whose old-site URL differs from the slug in the CMS ──
+      // Both are indexed under the old address; the post itself is unchanged.
+      { source: '/blog/sustainable-fabrics-for-promotional-clothing', destination: '/blog/sustainable-material-in-custom-promotional-apparel', permanent: true },
+      { source: '/blog/custom-t-shirts-for-promotional-events',       destination: '/blog/custom-tshirt-manufacturer-promotional-events',       permanent: true },
       // ── Clean URL migration ──
       // Old plural /categories/<slug> → new singular /category/<slug>
       // Legacy /products?category=X&sub=Y is handled in src/middleware.ts so
