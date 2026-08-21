@@ -1,17 +1,6 @@
-import Link from 'next/link';
-import Image from 'next/image';
-import { MapPin } from 'lucide-react';
-import { LOCATIONS } from '@/data/locations';
+import OfficeCards, { type CityCard } from './OfficeCards';
 
 const API_URL = (process.env.BACKEND_URL || 'https://crosswild-backend-p5l3.onrender.com') + '/api';
-
-interface CityCard {
-  city: string;
-  slug: string;
-  branchAddress: string;
-  image: string;
-  branchPhone: string;
-}
 
 // Base data — always shown; admin can override any field via the Locations admin panel
 const BASE_CITIES: CityCard[] = [
@@ -55,15 +44,6 @@ const CITY_IMAGE_DEFAULTS: Record<string, string> = {
   Jodhpur: '/images/city/jodhpur.jpg',
   Udaipur: '/images/city/udaipur.jpg',
 };
-
-// Root-level location URLs only exist for slugs in the next.config.js rewrite
-// list (mirrored by src/data/locations.ts); anything else — e.g. a location
-// added later via the admin — is only served under /locations/<slug>.
-const ROOT_LOCATION_SLUGS = new Set<string>(LOCATIONS.map((l) => l.slug));
-function cityHref(slug: string): string {
-  if (slug.includes('/')) return `/${slug}`; // explicit path (e.g. Jaipur card)
-  return ROOT_LOCATION_SLUGS.has(slug) ? `/${slug}` : `/locations/${slug}`;
-}
 
 async function getCityCards(): Promise<CityCard[]> {
   // Start from static base so all 4 cities always appear
@@ -136,42 +116,7 @@ export default async function OurNetworkSection() {
             Our Offices
           </h2>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            {cities.map((city) => (
-              <Link
-                key={city.city}
-                href={cityHref(city.slug)}
-                className="bg-white dark:bg-[#1f2937] border border-gray-200 dark:border-gray-700 rounded-xl p-5 block hover:shadow-md transition-shadow duration-200"
-              >
-                {/* Circular city image */}
-                <div className="w-[72px] h-[72px] rounded-full overflow-hidden mb-4 border border-gray-200 dark:border-gray-600 flex-shrink-0">
-                  <Image
-                    src={city.image}
-                    alt={`${city.city}`}
-                    width={72}
-                    height={72}
-                    quality={60}
-                    sizes="72px"
-                    loading="lazy"
-                    className="w-full h-full object-cover"
-                  />
-                </div>
-
-                {/* City name */}
-                <p className="text-[17px] font-bold text-gray-900 dark:text-white mb-3">
-                  {city.city}
-                </p>
-
-                {/* Address */}
-                <div className="flex items-start gap-2">
-                  <MapPin className="w-[15px] h-[15px] text-gray-500 dark:text-gray-400 flex-shrink-0 mt-[2px]" />
-                  <p className="text-[13px] leading-[1.55] text-gray-600 dark:text-gray-400">
-                    {city.branchAddress}
-                  </p>
-                </div>
-              </Link>
-            ))}
-          </div>
+          <OfficeCards cities={cities} />
 
         </div>
       </section>
