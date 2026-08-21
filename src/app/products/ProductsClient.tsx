@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo, useEffect, Suspense } from 'react';
+import { useState, useMemo, useEffect, useCallback, useRef, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { productCategories, getCategoryById } from '@/data/products';
 import { productsAPI, type Product } from '@/lib/api';
@@ -78,9 +78,14 @@ const formatCategoryName = (category: string) => {
 type CacheEntry = { products: Product[]; signature: string };
 const productsCache = new Map<string, CacheEntry>();
 
-// Products shown per page. Search/filter/sort always run over the full set;
-// only the rendered slice is paginated.
+// Products rendered per batch. Search/filter/sort always run over the full set;
+// only the rendered slice grows as the user scrolls.
 const PRODUCTS_PER_PAGE = 30;
+
+// How many products were on screen when the user left for a product detail
+// page. Restored on back-navigation so the saved scroll position still has a
+// grid tall enough to land on.
+const VISIBLE_COUNT_KEY = 'products-visible-count';
 
 function ProductsContent() {
   const searchParams = useSearchParams();
@@ -98,7 +103,15 @@ function ProductsContent() {
   // Bumped to re-run the freshness check (e.g. when the tab regains focus after
   // adding data in the admin panel in another tab).
   const [revalidateTick, setRevalidateTick] = useState(0);
-  const [currentPage, setCurrentPage] = useState(1);
+  // Number of products currently rendered (infinite scroll). Seeded from the
+  // count saved on the way out so back-navigation restores the same grid.
+  const [visibleCount, setVisibleCount] = useState(() => {
+    if (typeof window === 'undefined') return PRODUCTS_PER_PAGE;
+    // Only a real back-navigation (scroll position saved too) restores a count.
+    if (!sessionStorage.getItem('products-scroll')) return PRODUCTS_PER_PAGE;
+    const saved = parseInt(sessionStorage.getItem(VISIBLE_COUNT_KEY) || '', 10);
+    return Number.isNaN(saved) ? PRODUCTS_PER_PAGE : Math.max(PRODUCTS_PER_PAGE, saved);
+  });
 
   // Re-check for new data whenever the tab/window regains focus.
   useEffect(() => {
@@ -206,6 +219,9 @@ function ProductsContent() {
   const rememberScroll = () => {
     if (typeof window !== 'undefined') {
       sessionStorage.setItem('products-scroll', String(window.scrollY));
+      // Without the batch count the restored scroll would land past the end of
+      // a freshly-reset 30-product grid.
+      sessionStorage.setItem(VISIBLE_COUNT_KEY, String(visibleCount));
     }
   };
 
@@ -213,8 +229,9 @@ function ProductsContent() {
   // position. Cleared after use so a fresh visit to /products still lands at top.
   useEffect(() => {
     const saved = sessionStorage.getItem('products-scroll');
-    if (!saved) return;
     sessionStorage.removeItem('products-scroll');
+    sessionStorage.removeItem(VISIBLE_COUNT_KEY);
+    if (!saved) return;
     const y = parseInt(saved, 10);
     if (Number.isNaN(y)) return;
     // Wait two frames so the (cached) grid is laid out before restoring scroll.
@@ -274,48 +291,75 @@ function ProductsContent() {
 
   const currentCategory = getCategoryById(selectedCategory);
 
-  // Pagination — PRODUCTS_PER_PAGE per page. Search / filter / sort above run
-  // over the FULL set, so the paginated view always reflects the complete
-  // filtered list (not just the current page).
-  const totalPages = Math.max(1, Math.ceil(filteredProducts.length / PRODUCTS_PER_PAGE));
-
-  const paginatedProducts = useMemo(
-    () => filteredProducts.slice((currentPage - 1) * PRODUCTS_PER_PAGE, currentPage * PRODUCTS_PER_PAGE),
-    [filteredProducts, currentPage]
+  // Infinite scroll — render PRODUCTS_PER_PAGE at a time and grow the slice as
+  // the sentinel below the grid scrolls into view. Search / filter / sort above
+  // run over the FULL set, so the visible slice always reflects the complete
+  // filtered list. The whole list is already in memory, so "loading more" is a
+  // render-slice change, not a network call.
+  const visibleProducts = useMemo(
+    () => filteredProducts.slice(0, visibleCount),
+    [filteredProducts, visibleCount]
   );
 
-  // Back to page 1 whenever the filtered set changes (new search / filter / sort / category).
+  const hasMore = visibleCount < filteredProducts.length;
+
+  const loadMore = useCallback(() => {
+    setVisibleCount((c) => c + PRODUCTS_PER_PAGE);
+  }, []);
+
+  // Back to the first batch whenever the filtered set changes (new search /
+  // filter / sort / category). Skipped on the first run so a restored count
+  // (back-navigation) survives.
+  const didMountRef = useRef(false);
   useEffect(() => {
-    setCurrentPage(1);
+    if (!didMountRef.current) {
+      didMountRef.current = true;
+      return;
+    }
+    setVisibleCount(PRODUCTS_PER_PAGE);
   }, [searchQuery, sortBy, selectedCategory]);
 
-  // Keep the current page in range if the list shrinks (e.g. a background refresh).
+  // Auto-load the next batch when the sentinel enters the viewport. Starts
+  // fetching slightly early (rootMargin) so the grid never visibly runs dry.
+  const sentinelRef = useRef<HTMLDivElement | null>(null);
   useEffect(() => {
-    if (currentPage > totalPages) setCurrentPage(totalPages);
-  }, [currentPage, totalPages]);
+    const node = sentinelRef.current;
+    if (!node || !hasMore || loading) return;
+    if (typeof IntersectionObserver === 'undefined') return;
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0]?.isIntersecting) loadMore();
+      },
+      { rootMargin: '600px 0px' }
+    );
+    observer.observe(node);
 
-  const goToPage = (page: number) => {
-    const next = Math.min(Math.max(1, page), totalPages);
-    setCurrentPage(next);
-    if (typeof window !== 'undefined') window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
+    // Backstop for a jump to the bottom. The footer below this sentinel is
+    // taller than the viewport, so dragging the scrollbar down or pressing End
+    // clears the sentinel within a single frame: the observer sees
+    // non-intersecting before and non-intersecting after, never crosses a
+    // threshold, and so never fires at all — the spinner would sit there
+    // claiming to load with nothing behind it. This only handles the case the
+    // observer structurally cannot see (sentinel already above the viewport),
+    // so the two never both fire for the same scroll.
+    let frame = 0;
+    const onScroll = () => {
+      if (frame) return;
+      frame = requestAnimationFrame(() => {
+        frame = 0;
+        if (node.getBoundingClientRect().bottom < 0) loadMore();
+      });
+    };
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', onScroll, { passive: true });
 
-  // Page buttons to render, collapsing long ranges with ellipses.
-  const pageNumbers = useMemo<(number | 'ellipsis')[]>(() => {
-    const pages: (number | 'ellipsis')[] = [];
-    if (totalPages <= 7) {
-      for (let i = 1; i <= totalPages; i++) pages.push(i);
-    } else {
-      pages.push(1);
-      if (currentPage > 3) pages.push('ellipsis');
-      const start = Math.max(2, currentPage - 1);
-      const end = Math.min(totalPages - 1, currentPage + 1);
-      for (let i = start; i <= end; i++) pages.push(i);
-      if (currentPage < totalPages - 2) pages.push('ellipsis');
-      pages.push(totalPages);
-    }
-    return pages;
-  }, [totalPages, currentPage]);
+    return () => {
+      observer.disconnect();
+      window.removeEventListener('scroll', onScroll);
+      window.removeEventListener('resize', onScroll);
+      if (frame) cancelAnimationFrame(frame);
+    };
+  }, [hasMore, loading, loadMore, filteredProducts.length]);
 
   // Product Card Component
   const ProductCard = ({ product }: { product: Product }) => {
@@ -700,7 +744,7 @@ function ProductsContent() {
                     ? 'Loading...'
                     : filteredProducts.length === 0
                     ? '0 products found'
-                    : `Showing ${(currentPage - 1) * PRODUCTS_PER_PAGE + 1}–${Math.min(currentPage * PRODUCTS_PER_PAGE, filteredProducts.length)} of ${filteredProducts.length} products`}
+                    : `Showing ${visibleProducts.length} of ${filteredProducts.length} products`}
                 </p>
               </div>
 
@@ -742,54 +786,42 @@ function ProductsContent() {
                 </div>
               ) : viewMode === 'grid' ? (
                 <div className="grid grid-cols-2 xl:grid-cols-3 gap-3 sm:gap-5">
-                  {paginatedProducts.map((product) => (
+                  {visibleProducts.map((product) => (
                     <ProductCard key={product.id} product={product} />
                   ))}
                 </div>
               ) : (
                 <div className="space-y-4">
-                  {paginatedProducts.map((product) => (
+                  {visibleProducts.map((product) => (
                     <ProductListCard key={product.id} product={product} />
                   ))}
                 </div>
               )}
 
-              {/* Pagination — only when there's more than one page of results */}
-              {!loading && !error && filteredProducts.length > 0 && totalPages > 1 && (
-                <nav className="mt-10 flex flex-wrap items-center justify-center gap-2" aria-label="Products pagination">
+              {/* Infinite scroll sentinel — auto-loads the next batch as it
+                  scrolls into view. The button is a manual fallback for when
+                  the observer can't fire (no IntersectionObserver, reduced
+                  motion / keyboard-only users who never scroll it into view). */}
+              {!loading && !error && hasMore && (
+                <div ref={sentinelRef} className="mt-10 flex flex-col items-center gap-4">
+                  <div className="flex items-center gap-2 text-gray-400" aria-hidden="true">
+                    <span className="inline-block w-5 h-5 rounded-full border-2 border-primary border-t-transparent animate-spin" />
+                    <span className="text-sm">Loading more products…</span>
+                  </div>
                   <button
-                    onClick={() => goToPage(currentPage - 1)}
-                    disabled={currentPage === 1}
-                    className="px-4 py-2 rounded-lg border border-gray-200 dark:border-gray-700 text-sm font-medium text-gray-700 dark:text-gray-200 disabled:opacity-40 disabled:cursor-not-allowed hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                    onClick={loadMore}
+                    className="px-6 py-3 rounded-xl border border-gray-200 dark:border-gray-700 text-sm font-semibold text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
                   >
-                    Prev
+                    Load more
                   </button>
-                  {pageNumbers.map((p, i) =>
-                    p === 'ellipsis' ? (
-                      <span key={`ellipsis-${i}`} className="px-2 text-gray-400 select-none">…</span>
-                    ) : (
-                      <button
-                        key={p}
-                        onClick={() => goToPage(p)}
-                        aria-current={p === currentPage ? 'page' : undefined}
-                        className={`min-w-[2.5rem] px-3 py-2 rounded-lg text-sm font-semibold transition-colors ${
-                          p === currentPage
-                            ? 'bg-primary text-white'
-                            : 'border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700'
-                        }`}
-                      >
-                        {p}
-                      </button>
-                    )
-                  )}
-                  <button
-                    onClick={() => goToPage(currentPage + 1)}
-                    disabled={currentPage === totalPages}
-                    className="px-4 py-2 rounded-lg border border-gray-200 dark:border-gray-700 text-sm font-medium text-gray-700 dark:text-gray-200 disabled:opacity-40 disabled:cursor-not-allowed hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
-                  >
-                    Next
-                  </button>
-                </nav>
+                </div>
+              )}
+
+              {/* End-of-list marker, so the grid doesn't just stop dead. */}
+              {!loading && !error && !hasMore && filteredProducts.length > PRODUCTS_PER_PAGE && (
+                <p className="mt-10 text-center text-sm text-gray-400">
+                  You&rsquo;ve reached the end &mdash; {filteredProducts.length} products.
+                </p>
               )}
             </main>
           </div>
