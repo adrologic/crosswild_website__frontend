@@ -84,13 +84,28 @@ const FALLBACK_FLAT: FlatCategory[] = [
   { name: 'Raincoats', slug: 'raincoats' },
 ];
 
+// Categories the nav should lead with, in this order. The API returns them
+// alphabetically and carries no order field, which buried T-Shirts — the
+// catalogue's lead product — at the end of the bar behind Apron and Chef Coat.
+// Anything not listed keeps the order the API gave it, after these.
+const NAV_PRIORITY_SLUGS = ['tshirts'];
+
+function byNavPriority(a: any, b: any): number {
+  const rank = (cat: any) => {
+    const i = NAV_PRIORITY_SLUGS.indexOf(cat.id || cat.slug);
+    return i === -1 ? NAV_PRIORITY_SLUGS.length : i;
+  };
+  return rank(a) - rank(b);
+}
+
 // Transform API tree into nav format
 function buildNavCategories(tree: any[]): { nav: NavCategory[]; flat: FlatCategory[] } {
   const flat: FlatCategory[] = [];
   const mainCats: NavCategory[] = [];
   const standaloneCats: NavItem[] = [];
 
-  for (const cat of tree) {
+  // Stable sort, so everything outside the priority list keeps API order.
+  for (const cat of [...tree].sort(byNavPriority)) {
     flat.push({ name: cat.name, slug: cat.id });
     const subs = cat.subcategories || [];
 
