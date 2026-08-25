@@ -765,7 +765,7 @@ export default function CrosswildHeader() {
                     className="flex items-center gap-1.5 px-3 py-2 bg-green-500 text-white rounded-full hover:bg-green-600 transition-colors text-xs font-semibold">
                     <MessageCircle className="w-3.5 h-3.5" />WhatsApp
                   </a>
-                  <a href="mailto:info@thecrosswild.com?subject=Custom%20Product%20Inquiry&body=Hello%2C%20I%20want%20to%20create%20a%20custom%20product.%20Please%20share%20the%20details."
+                  <a href="mailto:orders@thecrosswild.com?subject=Custom%20Product%20Inquiry&body=Hello%2C%20I%20want%20to%20create%20a%20custom%20product.%20Please%20share%20the%20details."
                     className="flex items-center gap-1.5 px-3 py-2 bg-gradient-to-r from-primary to-orange-500 text-white rounded-full hover:shadow-[0_0_12px_rgba(249,115,22,0.4)] transition-all text-xs font-semibold">
                     <Mail className="w-3.5 h-3.5" />Email
                   </a>

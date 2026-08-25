@@ -110,7 +110,7 @@ export default function CheckoutPage() {
           (formData.notes ? `\n\nNotes: ${formData.notes}` : '');
 
         const emailSubject = `New Order #${order.orderNumber} from ${formData.fullName}`;
-        const mailtoLink = `mailto:info@thecrosswild.com?subject=${encodeURIComponent(emailSubject)}&body=${encodeURIComponent(emailBody)}`;
+        const mailtoLink = `mailto:orders@thecrosswild.com?subject=${encodeURIComponent(emailSubject)}&body=${encodeURIComponent(emailBody)}`;
 
         // Open default email client
         window.location.href = mailtoLink;
