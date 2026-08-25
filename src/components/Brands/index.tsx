@@ -4,6 +4,21 @@ import { useEffect, useState } from 'react';
 import Image from "next/image";
 import { getBrands, getSiteSettings, type Brand, type StatItem } from '@/lib/cms';
 
+// Client logos shipped with the site, shown until brands are added in the admin
+// panel — the CMS list is empty today, so without these the marquee rendered
+// nothing at all and the section was just a heading above the stats.
+// Files live in public/images/clients.
+const FALLBACK_CLIENTS: Brand[] = [
+  { _id: 'client-airtel', name: 'Airtel', logoImage: '/images/clients/airtel.jpg', websiteUrl: '' },
+  { _id: 'client-amity', name: 'Amity University', logoImage: '/images/clients/amity.jpg', websiteUrl: '' },
+  { _id: 'client-biyani', name: 'Biyani Group of Colleges', logoImage: '/images/clients/biyani.jpg', websiteUrl: '' },
+  { _id: 'client-bjp', name: 'BJP', logoImage: '/images/clients/bjp.jpg', websiteUrl: '' },
+  { _id: 'client-dlb', name: 'DLB', logoImage: '/images/clients/dlb.jpg', websiteUrl: '' },
+  { _id: 'client-hdfc', name: 'HDFC Bank', logoImage: '/images/clients/hdfc.jpg', websiteUrl: '' },
+  { _id: 'client-icici', name: 'ICICI Bank', logoImage: '/images/clients/icici.jpg', websiteUrl: '' },
+  { _id: 'client-tvs', name: 'TVS', logoImage: '/images/clients/tvs.jpg', websiteUrl: '' },
+];
+
 const DEFAULT_STATS: StatItem[] = [
   { label: 'Happy Clients', value: '5000+' },
   { label: 'Orders Delivered', value: '50K+' },
@@ -12,11 +27,12 @@ const DEFAULT_STATS: StatItem[] = [
 ];
 
 export default function Brands() {
-  const [brands, setBrands] = useState<Brand[]>([]);
+  const [brands, setBrands] = useState<Brand[]>(FALLBACK_CLIENTS);
   const [stats, setStats] = useState<StatItem[]>(DEFAULT_STATS);
 
   useEffect(() => {
-    getBrands().then(setBrands);
+    // Anything configured in admin replaces the shipped logos wholesale.
+    getBrands().then((b) => { if (b.length) setBrands(b); });
     getSiteSettings().then((s) => { if (s?.stats?.length) setStats(s.stats); });
   }, []);
 
@@ -64,24 +80,33 @@ export default function Brands() {
 }
 
 function SingleBrand({ brand }: { brand: Brand }) {
+  const logo = brand.logoImage ? (
+    <Image
+      src={brand.logoImage}
+      alt={`${brand.name} — client of The Cross Wild`}
+      fill
+      sizes="160px"
+      className="object-contain p-2"
+    />
+  ) : null;
+
+  // Tile rather than a bare image: these logos are JPGs with a white
+  // background, so on the dark theme a transparent tile would show them as
+  // pale rectangles floating on dark. White behind them in both themes reads
+  // as a deliberate logo wall.
+  const tileClass =
+    'relative block h-16 w-40 overflow-hidden rounded-lg bg-white shadow-sm ring-1 ring-black/5';
+
   return (
-    <div className="flex-shrink-0 mx-8 transition-transform hover:scale-110">
-      <a
-        href={brand.websiteUrl || '#'}
-        target="_blank"
-        rel="nofollow noreferrer"
-        className="relative block h-16 w-32 opacity-60 transition hover:opacity-100 dark:opacity-50 dark:hover:opacity-100"
-      >
-        {brand.logoImage && (
-          <Image
-            src={brand.logoImage}
-            alt={brand.name}
-            fill
-            className="object-contain"
-            unoptimized
-          />
-        )}
-      </a>
+    <div className="flex-shrink-0 mx-6 transition-transform hover:scale-105">
+      {brand.websiteUrl ? (
+        <a href={brand.websiteUrl} target="_blank" rel="nofollow noreferrer" className={tileClass}>
+          {logo}
+        </a>
+      ) : (
+        // No site on file — a link to "#" would just be a dead control.
+        <div className={tileClass}>{logo}</div>
+      )}
     </div>
   );
 }
