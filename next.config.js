@@ -102,6 +102,17 @@ const nextConfig = {
     ];
   },
   images: {
+    // Vercel's image optimizer is served from a metered quota, and once that
+    // quota is exhausted EVERY /_next/image request answers 402 — the whole
+    // site loses its images at once, including the header logo and the product
+    // photos, with nothing in the code to show for it. Serving the files
+    // directly removes that single point of failure. The source images were
+    // compressed to suit (26.3MB -> 5.2MB across public/), so the pages stay
+    // light without the optimizer in front of them.
+    //
+    // remotePatterns below is left in place: it is ignored while unoptimized
+    // is set, and is exactly what would be needed to switch back.
+    unoptimized: true,
     remotePatterns: [
       {
         protocol: "https",
