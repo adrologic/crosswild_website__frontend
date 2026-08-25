@@ -64,7 +64,9 @@ const FALLBACK_CATEGORIES: NavCategory[] = [
     { name: 'Sweatshirts & Hoodies', link: getCategoryUrl('sweatshirts') },
     { name: 'Lower & Shorts', link: getCategoryUrl('lowers') },
     { name: 'Uniforms', link: getCategoryUrl('uniforms') },
-    { name: 'Printing & Embroidery', link: getCategoryUrl('printing') },
+    // Hidden from the nav for now — see HIDDEN_NAV_SLUGS below, which does the
+    // same for the API-driven nav. Uncomment both to bring it back.
+    // { name: 'Printing & Embroidery', link: getCategoryUrl('printing') },
     { name: 'Apron', link: getCategoryUrl('apron') },
     { name: 'Chef Coat', link: getCategoryUrl('chef-coat') },
     { name: 'Raincoats', link: getCategoryUrl('raincoats') },
@@ -90,6 +92,12 @@ const FALLBACK_FLAT: FlatCategory[] = [
 // Anything not listed keeps the order the API gave it, after these.
 const NAV_PRIORITY_SLUGS = ['tshirts'];
 
+// Categories kept out of the nav bar and burger menu, without touching the
+// database. Their category pages, sitemap entries and search results are all
+// untouched — this only stops the nav linking to them, so nothing that is
+// already indexed is lost. Empty this list to show them again.
+const HIDDEN_NAV_SLUGS = ['printing'];
+
 function byNavPriority(a: any, b: any): number {
   const rank = (cat: any) => {
     const i = NAV_PRIORITY_SLUGS.indexOf(cat.id || cat.slug);
@@ -106,8 +114,16 @@ function buildNavCategories(tree: any[]): { nav: NavCategory[]; flat: FlatCatego
 
   // Stable sort, so everything outside the priority list keeps API order.
   for (const cat of [...tree].sort(byNavPriority)) {
+    // Search still finds it, and its page still works — it just isn't in the bar.
+    const hidden = HIDDEN_NAV_SLUGS.includes(cat.id || cat.slug);
+
     flat.push({ name: cat.name, slug: cat.id });
     const subs = cat.subcategories || [];
+
+    if (hidden) {
+      for (const sub of subs) flat.push({ name: sub.name, slug: sub.id });
+      continue;
+    }
 
     if (subs.length > 0) {
       mainCats.push({
