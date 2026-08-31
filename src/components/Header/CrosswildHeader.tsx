@@ -64,9 +64,7 @@ const FALLBACK_CATEGORIES: NavCategory[] = [
     { name: 'Sweatshirts & Hoodies', link: getCategoryUrl('sweatshirts') },
     { name: 'Lower & Shorts', link: getCategoryUrl('lowers') },
     { name: 'Uniforms', link: getCategoryUrl('uniforms') },
-    // Hidden from the nav for now — see HIDDEN_NAV_SLUGS below, which does the
-    // same for the API-driven nav. Uncomment both to bring it back.
-    // { name: 'Printing & Embroidery', link: getCategoryUrl('printing') },
+    { name: 'Printing & Embroidery', link: getCategoryUrl('printing') },
     { name: 'Apron', link: getCategoryUrl('apron') },
     { name: 'Chef Coat', link: getCategoryUrl('chef-coat') },
     { name: 'Raincoats', link: getCategoryUrl('raincoats') },
@@ -95,8 +93,8 @@ const NAV_PRIORITY_SLUGS = ['tshirts'];
 // Categories kept out of the nav bar and burger menu, without touching the
 // database. Their category pages, sitemap entries and search results are all
 // untouched — this only stops the nav linking to them, so nothing that is
-// already indexed is lost. Empty this list to show them again.
-const HIDDEN_NAV_SLUGS = ['printing'];
+// already indexed is lost. Empty (as now) to show every category.
+const HIDDEN_NAV_SLUGS: string[] = [];
 
 function byNavPriority(a: any, b: any): number {
   const rank = (cat: any) => {
