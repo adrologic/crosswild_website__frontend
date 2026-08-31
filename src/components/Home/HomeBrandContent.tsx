@@ -31,10 +31,45 @@ const FALLBACK_WHY_CHOOSE: HomeWhyChoose[] = [
 ];
 
 const FALLBACK_HIGHLIGHTS: HomeProductHighlight[] = [
-  { _id: 'h1', title: 'Mug Printing', image: '/images/products/Mugs/Promotional-Mug.jpg', link: '/contact-us' },
-  { _id: 'h2', title: 'Cap Printing', image: '/images/products/Caps/Sports-Cap.jpg', link: '/contact-us' },
-  { _id: 'h3', title: 'Digital Printing', image: '/images/products/Digital-Printing/Digital-Printing.jpg', link: '/contact-us' },
+  { _id: 'h1', title: 'Mug Printing', image: '/banners/homePage/mugPrintingLight.webp', link: '/product/mug-printing-in-Jaipur' },
+  { _id: 'h2', title: 'Cap Printing', image: '/banners/homePage/capPrintingLight.webp', link: '/product/cap-printing-manufacturer-in-jaipur' },
+  { _id: 'h3', title: 'Digital Printing', image: '/banners/homePage/digitalPrintingLight.webp', link: '/product/printing' },
 ];
+
+/**
+ * The three highlight banners ship as a designed light/dark pair, with the
+ * product name, tagline and feature strip drawn into the artwork itself.
+ *
+ * The pairing lives here rather than in the CMS because HomeProductHighlight
+ * stores a single `image` and has no dark field — adding one needs a backend
+ * schema change and a redeploy. Keyed by the light path the CMS stores, so a
+ * highlight whose image is swapped in admin simply falls back to the tinted,
+ * labelled treatment used for plain product photos.
+ *
+ * Themes are swapped with CSS rather than `useTheme`, matching ThemeBanner:
+ * the right image is in the markup on first paint, and the off-theme one stays
+ * `display: none` and is never fetched until the visitor switches.
+ */
+const DESIGNED_BANNERS: Record<string, { dark: string; alt: string }> = {
+  '/banners/homePage/mugPrintingLight.webp': {
+    dark: '/banners/homePage/mugPrintingDark.webp',
+    alt:
+      'Custom mug printing — your design, your brand, your mug. Custom printing, ' +
+      'branding and bulk orders; premium quality, vibrant prints, dishwasher safe.',
+  },
+  '/banners/homePage/capPrintingLight.webp': {
+    dark: '/banners/homePage/capPrintingDark.webp',
+    alt:
+      'Custom cap printing — your design, your brand, your cap. Custom printing, ' +
+      'branding and bulk orders; durable, comfortable caps with a clean finish.',
+  },
+  '/banners/homePage/digitalPrintingLight.webp': {
+    dark: '/banners/homePage/digitalPrintingDark.webp',
+    alt:
+      'Premium digital printing — high detail, vibrant colours, unlimited possibilities. ' +
+      'Custom prints with no minimums; photo-real detail, fade resistant, quick turnaround.',
+  },
+};
 
 const CAPABILITY_COLORS = [
   { bg: 'bg-blue-50 dark:bg-blue-900/20 border-blue-200 dark:border-blue-800', title: 'text-blue-700 dark:text-blue-400', rule: 'bg-blue-200/80 dark:bg-blue-800/70' },
@@ -204,29 +239,50 @@ export default async function HomeBrandContent({ content }: Props = {}) {
             </p>
           </div>
 
-          <div className="grid sm:grid-cols-3 gap-6 max-w-5xl mx-auto">
+          <div className="grid sm:grid-cols-3 gap-6 max-w-6xl mx-auto">
             {highlights.map((item, idx) => {
+              const designed = DESIGNED_BANNERS[item.image];
               const gradient = HIGHLIGHT_GRADIENTS[idx % HIGHLIGHT_GRADIENTS.length];
+              const imgClass =
+                'object-cover transition-transform duration-500 group-hover:scale-105';
               return (
                 <Link
                   key={item._id}
                   href={item.link || '/contact-us'}
-                  className="group relative h-64 rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 hover:-translate-y-1"
+                  className="group relative aspect-square rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 hover:-translate-y-1"
                 >
                   {item.image && (
                     <Image
                       src={item.image}
-                      alt={item.title}
+                      alt={designed ? designed.alt : item.title}
                       fill
-                      className="object-cover group-hover:scale-105 transition-transform duration-500"
+                      sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                      className={designed ? `${imgClass} dark:hidden` : imgClass}
                     />
                   )}
-                  <div className={`absolute inset-0 bg-gradient-to-t ${gradient}`} />
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <span className="text-white text-xl font-black tracking-widest uppercase drop-shadow-lg">
-                      {item.title}
-                    </span>
-                  </div>
+                  {designed && (
+                    <Image
+                      src={designed.dark}
+                      alt={designed.alt}
+                      fill
+                      sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                      className={`hidden dark:block ${imgClass}`}
+                    />
+                  )}
+
+                  {/* Designed artwork carries its own headline and background, so
+                      nothing is drawn over it. Plain product photos still get the
+                      tint and label, which is the only thing naming them. */}
+                  {!designed && (
+                    <>
+                      <div className={`absolute inset-0 bg-gradient-to-t ${gradient}`} />
+                      <div className="absolute inset-0 flex items-center justify-center">
+                        <span className="text-white text-xl font-black tracking-widest uppercase drop-shadow-lg">
+                          {item.title}
+                        </span>
+                      </div>
+                    </>
+                  )}
                 </Link>
               );
             })}
