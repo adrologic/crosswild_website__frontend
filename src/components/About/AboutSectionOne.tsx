@@ -18,7 +18,6 @@ const DEFAULT = {
     "Mug Printing",
     "Digital Printing",
     "School & Staff Uniforms",
-    "Face Masks & PPE Kits",
   ],
 };
 
