@@ -14,6 +14,7 @@ import {
   getSiteSettings,
   getMenu,
   type Link as CmsLink,
+  type BranchOffice,
 } from '@/lib/cms';
 
 // Pre-rebrand logo still stored in Site Settings; treated as "no custom logo".
@@ -38,6 +39,19 @@ const FALLBACK_SERVICES: CmsLink[] = [
   { label: 'Cap Printing', href: '/product/cap-printing-manufacturer-in-jaipur' },
   { label: 'Staff Uniforms', href: '/product/staff-uniform-manufacturer' },
   { label: 'All Products', href: '/products' },
+];
+
+/**
+ * Branch offices shown when Site Settings has none. The other FALLBACK_* lists
+ * above exist so the footer never renders a bare heading; this one was missing,
+ * so an unreachable backend emptied the offices row entirely.
+ * Addresses and numbers match DEFAULT_OFFICES in components/Contact/index.tsx.
+ */
+const FALLBACK_BRANCH_OFFICES: BranchOffice[] = [
+  { city: 'Jaipur',  phone: '+91-9571815050', address: 'D-8, Near World Trade Park, Malviya Nagar, Jaipur, Rajasthan', hours: 'Mon\u2013Sat: 9:00 AM \u2013 6:00 PM', email: '', order: 0 },
+  { city: 'Jodhpur', phone: '+91-9571286262', address: 'B-13, Shastri Nagar, Near Shastri Circle, Jodhpur', hours: 'Mon\u2013Sat: 9:00 AM \u2013 6:00 PM', email: '', order: 1 },
+  { city: 'Indore',  phone: '+91-9649715050', address: '401, 4th Floor, Near Sky Corporate Tower, Scheme No 78, AB Road, Vijay Nagar, Indore, MP', hours: 'Mon\u2013Sat: 9:00 AM \u2013 6:00 PM', email: '', order: 2 },
+  { city: 'Udaipur', phone: '+91-9549066262', address: '45, Moti Magri Scheme, Zinc Park, Udaipur, Rajasthan 313001', hours: 'Mon\u2013Sat: 9:00 AM \u2013 6:00 PM', email: '', order: 3 },
 ];
 
 const SOCIAL_ICONS: Record<string, React.ReactElement> = {
@@ -102,40 +116,112 @@ export default async function CrosswildFooter() {
     : [...quickFromCms, { label: 'Blog', href: '/blog' }];
   const bottom = bottomLinks?.items || footer?.bottomLinks || [];
 
+  // Offices come from Site Settings; fall back so the row is never empty, and
+  // sort by the admin-set order rather than insertion order.
+  const offices = (footer?.branchOffices?.length ? footer.branchOffices : FALLBACK_BRANCH_OFFICES)
+    .slice()
+    .sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
+
+  // Links sit on a near-black surface, where the brand crimson (#9a0822) is all
+  // but invisible. primary-300 is the same hue lifted to read against it.
+  const linkClass =
+    'text-gray-400 dark:text-[#8C7F6E] hover:text-primary-300 transition-colors duration-200';
+
   return (
     <footer className="bg-[#0f1a2e] dark:bg-[#140407] text-gray-300 dark:text-[#C8B99A]">
-      <div className="w-full px-6 lg:px-12 py-12">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-8">
-          {/* Company Info */}
-          <div className="sm:col-span-2 lg:col-span-3 xl:col-span-2">
+      {/* Hairline that picks the brand colour up off the page above */}
+      <div className="h-px w-full bg-gradient-to-r from-transparent via-primary-400/50 to-transparent" />
+
+      <div className="w-full px-6 lg:px-12 py-14">
+        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-12 gap-10 xl:gap-12">
+
+          {/* Brand */}
+          <div className="sm:col-span-2 xl:col-span-4">
             <Image
               src={logoSrc}
               alt="The CrossWild"
               width={459}
               height={320}
-              className={`h-10 w-auto mb-4 ${cmsLogo ? 'brightness-0 invert' : ''}`}
+              className={`h-11 w-auto mb-5 ${cmsLogo ? 'brightness-0 invert' : ''}`}
             />
-            <p className="text-gray-400 dark:text-[#8C7F6E] mb-6 leading-relaxed">
+            <p className="text-gray-400 dark:text-[#8C7F6E] leading-relaxed max-w-sm">
               {footer?.companyDescription || "India's leading manufacturers & printers of custom T-Shirts, Bags, Caps & Uniforms."}
             </p>
 
-            <div className="space-y-3">
+            {social && (
+              <div className="mt-6">
+                <p className="text-xs uppercase tracking-[0.14em] text-gray-500 dark:text-[#6F6555] mb-3">Follow Us</p>
+                <div className="flex flex-wrap gap-2.5">
+                  {(['facebook', 'twitter', 'instagram', 'youtube', 'pinterest', 'linkedin'] as const).map((k) => {
+                    const url = social[k];
+                    if (!url) return null;
+                    return (
+                      <a
+                        key={k}
+                        href={url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        aria-label={k}
+                        className="w-10 h-10 rounded-full border border-white/10 bg-white/[0.04] text-gray-400 flex items-center justify-center hover:bg-primary hover:border-primary hover:text-white transition-colors duration-200"
+                      >
+                        {SOCIAL_ICONS[k]}
+                      </a>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* Services */}
+          <div className="xl:col-span-2">
+            <h4 className="text-white font-semibold mb-1">Services</h4>
+            <span className="block w-8 h-0.5 bg-primary rounded-full mb-4" />
+            <ul className="space-y-2.5 text-sm">
+              {services.map((s, i) => (
+                <li key={i}><Link href={s.href || '#'} className={linkClass}>{s.label}</Link></li>
+              ))}
+            </ul>
+          </div>
+
+          {/* Quick Links */}
+          <div className="xl:col-span-2">
+            <h4 className="text-white font-semibold mb-1">Quick Links</h4>
+            <span className="block w-8 h-0.5 bg-primary rounded-full mb-4" />
+            <ul className="space-y-2.5 text-sm">
+              {quick.map((l, i) => (
+                <li key={i}><Link href={l.href || '#'} className={linkClass}>{l.label}</Link></li>
+              ))}
+            </ul>
+          </div>
+
+          {/* Get in touch */}
+          <div className="sm:col-span-2 xl:col-span-4">
+            <h4 className="text-white font-semibold mb-1">Get in Touch</h4>
+            <span className="block w-8 h-0.5 bg-primary rounded-full mb-4" />
+            <div className="space-y-3 text-sm">
               {contact?.primaryPhone && (
-                <a href={`tel:${contact.primaryPhone}`} className="flex items-center gap-3 text-gray-400 hover:text-primary transition-colors">
-                  <Phone className="w-5 h-5" />
-                  <span>{contact.primaryPhone}</span>
+                <a href={`tel:${contact.primaryPhone}`} className="group flex items-center gap-3">
+                  <span className="w-9 h-9 rounded-lg bg-white/[0.05] border border-white/10 flex items-center justify-center text-primary-300 group-hover:bg-primary group-hover:border-primary group-hover:text-white transition-colors duration-200">
+                    <Phone className="w-4 h-4" />
+                  </span>
+                  <span className="text-gray-300 dark:text-[#C8B99A] group-hover:text-primary-300 transition-colors">{contact.primaryPhone}</span>
                 </a>
               )}
               {contact?.primaryEmail && (
-                <a href={`mailto:${contact.primaryEmail}`} className="flex items-center gap-3 text-gray-400 hover:text-primary transition-colors">
-                  <Mail className="w-5 h-5" />
-                  <span>{contact.primaryEmail}</span>
+                <a href={`mailto:${contact.primaryEmail}`} className="group flex items-center gap-3">
+                  <span className="w-9 h-9 rounded-lg bg-white/[0.05] border border-white/10 flex items-center justify-center text-primary-300 group-hover:bg-primary group-hover:border-primary group-hover:text-white transition-colors duration-200">
+                    <Mail className="w-4 h-4" />
+                  </span>
+                  <span className="text-gray-300 dark:text-[#C8B99A] group-hover:text-primary-300 transition-colors break-all">{contact.primaryEmail}</span>
                 </a>
               )}
               {contact?.address?.street && (
-                <div className="flex items-start gap-3 text-gray-400">
-                  <MapPin className="w-5 h-5 mt-1 flex-shrink-0" />
-                  <span>
+                <div className="flex items-start gap-3">
+                  <span className="w-9 h-9 rounded-lg bg-white/[0.05] border border-white/10 flex items-center justify-center text-primary-300 flex-shrink-0">
+                    <MapPin className="w-4 h-4" />
+                  </span>
+                  <span className="text-gray-400 dark:text-[#8C7F6E] leading-relaxed pt-1.5">
                     {contact.address.street}
                     {contact.address.city && `, ${contact.address.city}`}
                     {contact.address.state && `, ${contact.address.state}`}
@@ -145,98 +231,52 @@ export default async function CrosswildFooter() {
               )}
             </div>
           </div>
-
-          {/* Services */}
-          <div>
-            <h4 className="text-white font-bold text-lg mb-4">Services</h4>
-            <ul className="space-y-2">
-              {services.map((s, i) => (
-                <li key={i}><Link href={s.href || '#'} className="hover:text-primary transition-colors">{s.label}</Link></li>
-              ))}
-            </ul>
-          </div>
-
-          {/* Quick Links */}
-          <div>
-            <h4 className="text-white font-bold text-lg mb-4">Quick Links</h4>
-            <ul className="space-y-2">
-              {quick.map((l, i) => (
-                <li key={i}><Link href={l.href || '#'} className="hover:text-primary transition-colors">{l.label}</Link></li>
-              ))}
-            </ul>
-          </div>
-
-          {/* Branch Offices */}
-          <div>
-            <h4 className="text-white font-bold text-lg mb-4">Contact Us</h4>
-            <div className="space-y-4 text-sm text-gray-400">
-              {contact?.primaryEmail && (
-                <a href={`mailto:${contact.primaryEmail}`} className="flex items-center gap-2 hover:text-primary transition-colors">
-                  <Mail className="w-4 h-4 flex-shrink-0" />
-                  <span>{contact.primaryEmail}</span>
-                </a>
-              )}
-              {(footer?.branchOffices || []).map((b, i) => (
-                <div key={i}>
-                  <p className="text-white font-semibold text-xs uppercase tracking-wide mb-1">{b.city}</p>
-                  {b.phone && (
-                    <a href={`tel:${b.phone}`} className="flex items-center gap-2 hover:text-primary transition-colors mb-1">
-                      <Phone className="w-4 h-4 flex-shrink-0" />
-                      <span>{b.phone}</span>
-                    </a>
-                  )}
-                  {b.address && (
-                    <div className="flex items-start gap-2">
-                      <MapPin className="w-4 h-4 flex-shrink-0 mt-0.5" />
-                      <span>{b.address}</span>
-                    </div>
-                  )}
-                </div>
-              ))}
-            </div>
-          </div>
         </div>
 
-        {/* Social */}
-        {social && (
-          <div className="mt-12 pt-8 border-t border-gray-800 dark:border-[#2A2018]">
-            <div className="flex flex-col md:flex-row items-center justify-between gap-6">
-              <div className="flex items-center gap-4">
-                <span className="text-gray-400">Follow Us:</span>
-                <div className="flex gap-3">
-                  {(['facebook', 'twitter', 'instagram', 'youtube', 'pinterest', 'linkedin'] as const).map((k) => {
-                    const url = social[k];
-                    if (!url) return null;
-                    return (
-                      <a key={k} href={url} target="_blank" rel="noopener noreferrer" aria-label={k}
-                        className="w-10 h-10 bg-gray-800 dark:bg-[#26211A] rounded-full flex items-center justify-center hover:bg-primary dark:hover:bg-primary transition-colors">
-                        {SOCIAL_ICONS[k]}
+        {/* Offices — their own row, so a fourth city widens the grid instead of
+            stretching one cramped column further down the page. */}
+        {offices.length > 0 && (
+          <div className="mt-14 pt-10 border-t border-white/10 dark:border-[#2A2018]">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+              {offices.map((b, i) => (
+                <div
+                  key={i}
+                  className="rounded-xl border border-white/10 bg-white/[0.03] p-5 hover:border-primary-400/40 hover:bg-white/[0.06] transition-colors duration-200"
+                >
+                  <div className="flex items-center gap-2.5 mb-4">
+                    <span className="w-7 h-7 rounded-lg bg-primary/25 text-primary-300 flex items-center justify-center flex-shrink-0">
+                      <MapPin className="w-3.5 h-3.5" />
+                    </span>
+                    <h5 className="text-white font-semibold">{b.city}</h5>
+                  </div>
+
+                  <div className="space-y-2.5 text-sm">
+                    {b.phone && (
+                      <a href={`tel:${b.phone}`} className="flex items-center gap-2.5 text-gray-300 dark:text-[#C8B99A] hover:text-primary-300 transition-colors">
+                        <Phone className="w-3.5 h-3.5 flex-shrink-0 text-gray-500" />
+                        <span>{b.phone}</span>
                       </a>
-                    );
-                  })}
+                    )}
+                    {b.address && (
+                      <p className="flex items-start gap-2.5 text-gray-400 dark:text-[#8C7F6E] leading-relaxed">
+                        <MapPin className="w-3.5 h-3.5 flex-shrink-0 mt-0.5 text-gray-500" />
+                        <span>{b.address}</span>
+                      </p>
+                    )}
+                  </div>
                 </div>
-              </div>
-              <div className="flex items-center gap-3">
-                <span className="text-gray-400 text-sm">We Accept:</span>
-                <div className="flex gap-2">
-                  {['💳', '💰', '📱'].map((icon, idx) => (
-                    <div key={idx} className="w-10 h-10 bg-gray-800 dark:bg-[#26211A] rounded flex items-center justify-center text-xl">
-                      {icon}
-                    </div>
-                  ))}
-                </div>
-              </div>
+              ))}
             </div>
           </div>
         )}
 
         {/* Bottom Bar */}
-        <div className="mt-8 pt-8 border-t border-gray-800 dark:border-[#2A2018]">
+        <div className="mt-12 pt-6 border-t border-white/10 dark:border-[#2A2018]">
           <div className="flex flex-col md:flex-row items-center justify-between gap-4 text-sm text-gray-400 dark:text-[#8C7F6E]">
             <p>&copy; {year} {footer?.copyrightText || 'The CrossWild. All rights reserved.'}</p>
-            <div className="flex gap-6">
+            <div className="flex flex-wrap justify-center gap-x-6 gap-y-2">
               {bottom.map((l, i) => (
-                <Link key={i} href={l.href || '#'} className="hover:text-primary transition-colors">{l.label}</Link>
+                <Link key={i} href={l.href || '#'} className="hover:text-primary-300 transition-colors">{l.label}</Link>
               ))}
             </div>
           </div>
