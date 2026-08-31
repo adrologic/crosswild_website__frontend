@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import CrosswildHeader from "@/components/Header/CrosswildHeader";
 import CrosswildFooter from "@/components/Footer/CrosswildFooter";
-import LocationsStrip from "@/components/Locations/LocationsStrip";
+import LocationsCTA from "@/components/Locations/LocationsCTA";
 import DeferredWidgets from "@/components/DeferredWidgets";
 import SEOHead from "@/components/SEO/SEOHead";
 import { Inter } from "next/font/google";
@@ -175,7 +175,7 @@ export default async function RootLayout({
           <SEOHead />
           <CrosswildHeader />
           {children}
-          <LocationsStrip />
+          <LocationsCTA />
           <CrosswildFooter />
           <DeferredWidgets />
         </Providers>

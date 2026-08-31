@@ -37,7 +37,7 @@ export const LOCATIONS: Location[] = [
   { slug: 'bags-manufacturing-company-in-sikar',       h1: 'Bags Manufacturer in Sikar',      city: 'Sikar',   categoryLabel: 'Bags',     isActive: true },
 ];
 
-// Used by Footer/index.tsx and LocationsStrip.tsx
+// Used by the header's locations menu (CrosswildHeader.tsx).
 export const FOOTER_LOCATION_ITEMS = LOCATIONS.map((l) => ({
   label: `${l.categoryLabel} — ${l.city}`,
   citySlug: l.slug,

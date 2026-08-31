@@ -23,11 +23,11 @@ const FALLBACK: Deal[] = [
 ];
 
 // The "Need Help Choosing? Talk to Our Experts!" gradient CTA that closed this
-// section was the same banner, in the same colours, as the one ending
-// LocationsStrip further down the page. That one is kept — it closes the page —
-// and the deal cards here carry their own "Claim Now" links. Dropping it also
-// took the site-settings phone lookup this component only needed for its
-// "Call Us Now" button.
+// section was the same banner, in the same colours, as LocationsCTA further
+// down the page. That one is kept — it closes the page — and the deal cards
+// here carry their own "Claim Now" links. Dropping it also took the
+// site-settings phone lookup this component only needed for its "Call Us Now"
+// button.
 export default function DealsSection() {
   const [deals, setDeals] = useState<Deal[]>(FALLBACK);
 
