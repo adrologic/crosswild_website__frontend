@@ -40,7 +40,7 @@ export default function Brands() {
   const duplicatedBrands = [...brands, ...brands];
 
   return (
-    <section className="py-12 bg-theme-bg-soft overflow-hidden">
+    <section className="py-8 md:py-12 bg-theme-bg-soft overflow-hidden">
       <div className="w-full px-6 lg:px-12">
         <div className="text-center mb-8">
           <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
@@ -66,7 +66,7 @@ export default function Brands() {
         )}
 
         {/* Stats Section */}
-        <div className="mt-12 grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
+        <div className="mt-8 md:mt-12 grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
           {stats.map((s) => (
             <div key={s.label}>
               <div className="text-3xl font-bold text-primary">{s.value}</div>

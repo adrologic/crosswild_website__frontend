@@ -37,9 +37,9 @@ export default function CrosswildCategories() {
   }, []);
 
   return (
-    <section className="py-16 bg-gray-50">
+    <section className="py-10 md:py-16 bg-gray-50">
       <div className="w-full px-6 lg:px-12">
-        <div className="text-center mb-12">
+        <div className="text-center mb-8 md:mb-12">
           <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
             What would you like to create?
           </h2>
@@ -94,7 +94,7 @@ export default function CrosswildCategories() {
           })}
         </div>
 
-        <div className="text-center mt-12">
+        <div className="text-center mt-8 md:mt-12">
           <Link
             href="/products"
             className="inline-flex items-center gap-2 px-8 py-4 bg-white border-2 border-gray-300 text-gray-700 font-semibold rounded-lg hover:border-primary hover:text-primary hover:shadow-lg transition-all"

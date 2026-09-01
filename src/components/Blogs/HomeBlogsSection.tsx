@@ -57,11 +57,11 @@ export default async function HomeBlogsSection() {
   if (!blogs.length) return null;
 
   return (
-    <section className="bg-white dark:bg-gray-900 py-14 border-t border-gray-100 dark:border-gray-800">
+    <section className="bg-white dark:bg-gray-900 py-10 md:py-14 border-t border-gray-100 dark:border-gray-800">
       <div className="w-full px-6 lg:px-12">
 
         {/* Section title — matches old website style */}
-        <div className="text-center mb-10">
+        <div className="text-center mb-7 md:mb-10">
           <h2 className="text-3xl font-bold text-gray-900 dark:text-white inline-block">
             Blogs
           </h2>

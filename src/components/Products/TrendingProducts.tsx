@@ -40,8 +40,8 @@ export default function TrendingProducts() {
 
   if (loading) {
     return (
-      <section className="py-16 bg-theme-bg">
-        <div className="flex justify-center items-center py-20">
+      <section className="py-10 md:py-16 bg-theme-bg">
+        <div className="flex justify-center items-center py-12 md:py-20">
           <Loader2 className="w-8 h-8 animate-spin text-primary" />
         </div>
       </section>
@@ -51,10 +51,10 @@ export default function TrendingProducts() {
   if (products.length === 0) return null;
 
   return (
-    <section className="py-16 bg-theme-bg">
+    <section className="py-10 md:py-16 bg-theme-bg">
       <div className="w-full px-6 lg:px-12">
         {/* Header */}
-        <div className="text-center mb-12">
+        <div className="text-center mb-8 md:mb-12">
           <div className="inline-flex items-center gap-2 bg-primary/10 text-primary px-4 py-2 rounded-full font-semibold mb-4 animate-pulse">
             <Zap className="w-4 h-4" />
             Hot Right Now

@@ -109,7 +109,7 @@ export default async function OurNetworkSection() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
 
-      <section className="bg-[#efefef] dark:bg-[#111827] py-10">
+      <section className="bg-[#efefef] dark:bg-[#111827] py-6 md:py-10">
         <div className="w-full px-6 lg:px-12">
 
           <h2 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white text-center mb-8">

@@ -139,7 +139,7 @@ export default async function HomeBrandContent({ content }: Props = {}) {
   return (
     <>
       {/* ── Intro + Capabilities ─────────────────────────── */}
-      <section className="py-16 md:py-20 bg-theme-bg">
+      <section className="py-10 md:py-20 bg-theme-bg">
         <div className="w-full px-6 lg:px-12">
           {/* Explore Our Capabilities — capped width so the three cards stay a
               readable group instead of stretching across a wide desktop. */}
@@ -147,7 +147,7 @@ export default async function HomeBrandContent({ content }: Props = {}) {
             <h3 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white text-center">
               {capabilitiesHeading}
             </h3>
-            <div className="mx-auto mt-4 mb-10 h-1 w-16 rounded-full bg-primary" />
+            <div className="mx-auto mt-4 mb-7 md:mb-10 h-1 w-16 rounded-full bg-primary" />
             <div className="grid sm:grid-cols-3 gap-6">
               {capabilities.map((cat, idx) => {
                 const c = CAPABILITY_COLORS[idx % CAPABILITY_COLORS.length];
@@ -183,7 +183,7 @@ export default async function HomeBrandContent({ content }: Props = {}) {
       </section>
 
       {/* ── Customize & Promote ──────────────────────────── */}
-      <section className="py-16 md:py-20 bg-theme-bg-soft">
+      <section className="py-10 md:py-20 bg-theme-bg-soft">
         <div className="w-full px-6 lg:px-12">
           {/* Narrower column, and the copy set left rather than centred — eight
               centred lines give the eye no fixed edge to return to. Same words,
@@ -203,9 +203,9 @@ export default async function HomeBrandContent({ content }: Props = {}) {
       </section>
 
       {/* ── Why Choose ──────────────────────────────────── */}
-      <section className="py-16 md:py-20 bg-theme-bg">
+      <section className="py-10 md:py-20 bg-theme-bg">
         <div className="w-full px-6 lg:px-12">
-          <div className="text-center mb-12">
+          <div className="text-center mb-8 md:mb-12">
             <h2 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white">
               {whyChooseHeading}
             </h2>
@@ -228,9 +228,9 @@ export default async function HomeBrandContent({ content }: Props = {}) {
       </section>
 
       {/* ── Get the Best Result + Product Images ────────── */}
-      <section className="py-16 md:py-20 bg-theme-bg-soft">
+      <section className="py-10 md:py-20 bg-theme-bg-soft">
         <div className="w-full px-6 lg:px-12">
-          <div className="max-w-3xl mx-auto text-center mb-12">
+          <div className="max-w-3xl mx-auto text-center mb-8 md:mb-12">
             <h2 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white mb-4">
               {bestResultsHeading}
             </h2>

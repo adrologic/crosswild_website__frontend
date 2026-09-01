@@ -33,8 +33,8 @@ export default function PopularProducts() {
 
   if (loading) {
     return (
-      <section className="py-16 bg-theme-bg">
-        <div className="flex justify-center items-center py-20">
+      <section className="py-10 md:py-16 bg-theme-bg">
+        <div className="flex justify-center items-center py-12 md:py-20">
           <Loader2 className="w-8 h-8 animate-spin text-primary" />
         </div>
       </section>
@@ -44,10 +44,10 @@ export default function PopularProducts() {
   if (products.length === 0) return null;
 
   return (
-    <section className="py-16 bg-theme-bg">
+    <section className="py-10 md:py-16 bg-theme-bg">
       <div className="w-full px-6 lg:px-12">
         {/* Header */}
-        <div className="text-center mb-12">
+        <div className="text-center mb-8 md:mb-12">
           <div className="inline-flex items-center gap-2 bg-orange-100 text-orange-600 px-4 py-2 rounded-full font-semibold mb-4">
             <TrendingUp className="w-4 h-4" />
             Customer Favorites

@@ -54,10 +54,10 @@ export default function ShopByCategory() {
   }, []);
 
   return (
-    <section className="py-16 bg-theme-bg-soft">
+    <section className="py-10 md:py-16 bg-theme-bg-soft">
       <div className="w-full px-6 lg:px-12">
         {/* Header */}
-        <div className="text-center mb-10">
+        <div className="text-center mb-7 md:mb-10">
           <div className="inline-flex items-center gap-2 bg-primary/10 text-primary px-4 py-2 rounded-full font-semibold mb-4">
             <Grid3X3 className="w-4 h-4" />
             Browse Categories
@@ -71,7 +71,7 @@ export default function ShopByCategory() {
         </div>
 
         {/* Category Tabs */}
-        <div className="flex overflow-x-auto gap-3 mb-10 pb-2 scrollbar-hide" style={{ scrollbarWidth: 'none' }}>
+        <div className="flex overflow-x-auto gap-3 mb-7 md:mb-10 pb-2 scrollbar-hide" style={{ scrollbarWidth: 'none' }}>
           {CATEGORIES.map((cat) => (
             <button
               key={cat.slug}
@@ -90,11 +90,11 @@ export default function ShopByCategory() {
 
         {/* Products */}
         {isLoading ? (
-          <div className="flex justify-center items-center py-20">
+          <div className="flex justify-center items-center py-12 md:py-20">
             <Loader2 className="w-8 h-8 animate-spin text-primary" />
           </div>
         ) : currentProducts.length === 0 ? (
-          <div className="text-center py-16">
+          <div className="text-center py-12 md:py-16">
             <p className="text-gray-500 dark:text-gray-400 text-lg">
               No products found in this category yet.
             </p>

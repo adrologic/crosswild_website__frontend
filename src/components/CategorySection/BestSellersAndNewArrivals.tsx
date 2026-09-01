@@ -167,8 +167,8 @@ const BestSellersAndNewArrivals = () => {
 
   if (loading) {
     return (
-      <section className="py-16 bg-theme-bg-soft">
-        <div className="flex justify-center items-center py-20">
+      <section className="py-10 md:py-16 bg-theme-bg-soft">
+        <div className="flex justify-center items-center py-12 md:py-20">
           <Loader2 className="w-8 h-8 animate-spin text-primary" />
         </div>
       </section>
@@ -178,10 +178,10 @@ const BestSellersAndNewArrivals = () => {
   if (bestSellers.length === 0 && newArrivals.length === 0) return null;
 
   return (
-    <section className="py-16 bg-gradient-to-b from-gray-50 to-white dark:from-gray-900 dark:to-gray-800">
+    <section className="py-10 md:py-16 bg-gradient-to-b from-gray-50 to-white dark:from-gray-900 dark:to-gray-800">
       <div className="w-full px-6 lg:px-12">
         {/* Header */}
-        <div className="text-center mb-10">
+        <div className="text-center mb-7 md:mb-10">
           <h2 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-4">
             Featured Collections
           </h2>
@@ -191,7 +191,7 @@ const BestSellersAndNewArrivals = () => {
         </div>
 
         {/* Tab Buttons */}
-        <div className="flex justify-center gap-8 mb-10 border-b-2 border-gray-200 dark:border-gray-700">
+        <div className="flex justify-center gap-8 mb-7 md:mb-10 border-b-2 border-gray-200 dark:border-gray-700">
           <TabButton
             isActive={activeTab === "bestSellers"}
             label="Best Sellers"

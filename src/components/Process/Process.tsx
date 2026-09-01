@@ -44,7 +44,7 @@ export default function OurProcess() {
   }, []);
 
   return (
-    <section className="w-full bg-gradient-to-b from-gray-50 to-white py-20 px-6 md:px-16 relative">
+    <section className="w-full bg-gradient-to-b from-gray-50 to-white py-12 md:py-20 px-6 md:px-16 relative">
       <div className="w-full px-6 lg:px-12 grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
         <div className="flex flex-col justify-between text-center lg:text-left">
           <div>
