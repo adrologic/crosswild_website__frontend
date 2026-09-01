@@ -71,22 +71,12 @@ export default function CrosswildCategories() {
                       sizes="(max-width: 768px) 50vw, (max-width: 1024px) 33vw, 25vw"
                       className="object-cover transition-transform duration-500 group-hover:scale-105"
                     />
-                    {category.popular && (
-                      <div className="absolute top-3 right-3 bg-yellow-400 text-yellow-900 text-xs font-bold px-2 py-1 rounded-full">
-                        Popular
-                      </div>
-                    )}
                   </div>
                 ) : (
                   <div className="relative flex aspect-16/10 items-center justify-center bg-gray-100">
                     <span className="text-5xl transition-transform duration-300 group-hover:scale-110">
                       {category.icon}
                     </span>
-                    {category.popular && (
-                      <div className="absolute top-3 right-3 bg-yellow-400 text-yellow-900 text-xs font-bold px-2 py-1 rounded-full">
-                        Popular
-                      </div>
-                    )}
                   </div>
                 )}
 
@@ -96,11 +86,7 @@ export default function CrosswildCategories() {
                     <h3 className="font-bold text-lg mb-1.5 text-gray-900 group-hover:text-primary transition-colors">
                       {category.title}
                     </h3>
-                    <p className="text-sm text-gray-600 mb-3 line-clamp-2">{toPlainText(category.description)}</p>
-                    <div className="flex items-center text-primary text-sm font-semibold">
-                      <span className="group-hover:mr-2 transition-all">Shop Now</span>
-                      <ArrowRight className="w-4 h-4 opacity-0 group-hover:opacity-100 transition-all" />
-                    </div>
+                    <p className="text-sm text-gray-600 line-clamp-2">{toPlainText(category.description)}</p>
                   </div>
                 </div>
               </Link>
