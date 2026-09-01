@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { Tag, Clock, TrendingUp, Zap } from 'lucide-react';
+import { Tag, TrendingUp, Zap } from 'lucide-react';
 import { getDeals, type Deal } from '@/lib/cms';
 import { toPlainText } from '@/lib/text';
 
@@ -39,10 +39,6 @@ export default function DealsSection() {
     <section className="py-8 md:py-12 bg-theme-bg overflow-hidden">
       <div className="w-full px-6 lg:px-12">
         <div className="text-center mb-5 md:mb-8">
-          <div className="inline-flex items-center gap-1.5 bg-red-100 text-red-700 px-3 py-1 rounded-full text-sm font-semibold mb-2 md:mb-3">
-            <Clock className="w-3.5 h-3.5" />
-            Limited Time Offers
-          </div>
           <h2 className="text-2xl md:text-4xl font-bold text-gray-900">
             Special Deals & Discounts
           </h2>
