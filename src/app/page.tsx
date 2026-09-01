@@ -128,6 +128,11 @@ export default async function Home() {
       {/* Deals & Promotions Section */}
       <DealsSection />
 
+      {/* Trusted Brands & Clients — the client logos and counters land right
+          before "Explore Our Capabilities", so the proof is read before the
+          claims it backs. */}
+      <Brands />
+
       {/* Brand Content — Intro, Capabilities, Why Choose, Product Highlights */}
       {/* Admin → Page Content → Home → "Customize & Promote Section" (home/why-choose) */}
       <HomeBrandContent content={content?.['why-choose']} />
@@ -145,9 +150,6 @@ export default async function Home() {
 
       {/* Manufacturing Process */}
       <Process />
-
-      {/* Trusted Brands & Clients */}
-      <Brands />
 
       {/* Blogs — only blogs marked "Show on Home" in admin panel appear here */}
       <HomeBlogsSection />
