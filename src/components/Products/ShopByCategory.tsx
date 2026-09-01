@@ -63,7 +63,7 @@ export default function ShopByCategory() {
             Browse Categories
           </div>
           <h2 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-4">
-            Shop by Category
+            Explore by Category
           </h2>
           <p className="text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
             Explore our wide range of custom products across all categories
