@@ -90,19 +90,9 @@ export default function PopularProducts() {
                   />
                 )}
 
-                {/* Badges — product code first so it reads top-left of the photo */}
+                {/* Product code, top-left of the photo — the only badge these cards carry */}
                 <div className="absolute top-[14px] left-[14px] right-[14px] flex flex-wrap items-start gap-2">
                   <ProductCodeBadge code={product.sku} inline />
-                  {product.bestSeller && (
-                    <span className="inline-flex items-center gap-1 px-3 py-1.5 bg-[#ff4f20] text-white text-[11px] font-bold rounded-full shadow-[0_4px_10px_rgba(255,79,32,0.35)]">
-                      Best Seller
-                    </span>
-                  )}
-                  {product.featured && (
-                    <span className="inline-flex items-center gap-1 px-3 py-1.5 bg-[#ff4f20] text-white text-[11px] font-bold rounded-full shadow-[0_4px_10px_rgba(255,79,32,0.35)]">
-                      Featured
-                    </span>
-                  )}
                 </div>
 
                 {/* Quick View Overlay */}

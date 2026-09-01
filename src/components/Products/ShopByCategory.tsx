@@ -135,20 +135,6 @@ export default function ShopByCategory() {
                       />
                     )}
                     <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-
-                    {/* Badges */}
-                    <div className="absolute top-[14px] left-[14px] flex flex-col gap-2">
-                      {product.bestSeller && (
-                        <span className="inline-flex items-center gap-1 px-3 py-1.5 bg-[#ff4f20] text-white text-[11px] font-bold rounded-full shadow-[0_4px_10px_rgba(255,79,32,0.35)]">
-                          Best Seller
-                        </span>
-                      )}
-                      {product.newArrival && (
-                        <span className="inline-flex items-center gap-1 px-3 py-1.5 bg-[#ff4f20] text-white text-[11px] font-bold rounded-full shadow-[0_4px_10px_rgba(255,79,32,0.35)]">
-                          New
-                        </span>
-                      )}
-                    </div>
                   </Link>
 
                   {/* Info */}
