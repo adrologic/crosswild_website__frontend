@@ -16,7 +16,7 @@ export default function CallButton() {
     <a
       href={`tel:${tel}`}
       aria-label={aria}
-      className="fixed bottom-20 left-6 z-50 hidden md:flex h-14 w-14 items-center justify-center rounded-full bg-yellow-500 text-white shadow-lg transition-transform hover:scale-110 hover:bg-yellow-600"
+      className="fixed bottom-20 left-6 z-50 flex h-12 w-12 md:h-14 md:w-14 items-center justify-center rounded-full bg-yellow-500 text-white shadow-lg transition-transform hover:scale-110 hover:bg-yellow-600"
     >
       <FaPhoneAlt size={24} aria-hidden="true" />
     </a>
