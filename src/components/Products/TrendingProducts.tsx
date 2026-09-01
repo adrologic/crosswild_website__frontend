@@ -78,9 +78,13 @@ export default function TrendingProducts() {
                 index === 0 ? 'lg:col-span-2 lg:row-span-2' : ''
               }`}
             >
-              {/* Image Container */}
-              {index === 0 ? (
-                <div className="relative overflow-hidden rounded-2xl h-52 sm:h-96 lg:h-full bg-theme-bg-soft">
+              {/* The wide overlay card is a desktop layout: it only spans two
+                  columns from lg up, and in a half-width mobile cell its
+                  absolutely positioned title, copy and buttons were taller than
+                  the photo and spilled over it. Below lg the first product uses
+                  the same photo-above-text card as the rest. */}
+              {index === 0 && (
+                <div className="relative hidden h-full overflow-hidden rounded-2xl bg-theme-bg-soft lg:block">
                   <Link href={`/products/${product.id}`} className="block absolute inset-0">
                     {product.image && (
                       <SafeImage
@@ -88,7 +92,7 @@ export default function TrendingProducts() {
                         alt={product.name}
                         fill
                         className={`object-contain p-3 group-hover:scale-105 transition-all duration-500 ${hoverImage ? 'group-hover:opacity-0' : ''}`}
-                        sizes="(max-width: 768px) 100vw, 66vw"
+                        sizes="66vw"
                       />
                     )}
                     {hoverImage && (
@@ -97,26 +101,15 @@ export default function TrendingProducts() {
                         alt={product.name}
                         fill
                         className="object-contain p-3 opacity-0 transition-all duration-500 group-hover:opacity-100 group-hover:scale-105"
-                        sizes="(max-width: 768px) 100vw, 66vw"
+                        sizes="66vw"
                       />
                     )}
                     {/* Gradient Overlay */}
                     <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
                   </Link>
 
-                  {/* Badges — product code first so it reads top-left of the photo */}
                   <div className="absolute top-[14px] left-[14px] right-[14px] flex flex-wrap items-start gap-2 z-10 pointer-events-none">
                     <ProductCodeBadge code={product.sku} inline />
-                    {product.newArrival && (
-                      <span className="inline-flex items-center gap-1 px-3 py-1.5 bg-[#ff4f20] text-white text-[11px] font-bold rounded-full shadow-[0_4px_10px_rgba(255,79,32,0.35)]">
-                        New
-                      </span>
-                    )}
-                    {product.featured && (
-                      <span className="inline-flex items-center gap-1 px-3 py-1.5 bg-[#ff4f20] text-white text-[11px] font-bold rounded-full shadow-[0_4px_10px_rgba(255,79,32,0.35)]">
-                        Trending
-                      </span>
-                    )}
                   </div>
 
                   {/* Product Info Overlay */}
@@ -156,95 +149,85 @@ export default function TrendingProducts() {
                     </div>
                   </div>
                 </div>
-              ) : (
-                <Link
-                  href={`/products/${product.id}`}
-                  className="block relative aspect-[4/3] bg-[#ffffff] rounded-2xl shadow-[0_4px_12px_rgba(22,36,59,0.08)] overflow-hidden"
-                >
-                  {product.image && (
-                    <SafeImage
-                      {...productImage(product)}
-                      alt={product.name}
-                      fill
-                      className={`object-contain p-[22px] transition-all duration-500 group-hover:scale-105 ${hoverImage ? 'group-hover:opacity-0' : ''}`}
-                      sizes="(max-width: 768px) 50vw, 33vw"
-                    />
-                  )}
-                  {hoverImage && (
-                    <SafeImage
-                      src={hoverImage}
-                      alt={product.name}
-                      fill
-                      className="object-contain p-[22px] opacity-0 transition-all duration-500 group-hover:opacity-100 group-hover:scale-105"
-                      sizes="(max-width: 768px) 50vw, 33vw"
-                    />
-                  )}
-
-                  {/* Badges — product code first so it reads top-left of the photo */}
-                  <div className="absolute top-[14px] left-[14px] right-[14px] flex flex-wrap items-start gap-2">
-                    <ProductCodeBadge code={product.sku} inline />
-                    {product.newArrival && (
-                      <span className="inline-flex items-center gap-1 px-3 py-1.5 bg-[#ff4f20] text-white text-[11px] font-bold rounded-full shadow-[0_4px_10px_rgba(255,79,32,0.35)]">
-                        New
-                      </span>
-                    )}
-                    {product.featured && (
-                      <span className="inline-flex items-center gap-1 px-3 py-1.5 bg-[#ff4f20] text-white text-[11px] font-bold rounded-full shadow-[0_4px_10px_rgba(255,79,32,0.35)]">
-                        Trending
-                      </span>
-                    )}
-                  </div>
-                </Link>
               )}
 
-              {/* Product Info (for small cards) */}
-              {index !== 0 && (
-                <div className="pt-4 px-2 pb-1.5">
-                  {product.category && (
-                    <span className="inline-flex items-center bg-[#ffffff] text-primary text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full shadow-[0_2px_6px_rgba(22,36,59,0.08)] mb-2 capitalize">
-                      {product.category}
-                    </span>
-                  )}
-                  <Link href={`/products/${product.id}`}>
-                    <h3 className="font-bold text-base text-[#16243b] dark:text-white mb-3.5 line-clamp-2 group-hover:text-primary transition-colors">
-                      {product.title || product.name}
-                    </h3>
-                  </Link>
+              {/* Image */}
+              <Link
+                href={`/products/${product.id}`}
+                className={`block relative aspect-[4/3] bg-[#ffffff] rounded-2xl shadow-[0_4px_12px_rgba(22,36,59,0.08)] overflow-hidden ${
+                  index === 0 ? 'lg:hidden' : ''
+                }`}
+              >
+                {product.image && (
+                  <SafeImage
+                    {...productImage(product)}
+                    alt={product.name}
+                    fill
+                    className={`object-contain p-[22px] transition-all duration-500 group-hover:scale-105 ${hoverImage ? 'group-hover:opacity-0' : ''}`}
+                    sizes="(max-width: 768px) 50vw, 33vw"
+                  />
+                )}
+                {hoverImage && (
+                  <SafeImage
+                    src={hoverImage}
+                    alt={product.name}
+                    fill
+                    className="object-contain p-[22px] opacity-0 transition-all duration-500 group-hover:opacity-100 group-hover:scale-105"
+                    sizes="(max-width: 768px) 50vw, 33vw"
+                  />
+                )}
 
-                  {/* Rating */}
-                  {product.rating > 0 && (
-                    <div className="flex items-center gap-2 mb-3">
-                      <div className="flex items-center gap-1">
-                        <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
-                        <span className="text-sm font-semibold">{product.rating}</span>
-                      </div>
-                      <span className="text-xs text-gray-500">
-                        ({product.reviews})
-                      </span>
-                    </div>
-                  )}
-
-                  {/* CTA Buttons - WhatsApp, Email */}
-                  <div className="flex items-center gap-2">
-                    <a
-                      href={getWhatsAppLink(product)}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      aria-label={`Inquire about ${product.name} on WhatsApp`}
-                      className="flex items-center justify-center w-[38px] h-[38px] bg-[#ffffff] text-primary rounded-[11px] shadow-[0_3px_8px_rgba(22,36,59,0.10)] hover:bg-primary hover:text-white transition-colors"
-                    >
-                      <MessageCircle className="w-4 h-4" aria-hidden="true" />
-                    </a>
-                    <a
-                      href={getEmailLink(product)}
-                      aria-label={`Email inquiry about ${product.name}`}
-                      className="flex items-center justify-center w-[38px] h-[38px] bg-[#ffffff] text-primary rounded-[11px] shadow-[0_3px_8px_rgba(22,36,59,0.10)] hover:bg-primary hover:text-white transition-colors"
-                    >
-                      <Mail className="w-4 h-4" aria-hidden="true" />
-                    </a>
-                  </div>
+                <div className="absolute top-[14px] left-[14px] right-[14px] flex flex-wrap items-start gap-2">
+                  <ProductCodeBadge code={product.sku} inline />
                 </div>
-              )}
+              </Link>
+
+              {/* Product Info */}
+              <div className={`pt-4 px-2 pb-1.5 ${index === 0 ? 'lg:hidden' : ''}`}>
+                {product.category && (
+                  <span className="inline-flex items-center bg-[#ffffff] text-primary text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full shadow-[0_2px_6px_rgba(22,36,59,0.08)] mb-2 capitalize">
+                    {product.category}
+                  </span>
+                )}
+                <Link href={`/products/${product.id}`}>
+                  <h3 className="font-bold text-base text-[#16243b] dark:text-white mb-3.5 line-clamp-2 group-hover:text-primary transition-colors">
+                    {product.title || product.name}
+                  </h3>
+                </Link>
+
+                {/* Rating */}
+                {product.rating > 0 && (
+                  <div className="flex items-center gap-2 mb-3">
+                    <div className="flex items-center gap-1">
+                      <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
+                      <span className="text-sm font-semibold">{product.rating}</span>
+                    </div>
+                    <span className="text-xs text-gray-500">
+                      ({product.reviews})
+                    </span>
+                  </div>
+                )}
+
+                {/* CTA Buttons - WhatsApp, Email */}
+                <div className="flex items-center gap-2">
+                  <a
+                    href={getWhatsAppLink(product)}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label={`Inquire about ${product.name} on WhatsApp`}
+                    className="flex items-center justify-center w-[38px] h-[38px] bg-[#ffffff] text-primary rounded-[11px] shadow-[0_3px_8px_rgba(22,36,59,0.10)] hover:bg-primary hover:text-white transition-colors"
+                  >
+                    <MessageCircle className="w-4 h-4" aria-hidden="true" />
+                  </a>
+                  <a
+                    href={getEmailLink(product)}
+                    aria-label={`Email inquiry about ${product.name}`}
+                    className="flex items-center justify-center w-[38px] h-[38px] bg-[#ffffff] text-primary rounded-[11px] shadow-[0_3px_8px_rgba(22,36,59,0.10)] hover:bg-primary hover:text-white transition-colors"
+                  >
+                    <Mail className="w-4 h-4" aria-hidden="true" />
+                  </a>
+                </div>
+              </div>
             </div>
             );
           })}
