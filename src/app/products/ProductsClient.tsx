@@ -3,7 +3,7 @@
 import { useState, useMemo, useEffect, useCallback, useRef, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { productCategories, getCategoryById } from '@/data/products';
-import { productsAPI, type Product } from '@/lib/api';
+import { productsAPI, categoriesAPI, type Product, type Category } from '@/lib/api';
 import SafeImage from '@/components/Common/SafeImage';
 import { productImage } from '@/lib/productImage';
 import ProductCodeBadge from '@/components/Common/ProductCodeBadge';
@@ -12,18 +12,13 @@ import SEOHead from '@/components/SEO/SEOHead';
 import { defaultFAQs } from '@/lib/seo';
 import { toPlainText } from '@/lib/text';
 import {
-  Search,
-  SlidersHorizontal,
-  Grid3X3,
-  LayoutList,
   Star,
   MessageCircle,
   Mail,
   ChevronRight,
   Sparkles,
   TrendingUp,
-  Package,
-  X
+  Package
 } from 'lucide-react';
 
 // Contact details for inquiries
@@ -52,6 +47,35 @@ const getEmailLink = (product: Product) => {
   );
   return `mailto:${EMAIL_ADDRESS}?subject=${subject}&body=${body}`;
 };
+
+// Sidebar row styling: scrolling chips on mobile, a plain list on desktop.
+//
+// Backgrounds here are black/white alphas rather than `bg-gray-*` on purpose.
+// styles/index.css remaps every gray background under `.dark` with `!important`
+// (`.dark .bg-gray-700` → #3a0c15), so a `lg:bg-transparent` on the same element
+// silently loses and every desktop row stays a filled pill.
+const categoryButtonClass = (active: boolean) =>
+  [
+    'rounded-xl transition-colors',
+    // Mobile: fixed-size chip on a horizontal rail.
+    'max-lg:shrink-0 max-lg:whitespace-nowrap max-lg:px-3.5 max-lg:py-2 max-lg:text-sm',
+    // Desktop: full-width row, wrapping rather than overflowing the sidebar.
+    'lg:block lg:w-full lg:px-4 lg:py-2.5 lg:text-left lg:overflow-hidden',
+    active
+      ? 'bg-primary text-white font-semibold'
+      : 'text-gray-600 dark:text-gray-300 hover:bg-black/5 dark:hover:bg-white/10 max-lg:bg-black/5 max-lg:dark:bg-white/10',
+  ].join(' ');
+
+const subButtonClass = (active: boolean) =>
+  [
+    'rounded-lg text-sm transition-colors',
+    'max-lg:shrink-0 max-lg:whitespace-nowrap max-lg:px-3 max-lg:py-1.5',
+    // items-start keeps the count on the first line when a long name wraps.
+    'lg:flex lg:w-full lg:items-start lg:justify-between lg:gap-2 lg:px-3.5 lg:py-2 lg:text-left lg:overflow-hidden',
+    active
+      ? 'bg-primary/10 text-primary font-semibold'
+      : 'text-gray-500 dark:text-gray-400 hover:bg-black/5 dark:hover:bg-white/10 max-lg:bg-black/5 max-lg:dark:bg-white/10',
+  ].join(' ');
 
 // Category name formatter
 const formatCategoryName = (category: string) => {
@@ -91,15 +115,17 @@ function ProductsContent() {
   const searchParams = useSearchParams();
   const categoryParam = searchParams.get('category');
   const searchParam = searchParams.get('search');
+  const subParam = searchParams.get('sub');
 
   const [products, setProducts] = useState<Product[]>(() => productsCache.get(categoryParam || 'all')?.products ?? []);
   const [loading, setLoading] = useState(() => !productsCache.has(categoryParam || 'all'));
   const [error, setError] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState(searchParam || '');
   const [selectedCategory, setSelectedCategory] = useState(categoryParam || 'all');
-  const [sortBy, setSortBy] = useState('featured');
-  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
-  const [showMobileFilters, setShowMobileFilters] = useState(false);
+  const [selectedSub, setSelectedSub] = useState(subParam || '');
+  // Sub-category names/ids live in the CMS tree, not the hardcoded top-level
+  // list, so the sidebar needs the tree to label anything below a category.
+  const [categoryTree, setCategoryTree] = useState<Category[]>([]);
   // Bumped to re-run the freshness check (e.g. when the tab regains focus after
   // adding data in the admin panel in another tab).
   const [revalidateTick, setRevalidateTick] = useState(0);
@@ -125,6 +151,16 @@ function ProductsContent() {
     };
   }, []);
 
+  // Category tree (top-level -> sub-categories). Fetched once; if it fails the
+  // sidebar simply shows top-level categories with no sub-category section.
+  useEffect(() => {
+    let cancelled = false;
+    categoriesAPI.getTree({ active: true })
+      .then((res) => { if (!cancelled) setCategoryTree(res.categories || []); })
+      .catch(() => { /* non-fatal — sub-categories just stay hidden */ });
+    return () => { cancelled = true; };
+  }, []);
+
   // Sync URL params when they change (e.g. header search navigation)
   useEffect(() => {
     if (categoryParam) setSelectedCategory(categoryParam);
@@ -134,6 +170,17 @@ function ProductsContent() {
   useEffect(() => {
     if (searchParam !== null) setSearchQuery(searchParam);
   }, [searchParam]);
+
+  useEffect(() => {
+    setSelectedSub(subParam || '');
+  }, [subParam]);
+
+  // Picking a category drops any sub-category filter — keeping it would filter
+  // the new category by a sub-category that doesn't belong to it.
+  const selectCategory = (id: string) => {
+    setSelectedCategory(id);
+    setSelectedSub('');
+  };
 
   // Load products for the selected category.
   //
@@ -241,55 +288,72 @@ function ProductsContent() {
     return () => cancelAnimationFrame(raf);
   }, []);
 
+  // Search matches, before the sub-category filter is applied. The sidebar
+  // counts read off this, so they track the search box instead of contradicting
+  // it ("Cotton T-Shirts (12)" leading to 3 results).
+  const searchMatched = useMemo(() => {
+    if (!searchQuery) return products;
+    const query = searchQuery.toLowerCase();
+    return products.filter(p =>
+      p.name.toLowerCase().includes(query) ||
+      // A buyer reads the code off a product photo and types it in — this
+      // page filters client-side, so it has to match the code too or the
+      // search dead-ends on the very code the badge is advertising.
+      (p.sku || '').toLowerCase().includes(query) ||
+      p.description.toLowerCase().includes(query)
+    );
+  }, [products, searchQuery]);
+
+  // Products per sub-category of the selected category.
+  const subCounts = useMemo(() => {
+    const counts = new Map<string, number>();
+    if (selectedCategory === 'all') return counts;
+    for (const p of searchMatched) {
+      for (const pc of p.productCategories || []) {
+        if (pc.category !== selectedCategory) continue;
+        for (const sub of pc.subcategories || []) {
+          counts.set(sub, (counts.get(sub) || 0) + 1);
+        }
+      }
+    }
+    return counts;
+  }, [searchMatched, selectedCategory]);
+
   // Filter and sort products
   const filteredProducts = useMemo(() => {
-    let filtered = [...products];
+    const filtered = selectedSub
+      ? searchMatched.filter(p => (p.productCategories || []).some(pc =>
+          pc.category === selectedCategory && (pc.subcategories || []).includes(selectedSub)
+        ))
+      : [...searchMatched];
 
-    // Search filter
-    if (searchQuery) {
-      const query = searchQuery.toLowerCase();
-      filtered = filtered.filter(p =>
-        p.name.toLowerCase().includes(query) ||
-        // A buyer reads the code off a product photo and types it in — this
-        // page filters client-side, so it has to match the code too or the
-        // search dead-ends on the very code the badge is advertising.
-        (p.sku || '').toLowerCase().includes(query) ||
-        p.description.toLowerCase().includes(query)
-      );
-    }
-
-    // Sort
-    switch (sortBy) {
-      case 'name-asc':
-        filtered.sort((a, b) => a.name.localeCompare(b.name));
-        break;
-      case 'name-desc':
-        filtered.sort((a, b) => b.name.localeCompare(a.name));
-        break;
-      case 'newest':
-        filtered.sort((a, b) => new Date(b.createdAt || 0).getTime() - new Date(a.createdAt || 0).getTime());
-        break;
-      case 'rating':
-        filtered.sort((a, b) => (b.rating || 0) - (a.rating || 0));
-        break;
-      default:
-        // On "All Products" keep the shuffled order so categories stay mixed.
-        // Within a single category, surface featured/bestsellers first.
-        if (selectedCategory !== 'all') {
-          filtered.sort((a, b) => {
-            if (a.featured && !b.featured) return -1;
-            if (!a.featured && b.featured) return 1;
-            if (a.bestSeller && !b.bestSeller) return -1;
-            if (!a.bestSeller && b.bestSeller) return 1;
-            return 0;
-          });
-        }
+    // Sort. On "All Products" keep the shuffled order so categories stay
+    // mixed. Within a single category, surface featured/bestsellers first.
+    if (selectedCategory !== 'all') {
+      filtered.sort((a, b) => {
+        if (a.featured && !b.featured) return -1;
+        if (!a.featured && b.featured) return 1;
+        if (a.bestSeller && !b.bestSeller) return -1;
+        if (!a.bestSeller && b.bestSeller) return 1;
+        return 0;
+      });
     }
 
     return filtered;
-  }, [products, searchQuery, sortBy, selectedCategory]);
+  }, [searchMatched, selectedSub, selectedCategory]);
 
   const currentCategory = getCategoryById(selectedCategory);
+
+  // Sub-categories to offer for the selected category. Ones with nothing in
+  // them are dropped — a filter that leads to an empty grid is worse than a
+  // filter that isn't there. The active one always stays, so the current
+  // selection can never disappear out from under the user.
+  const visibleSubs = useMemo(() => {
+    if (selectedCategory === 'all') return [];
+    const subs = categoryTree.find(c => c.id === selectedCategory)?.subcategories || [];
+    if (loading || products.length === 0) return subs;
+    return subs.filter(sub => (subCounts.get(sub.id) || 0) > 0 || sub.id === selectedSub);
+  }, [categoryTree, selectedCategory, subCounts, selectedSub, loading, products.length]);
 
   // Infinite scroll — render PRODUCTS_PER_PAGE at a time and grow the slice as
   // the sentinel below the grid scrolls into view. Search / filter / sort above
@@ -317,7 +381,7 @@ function ProductsContent() {
       return;
     }
     setVisibleCount(PRODUCTS_PER_PAGE);
-  }, [searchQuery, sortBy, selectedCategory]);
+  }, [searchQuery, selectedCategory, selectedSub]);
 
   // Auto-load the next batch when the sentinel enters the viewport. Starts
   // fetching slightly early (rootMargin) so the grid never visibly runs dry.
@@ -479,111 +543,6 @@ function ProductsContent() {
     );
   };
 
-  // List View Card
-  const ProductListCard = ({ product }: { product: Product }) => (
-    <div className="group bg-card-bg rounded-[22px] p-[14px] gap-[14px] shadow-[0_14px_30px_rgba(22,36,59,0.16)] hover:-translate-y-[5px] hover:shadow-[0_22px_44px_rgba(22,36,59,0.24)] transition-all duration-[220ms] ease-out flex">
-      {/* Image */}
-      <Link href={`/products/${product.id}`} onClick={rememberScroll} className="relative w-32 sm:w-44 md:w-56 flex-shrink-0">
-        <div className="absolute inset-0 bg-[#ffffff] rounded-2xl shadow-[0_4px_12px_rgba(22,36,59,0.08)] overflow-hidden">
-          {product.image ? (
-            <SafeImage
-              {...productImage(product)}
-              alt={product.name}
-              fill
-              className="object-contain p-4 group-hover:scale-105 transition-transform duration-500"
-              sizes="(max-width: 768px) 30vw, 20vw"
-            />
-          ) : (
-            <div className="absolute inset-0 flex items-center justify-center">
-              <Package className="w-12 h-12 text-gray-300" />
-            </div>
-          )}
-        </div>
-
-        {/* Badges — product code first so it reads top-left of the photo */}
-        <div className="absolute top-[14px] left-[14px] right-[14px] flex flex-wrap items-start gap-2">
-          <ProductCodeBadge code={product.sku} inline />
-          {product.featured && (
-            <span className="inline-flex items-center gap-1 px-3 py-1.5 bg-[#ff4f20] text-white text-[11px] font-bold rounded-full shadow-[0_4px_10px_rgba(255,79,32,0.35)]">
-              <Sparkles className="w-3 h-3" />
-              Featured
-            </span>
-          )}
-          {product.bestSeller && (
-            <span className="inline-flex items-center gap-1 px-3 py-1.5 bg-[#ff4f20] text-white text-[11px] font-bold rounded-full shadow-[0_4px_10px_rgba(255,79,32,0.35)]">
-              Best Seller
-            </span>
-          )}
-        </div>
-      </Link>
-
-      {/* Content */}
-      <div className="flex-1 p-6 flex flex-col">
-        <div className="flex-1">
-          <span className="inline-flex items-center bg-[#ffffff] text-primary text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full shadow-[0_2px_6px_rgba(22,36,59,0.08)] mb-2">
-            {formatCategoryName(product.category)}
-          </span>
-
-          <Link href={`/products/${product.id}`} onClick={rememberScroll}>
-            <h3 className="font-bold text-xl text-[#16243b] dark:text-white mb-2 group-hover:text-primary transition-colors">
-              {product.title || product.name}
-            </h3>
-          </Link>
-
-          <p className="text-gray-500 dark:text-gray-400 mb-4 line-clamp-2">
-            {toPlainText(product.description)}
-          </p>
-
-          {/* Rating & Options */}
-          <div className="flex items-center gap-4 mb-4">
-            {product.rating > 0 && (
-              <div className="flex items-center gap-1">
-                <Star className="w-4 h-4 fill-amber-400 text-amber-400" />
-                <span className="text-sm font-medium">{product.rating.toFixed(1)}</span>
-                {product.reviews > 0 && (
-                  <span className="text-xs text-gray-400">({product.reviews} reviews)</span>
-                )}
-              </div>
-            )}
-            {product.colors && product.colors.length > 0 && (
-              <span className="text-sm text-gray-500">{product.colors.length} colors</span>
-            )}
-            {product.sizes && product.sizes.length > 0 && (
-              <span className="text-sm text-gray-500">{product.sizes.length} sizes</span>
-            )}
-          </div>
-        </div>
-
-        {/* CTA Buttons */}
-        <div className="flex gap-3">
-          <a
-            href={getWhatsAppLink(product)}
-            target="_blank"
-            rel="noopener noreferrer"
-            aria-label={`Inquire about ${product.name} on WhatsApp`}
-            className="flex items-center justify-center w-[38px] h-[38px] bg-[#ffffff] text-primary rounded-[11px] shadow-[0_3px_8px_rgba(22,36,59,0.10)] hover:bg-primary hover:text-white transition-colors"
-          >
-            <MessageCircle className="w-4 h-4" aria-hidden="true" />
-          </a>
-          <a
-            href={getEmailLink(product)}
-            className="flex items-center gap-2 px-4 h-[38px] bg-[#ffffff] text-primary font-bold rounded-[11px] shadow-[0_3px_8px_rgba(22,36,59,0.10)] hover:bg-primary hover:text-white transition-colors"
-          >
-            <Mail className="w-4 h-4" aria-hidden="true" />
-            Email
-          </a>
-          <Link
-            href={`/products/${product.id}`} onClick={rememberScroll}
-            className="flex items-center gap-2 px-6 h-[38px] bg-[#ffffff] text-primary border-[1.5px] border-primary font-bold rounded-[11px] hover:bg-primary hover:text-white transition-colors"
-          >
-            View Details
-            <ChevronRight className="w-4 h-4" />
-          </Link>
-        </div>
-      </div>
-    </div>
-  );
-
   return (
     <>
       <SEOHead
@@ -612,122 +571,82 @@ function ProductsContent() {
         </div>
 
         <div className="w-full px-6 lg:px-12 sm:px-6 lg:px-8 -mt-6">
-          {/* Search & Filter Bar */}
-          <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-4 mb-8">
-            <div className="flex flex-col lg:flex-row gap-4">
-              {/* Search */}
-              <div className="relative flex-1">
-                <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
-                <input
-                  type="text"
-                  placeholder="Search products..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full pl-12 pr-4 py-3 bg-gray-50 dark:bg-gray-700 border-0 rounded-xl focus:ring-2 focus:ring-primary/20 transition-all text-gray-900 dark:text-white placeholder-gray-400"
-                />
-              </div>
+          <div className="flex flex-col lg:flex-row gap-6 lg:gap-8">
+            {/* Categories + sub-categories */}
+            <aside className="w-full lg:w-64 flex-shrink-0">
+              <div className="bg-white dark:bg-gray-800 rounded-2xl p-4 lg:p-6 shadow-sm lg:sticky lg:top-24 lg:max-h-[calc(100vh-7rem)] lg:overflow-y-auto">
+                <h2 className="text-lg font-bold text-gray-900 dark:text-white mb-3 lg:mb-5">Categories</h2>
 
-              {/* Category Dropdown (Desktop) */}
-              <select
-                value={selectedCategory}
-                onChange={(e) => setSelectedCategory(e.target.value)}
-                className="hidden lg:block px-4 py-3 bg-gray-50 dark:bg-gray-700 border-0 rounded-xl focus:ring-2 focus:ring-primary/20 text-gray-900 dark:text-white min-w-[180px]"
-              >
-                <option value="all">All Categories</option>
-                {productCategories.filter(c => c.id !== 'all').map((cat) => (
-                  <option key={cat.id} value={cat.id}>
-                    {cat.name}
-                  </option>
-                ))}
-              </select>
-
-              {/* Sort */}
-              <select
-                value={sortBy}
-                onChange={(e) => setSortBy(e.target.value)}
-                className="px-4 py-3 bg-gray-50 dark:bg-gray-700 border-0 rounded-xl focus:ring-2 focus:ring-primary/20 text-gray-900 dark:text-white min-w-[160px]"
-              >
-                <option value="featured">Featured</option>
-                <option value="newest">Newest First</option>
-                <option value="name-asc">Name: A to Z</option>
-                <option value="name-desc">Name: Z to A</option>
-                <option value="rating">Top Rated</option>
-              </select>
-
-              {/* View Mode Toggle */}
-              <div className="flex gap-1 bg-gray-50 dark:bg-gray-700 rounded-xl p-1">
-                <button
-                  onClick={() => setViewMode('grid')}
-                  className={`p-2.5 rounded-lg transition-colors ${
-                    viewMode === 'grid'
-                      ? 'bg-primary text-white'
-                      : 'text-gray-500 hover:text-gray-700 dark:hover:text-gray-300'
-                  }`}
-                >
-                  <Grid3X3 className="w-5 h-5" />
-                </button>
-                <button
-                  onClick={() => setViewMode('list')}
-                  className={`p-2.5 rounded-lg transition-colors ${
-                    viewMode === 'list'
-                      ? 'bg-primary text-white'
-                      : 'text-gray-500 hover:text-gray-700 dark:hover:text-gray-300'
-                  }`}
-                >
-                  <LayoutList className="w-5 h-5" />
-                </button>
-              </div>
-
-              {/* Mobile Filter Button */}
-              <button
-                onClick={() => setShowMobileFilters(true)}
-                className="lg:hidden flex items-center justify-center gap-2 px-4 py-3 bg-gray-50 dark:bg-gray-700 rounded-xl text-gray-700 dark:text-gray-200"
-              >
-                <SlidersHorizontal className="w-5 h-5" />
-                Filters
-              </button>
-            </div>
-          </div>
-
-          <div className="flex gap-8">
-            {/* Sidebar Filters (Desktop) */}
-            <aside className="hidden lg:block w-64 flex-shrink-0">
-              <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-sm sticky top-24">
-                <h2 className="text-lg font-bold text-gray-900 dark:text-white mb-6">Categories</h2>
-                <div className="space-y-2">
+                <div className="relative">
+                <div className="flex gap-2 overflow-x-auto pb-1 lg:flex-col lg:gap-1.5 lg:overflow-visible lg:pb-0">
                   <button
-                    onClick={() => setSelectedCategory('all')}
-                    className={`w-full text-left px-4 py-2.5 rounded-xl transition-colors ${
-                      selectedCategory === 'all'
-                        ? 'bg-primary text-white font-semibold'
-                        : 'text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
-                    }`}
+                    onClick={() => selectCategory('all')}
+                    className={categoryButtonClass(selectedCategory === 'all')}
                   >
                     All Products
                   </button>
                   {productCategories.filter(c => c.id !== 'all').map((cat) => (
                     <button
                       key={cat.id}
-                      onClick={() => setSelectedCategory(cat.id)}
-                      className={`w-full text-left px-4 py-2.5 rounded-xl transition-colors ${
-                        selectedCategory === cat.id
-                          ? 'bg-primary text-white font-semibold'
-                          : 'text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
-                      }`}
+                      onClick={() => selectCategory(cat.id)}
+                      className={categoryButtonClass(selectedCategory === cat.id)}
                     >
                       {cat.name}
                     </button>
                   ))}
                 </div>
+                <div aria-hidden className="pointer-events-none absolute inset-y-0 right-0 w-8 bg-gradient-to-l from-white to-transparent dark:from-gray-800 lg:hidden" />
+                </div>
+
+                {/* Sub-categories of the selected category. Appears only once a
+                    category is picked, so the sidebar stays short by default. */}
+                {visibleSubs.length > 0 && (
+                  <div className="mt-4 pt-4 border-t border-gray-100 dark:border-gray-700 lg:mt-5 lg:pt-5">
+                    <h3 className="text-xs font-bold uppercase tracking-wide text-gray-500 dark:text-gray-400 mb-3">
+                      Browse {currentCategory?.name}
+                    </h3>
+                    <div className="relative">
+                    <div className="flex gap-2 overflow-x-auto pb-1 lg:flex-col lg:gap-1 lg:overflow-visible lg:pb-0">
+                      <button
+                        onClick={() => setSelectedSub('')}
+                        className={subButtonClass(!selectedSub)}
+                      >
+                        <span>All {currentCategory?.name}</span>
+                      </button>
+                      {visibleSubs.map((sub) => {
+                        const active = selectedSub === sub.id;
+                        const count = subCounts.get(sub.id) || 0;
+                        return (
+                          <button
+                            key={sub.id}
+                            onClick={() => setSelectedSub(sub.id)}
+                            className={subButtonClass(active)}
+                          >
+                            <span className="lg:min-w-0 lg:break-words">{sub.name}</span>
+                            {count > 0 && (
+                              <span className={`hidden lg:block lg:shrink-0 lg:pt-0.5 text-xs tabular-nums ${
+                                active ? 'text-primary' : 'text-gray-400 dark:text-gray-500'
+                              }`}>
+                                {count}
+                              </span>
+                            )}
+                          </button>
+                        );
+                      })}
+                    </div>
+                    <div aria-hidden className="pointer-events-none absolute inset-y-0 right-0 w-8 bg-gradient-to-l from-white to-transparent dark:from-gray-800 lg:hidden" />
+                    </div>
+                  </div>
+                )}
 
                 {/* Clear Filters */}
-                {(searchQuery || selectedCategory !== 'all') && (
+                {(searchQuery || selectedCategory !== 'all' || selectedSub) && (
                   <button
                     onClick={() => {
-                      setSelectedCategory('all');
+                      selectCategory('all');
                       setSearchQuery('');
                     }}
-                    className="w-full mt-6 px-4 py-2.5 text-sm text-primary hover:bg-primary/10 rounded-xl transition-colors"
+                    className="w-full mt-5 px-4 py-2.5 text-sm text-primary hover:bg-primary/10 rounded-xl transition-colors"
                   >
                     Clear All Filters
                   </button>
@@ -776,7 +695,7 @@ function ProductsContent() {
                   </p>
                   <button
                     onClick={() => {
-                      setSelectedCategory('all');
+                      selectCategory('all');
                       setSearchQuery('');
                     }}
                     className="px-6 py-3 bg-primary text-white rounded-xl hover:bg-primary/90 transition-colors"
@@ -784,16 +703,10 @@ function ProductsContent() {
                     Clear Filters
                   </button>
                 </div>
-              ) : viewMode === 'grid' ? (
+              ) : (
                 <div className="grid grid-cols-2 xl:grid-cols-3 gap-3 sm:gap-5">
                   {visibleProducts.map((product) => (
                     <ProductCard key={product.id} product={product} />
-                  ))}
-                </div>
-              ) : (
-                <div className="space-y-4">
-                  {visibleProducts.map((product) => (
-                    <ProductListCard key={product.id} product={product} />
                   ))}
                 </div>
               )}
@@ -827,55 +740,6 @@ function ProductsContent() {
           </div>
         </div>
 
-        {/* Mobile Filters Modal */}
-        {showMobileFilters && (
-          <div className="fixed inset-0 z-50 lg:hidden">
-            <div className="absolute inset-0 bg-black/50" onClick={() => setShowMobileFilters(false)} />
-            <div className="absolute right-0 top-0 bottom-0 w-80 max-w-full bg-white dark:bg-gray-800 p-6 overflow-y-auto">
-              <div className="flex items-center justify-between mb-6">
-                <h2 className="text-xl font-bold">Filters</h2>
-                <button
-                  onClick={() => setShowMobileFilters(false)}
-                  className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg"
-                >
-                  <X className="w-6 h-6" />
-                </button>
-              </div>
-
-              <div className="space-y-2">
-                <button
-                  onClick={() => {
-                    setSelectedCategory('all');
-                    setShowMobileFilters(false);
-                  }}
-                  className={`w-full text-left px-4 py-3 rounded-xl transition-colors ${
-                    selectedCategory === 'all'
-                      ? 'bg-primary text-white font-semibold'
-                      : 'text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
-                  }`}
-                >
-                  All Products
-                </button>
-                {productCategories.filter(c => c.id !== 'all').map((cat) => (
-                  <button
-                    key={cat.id}
-                    onClick={() => {
-                      setSelectedCategory(cat.id);
-                      setShowMobileFilters(false);
-                    }}
-                    className={`w-full text-left px-4 py-3 rounded-xl transition-colors ${
-                      selectedCategory === cat.id
-                        ? 'bg-primary text-white font-semibold'
-                        : 'text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
-                    }`}
-                  >
-                    {cat.name}
-                  </button>
-                ))}
-              </div>
-            </div>
-          </div>
-        )}
       </div>
     </>
   );
