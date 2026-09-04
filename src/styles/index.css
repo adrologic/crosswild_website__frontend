@@ -450,6 +450,23 @@
   display: none;
 }
 
+/* Horizontal scroll strips (the mobile category / sub-category filters) hint at
+   more content by fading their own trailing edge. A mask is used rather than a
+   coloured gradient overlay: the dark-mode utility overrides below repaint card
+   surfaces, so any from-<color> overlay ends up a mismatched box on the card.
+   Above lg the strips stack vertically and scroll no more, so the mask is off. */
+.scroll-fade-x {
+  -webkit-mask-image: linear-gradient(to right, #000 calc(100% - 2rem), transparent);
+  mask-image: linear-gradient(to right, #000 calc(100% - 2rem), transparent);
+}
+
+@media (min-width: 1024px) {
+  .scroll-fade-x {
+    -webkit-mask-image: none;
+    mask-image: none;
+  }
+}
+
 /* ============================================
    GLOBAL DARK MODE OVERRIDES
    Maps legacy Tailwind utility classes to the

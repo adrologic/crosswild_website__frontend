@@ -477,8 +477,7 @@ function ProductsContent() {
               <div className="bg-white dark:bg-gray-800 rounded-2xl p-4 lg:p-6 shadow-sm lg:sticky lg:top-24 lg:max-h-[calc(100vh-7rem)] lg:overflow-y-auto">
                 <h2 className="text-lg font-bold text-gray-900 dark:text-white mb-3 lg:mb-5">Categories</h2>
 
-                <div className="relative">
-                <div className="flex gap-2 overflow-x-auto pb-1 lg:flex-col lg:gap-1.5 lg:overflow-visible lg:pb-0">
+                <div className="scroll-fade-x flex gap-2 overflow-x-auto pb-1 lg:flex-col lg:gap-1.5 lg:overflow-visible lg:pb-0">
                   <button
                     onClick={() => selectCategory('all')}
                     className={categoryButtonClass(selectedCategory === 'all')}
@@ -495,8 +494,6 @@ function ProductsContent() {
                     </button>
                   ))}
                 </div>
-                <div aria-hidden className="pointer-events-none absolute inset-y-0 right-0 w-8 bg-gradient-to-l from-white to-transparent dark:from-gray-800 lg:hidden" />
-                </div>
 
                 {/* Sub-categories of the selected category. Appears only once a
                     category is picked, so the sidebar stays short by default. */}
@@ -505,8 +502,7 @@ function ProductsContent() {
                     <h3 className="text-xs font-bold uppercase tracking-wide text-gray-500 dark:text-gray-400 mb-3">
                       Browse {currentCategory?.name}
                     </h3>
-                    <div className="relative">
-                    <div className="flex gap-2 overflow-x-auto pb-1 lg:flex-col lg:gap-1 lg:overflow-visible lg:pb-0">
+                    <div className="scroll-fade-x flex gap-2 overflow-x-auto pb-1 lg:flex-col lg:gap-1 lg:overflow-visible lg:pb-0">
                       <button
                         onClick={() => setSelectedSub('')}
                         className={subButtonClass(!selectedSub)}
@@ -533,8 +529,6 @@ function ProductsContent() {
                           </button>
                         );
                       })}
-                    </div>
-                    <div aria-hidden className="pointer-events-none absolute inset-y-0 right-0 w-8 bg-gradient-to-l from-white to-transparent dark:from-gray-800 lg:hidden" />
                     </div>
                   </div>
                 )}
