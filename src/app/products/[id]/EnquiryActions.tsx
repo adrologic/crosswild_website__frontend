@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
-import { Check, Mail, MessageCircle, Minus, Phone, Plus, ShoppingBag } from 'lucide-react';
+import { Check, MessageCircle, Minus, Plus, ShoppingBag } from 'lucide-react';
 import { useAppDispatch } from '@/store/hooks';
 import { addToCart } from '@/store/slices/cartSlice';
 import { openCart } from '@/store/slices/uiSlice';
@@ -11,9 +11,7 @@ import type { Product } from '@/lib/api';
 
 // Used until the CMS settings land (and if the request fails).
 const FALLBACK_PHONE = '+919529626262';
-const FALLBACK_EMAIL = 'orders@thecrosswild.com';
 
-const toDialable = (phone: string) => phone.replace(/[^+\d]/g, '');
 const toWhatsApp = (phone: string) => phone.replace(/[^\d]/g, '');
 
 export default function EnquiryActions({ product }: { product: Product }) {
@@ -26,9 +24,7 @@ export default function EnquiryActions({ product }: { product: Product }) {
   // minimum. A buyer asking for 1,000 pieces would have sent an enquiry for 1.
   const [quantityText, setQuantityText] = useState(String(minQty));
   const [added, setAdded] = useState(false);
-  const [phone, setPhone] = useState(FALLBACK_PHONE);
   const [whatsappNumber, setWhatsappNumber] = useState(FALLBACK_PHONE);
-  const [email, setEmail] = useState(FALLBACK_EMAIL);
   const toastTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // The component isn't remounted when navigating between two product pages,
@@ -42,14 +38,12 @@ export default function EnquiryActions({ product }: { product: Product }) {
     getSiteSettings()
       .then((settings) => {
         if (cancelled || !settings?.contact) return;
-        if (settings.contact.primaryPhone) setPhone(settings.contact.primaryPhone);
         if (settings.contact.whatsappNumber || settings.contact.primaryPhone) {
           setWhatsappNumber(settings.contact.whatsappNumber || settings.contact.primaryPhone);
         }
-        if (settings.contact.primaryEmail) setEmail(settings.contact.primaryEmail);
       })
       .catch(() => {
-        /* keep the fallbacks */
+        /* keep the fallback */
       });
     return () => {
       cancelled = true;
@@ -77,15 +71,6 @@ export default function EnquiryActions({ product }: { product: Product }) {
 
   const whatsappLink = `https://wa.me/${toWhatsApp(whatsappNumber)}?text=${encodeURIComponent(enquiryText)}`;
 
-  const emailLink =
-    `mailto:${email}` +
-    `?subject=${encodeURIComponent(`Enquiry: ${title}${product.sku ? ` (${product.sku})` : ''}`)}` +
-    `&body=${encodeURIComponent(
-      `Hi The CrossWild Team,\n\nI'd like a quote for:\n\n` +
-      `${title}\n${product.sku ? `Product code: ${product.sku}\n` : ''}Quantity: ${quantity} pcs\n\n` +
-      `Please share pricing, branding options and delivery timelines.\n\nThank you!`
-    )}`;
-
   const setQuantity = (value: number) => setQuantityText(String(Math.max(minQty, Math.trunc(value))));
 
   const handleAdd = () => {
@@ -105,8 +90,11 @@ export default function EnquiryActions({ product }: { product: Product }) {
     toastTimer.current = setTimeout(() => setAdded(false), 4000);
   };
 
+  // Both actions share one shape so the pair reads as a single control row.
   const actionClass =
-    'inline-flex items-center justify-center gap-2 rounded-xl px-3 py-3 text-sm font-semibold transition-colors';
+    'inline-flex h-12 w-full items-center justify-center gap-2.5 rounded-xl px-5 text-sm font-semibold ' +
+    'transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 ' +
+    'focus-visible:ring-offset-theme-bg';
 
   return (
     <div className="space-y-4">
@@ -151,50 +139,25 @@ export default function EnquiryActions({ product }: { product: Product }) {
         )}
       </div>
 
-      {/* ─── Add to enquiry ─── */}
-      <button
-        type="button"
-        onClick={handleAdd}
-        className="flex w-full items-center justify-center gap-2.5 rounded-xl bg-primary px-6 py-3.5 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-primary/90"
-      >
-        <ShoppingBag className="h-5 w-5" />
-        Add to enquiry
-      </button>
+      {/* ─── Add to enquiry / WhatsApp ─── */}
+      <div className="grid gap-3 sm:grid-cols-2">
+        <button
+          type="button"
+          onClick={handleAdd}
+          className={`${actionClass} bg-primary text-white shadow-sm hover:bg-primary/90 focus-visible:ring-primary`}
+        >
+          <ShoppingBag className="h-[18px] w-[18px] flex-shrink-0" aria-hidden="true" />
+          Add to enquiry
+        </button>
 
-      {/* ─── WhatsApp / Call / Email ─── */}
-      <div className="grid grid-cols-3 gap-2">
         <a
           href={whatsappLink}
           target="_blank"
           rel="noopener noreferrer"
-          className={`${actionClass} bg-[#25D366] text-white hover:bg-[#1eba59]`}
+          className={`${actionClass} border border-[#25D366]/40 bg-[#25D366]/10 text-[#0f7a4a] hover:border-[#25D366]/70 hover:bg-[#25D366]/20 focus-visible:ring-[#25D366] dark:text-[#25D366]`}
         >
-          <MessageCircle className="h-4 w-4 flex-shrink-0" aria-hidden="true" />
-          WhatsApp
-        </a>
-
-        {/* A tel: link does nothing on a desktop browser, so desktop shows the
-            number itself and only the phone gets a dialable link. */}
-        <a
-          href={`tel:${toDialable(phone)}`}
-          className={`${actionClass} border border-theme-border bg-theme-bg-card text-theme-text hover:border-primary hover:text-primary md:hidden`}
-        >
-          <Phone className="h-4 w-4 flex-shrink-0" aria-hidden="true" />
-          Call
-        </a>
-        <div
-          className={`${actionClass} hidden border border-theme-border bg-theme-bg-card text-theme-text md:flex`}
-        >
-          <Phone className="h-4 w-4 flex-shrink-0 text-primary" aria-hidden="true" />
-          <span className="select-all whitespace-nowrap">{phone}</span>
-        </div>
-
-        <a
-          href={emailLink}
-          className={`${actionClass} border border-theme-border bg-theme-bg-card text-theme-text hover:border-primary hover:text-primary`}
-        >
-          <Mail className="h-4 w-4 flex-shrink-0" aria-hidden="true" />
-          Email
+          <MessageCircle className="h-[18px] w-[18px] flex-shrink-0" aria-hidden="true" />
+          Chat on WhatsApp
         </a>
       </div>
 
