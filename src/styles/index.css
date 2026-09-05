@@ -422,6 +422,8 @@
 }
 
 /* Infinite Scrolling Marquee Animation */
+/* The track holds its items twice over, so travelling exactly -50% lands the
+   second copy where the first started and the loop is seamless. */
 @keyframes scroll {
   0% {
     transform: translateX(0);
@@ -433,6 +435,13 @@
 
 .animate-scroll {
   animation: scroll 30s linear infinite;
+}
+
+/* Second row of the client logo wall. Running it backwards — and a little
+   slower — stops the two rows reading as one block sliding sideways, and means
+   a visitor who tracks a logo off one edge meets different ones coming back. */
+.animate-scroll-reverse {
+  animation: scroll 38s linear infinite reverse;
 }
 
 .pause-animation:hover {

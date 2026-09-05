@@ -7,16 +7,46 @@ import { getBrands, getSiteSettings, type Brand, type StatItem } from '@/lib/cms
 // Client logos shipped with the site, shown until brands are added in the admin
 // panel — the CMS list is empty today, so without these the marquee rendered
 // nothing at all and the section was just a heading above the stats.
-// Files live in public/images/clients.
+//
+// Files live in public/images/clients, every one fitted onto the same 250x106
+// canvas so no tile reads larger than its neighbours. Logos drawn on a coloured
+// plate (SBI, ZEE, Kendriya Vidyalaya, Springboard) keep that plate out to the
+// canvas edge rather than floating in a white box.
+//
+// The order matters: the wall is split down the middle into two rows below, so
+// this list is arranged to spread the banks, telecoms, government bodies and
+// colleges across both rows instead of stacking a whole sector in one.
 const FALLBACK_CLIENTS: Brand[] = [
-  { _id: 'client-airtel', name: 'Airtel', logoImage: '/images/clients/airtel.jpg', websiteUrl: '' },
-  { _id: 'client-amity', name: 'Amity University', logoImage: '/images/clients/amity.jpg', websiteUrl: '' },
-  { _id: 'client-biyani', name: 'Biyani Group of Colleges', logoImage: '/images/clients/biyani.jpg', websiteUrl: '' },
+  // Row one
   { _id: 'client-bjp', name: 'BJP', logoImage: '/images/clients/bjp.jpg', websiteUrl: '' },
-  { _id: 'client-dlb', name: 'DLB', logoImage: '/images/clients/dlb.jpg', websiteUrl: '' },
   { _id: 'client-hdfc', name: 'HDFC Bank', logoImage: '/images/clients/hdfc.jpg', websiteUrl: '' },
+  { _id: 'client-sbi', name: 'State Bank of India', logoImage: '/images/clients/sbi.jpg', websiteUrl: '' },
+  { _id: 'client-airtel', name: 'Airtel', logoImage: '/images/clients/airtel.jpg', websiteUrl: '' },
+  { _id: 'client-jio', name: 'Jio', logoImage: '/images/clients/jio.jpg', websiteUrl: '' },
+  { _id: 'client-zomato', name: 'Zomato', logoImage: '/images/clients/zomato.jpg', websiteUrl: '' },
+  { _id: 'client-indian-army', name: 'Indian Army', logoImage: '/images/clients/indian-army.jpg', websiteUrl: '' },
+  { _id: 'client-amity', name: 'Amity University', logoImage: '/images/clients/amity.jpg', websiteUrl: '' },
+  { _id: 'client-iit-jodhpur', name: 'IIT Jodhpur', logoImage: '/images/clients/iit-jodhpur.jpg', websiteUrl: '' },
+  { _id: 'client-genpact', name: 'Genpact', logoImage: '/images/clients/genpact.jpg', websiteUrl: '' },
+  { _id: 'client-nagar-nigam-jaipur', name: 'Nagar Nigam Jaipur', logoImage: '/images/clients/nagar-nigam-jaipur.jpg', websiteUrl: '' },
+  { _id: 'client-resonance', name: 'Resonance', logoImage: '/images/clients/resonance.jpg', websiteUrl: '' },
+  { _id: 'client-burger-farm', name: 'Burger Farm', logoImage: '/images/clients/burger-farm.jpg', websiteUrl: '' },
+  { _id: 'client-unique-builders', name: 'Unique Builders', logoImage: '/images/clients/unique-builders.jpg', websiteUrl: '' },
+  // Row two
   { _id: 'client-icici', name: 'ICICI Bank', logoImage: '/images/clients/icici.jpg', websiteUrl: '' },
   { _id: 'client-tvs', name: 'TVS', logoImage: '/images/clients/tvs.jpg', websiteUrl: '' },
+  { _id: 'client-indian-oil', name: 'IndianOil', logoImage: '/images/clients/indian-oil.jpg', websiteUrl: '' },
+  { _id: 'client-dlb', name: 'DLB', logoImage: '/images/clients/dlb.jpg', websiteUrl: '' },
+  { _id: 'client-justdial', name: 'Justdial', logoImage: '/images/clients/justdial.jpg', websiteUrl: '' },
+  { _id: 'client-zee-studios', name: 'ZEE Studios', logoImage: '/images/clients/zee-studios.jpg', websiteUrl: '' },
+  { _id: 'client-indian-air-force', name: 'Indian Air Force', logoImage: '/images/clients/indian-air-force.jpg', websiteUrl: '' },
+  { _id: 'client-biyani', name: 'Biyani Group of Colleges', logoImage: '/images/clients/biyani.jpg', websiteUrl: '' },
+  { _id: 'client-aiims-jodhpur', name: 'AIIMS Jodhpur', logoImage: '/images/clients/aiims-jodhpur.jpg', websiteUrl: '' },
+  { _id: 'client-manipal', name: 'Manipal University', logoImage: '/images/clients/manipal-university.jpg', websiteUrl: '' },
+  { _id: 'client-kendriya-vidyalaya', name: 'Kendriya Vidyalaya Sangathan', logoImage: '/images/clients/kendriya-vidyalaya.jpg', websiteUrl: '' },
+  { _id: 'client-nrai', name: 'National Rifle Association of India', logoImage: '/images/clients/nrai.jpg', websiteUrl: '' },
+  { _id: 'client-au-jaipur-marathon', name: 'AU Bank Jaipur Marathon', logoImage: '/images/clients/au-bank-jaipur-marathon.jpg', websiteUrl: '' },
+  { _id: 'client-springboard', name: 'Springboard Academy', logoImage: '/images/clients/springboard-academy.jpg', websiteUrl: '' },
 ];
 
 const DEFAULT_STATS: StatItem[] = [
@@ -36,8 +66,13 @@ export default function Brands() {
     getSiteSettings().then((s) => { if (s?.stats?.length) setStats(s.stats); });
   }, []);
 
-  // Duplicate for seamless infinite scroll
-  const duplicatedBrands = [...brands, ...brands];
+  // Two rows rather than one. At 28 logos a single track takes most of a minute
+  // to come back round, so a visitor sees maybe a third of the wall; halving it
+  // halves that wait and lets the rows travel opposite ways. Ceil keeps the top
+  // row the longer one when the count is odd, and the filter drops the second
+  // row entirely if the admin panel ever supplies just one logo.
+  const half = Math.ceil(brands.length / 2);
+  const rows = [brands.slice(0, half), brands.slice(half)].filter((row) => row.length > 0);
 
   return (
     <section className="py-8 md:py-12 bg-theme-bg-soft overflow-hidden">
@@ -51,17 +86,11 @@ export default function Brands() {
           </p>
         </div>
 
-        {brands.length > 0 && (
-          <div className="relative">
-            <div className="absolute left-0 top-0 bottom-0 w-20 bg-gradient-to-r from-theme-bg-soft to-transparent z-10 pointer-events-none"></div>
-            <div className="absolute right-0 top-0 bottom-0 w-20 bg-gradient-to-l from-theme-bg-soft to-transparent z-10 pointer-events-none"></div>
-            <div className="flex overflow-hidden">
-              <div className="flex animate-scroll hover:pause-animation">
-                {duplicatedBrands.map((brand, index) => (
-                  <SingleBrand key={`${brand._id}-${index}`} brand={brand} />
-                ))}
-              </div>
-            </div>
+        {rows.length > 0 && (
+          <div className="space-y-4">
+            {rows.map((row, index) => (
+              <BrandRow key={index} brands={row} reverse={index === 1} />
+            ))}
           </div>
         )}
 
@@ -76,6 +105,26 @@ export default function Brands() {
         </div>
       </div>
     </section>
+  );
+}
+
+function BrandRow({ brands, reverse }: { brands: Brand[]; reverse?: boolean }) {
+  // Listed twice over: the keyframe travels exactly -50%, so the second copy
+  // arrives where the first began and the loop has no seam.
+  const track = [...brands, ...brands];
+
+  return (
+    <div className="relative">
+      <div className="absolute left-0 top-0 bottom-0 w-20 bg-gradient-to-r from-theme-bg-soft to-transparent z-10 pointer-events-none"></div>
+      <div className="absolute right-0 top-0 bottom-0 w-20 bg-gradient-to-l from-theme-bg-soft to-transparent z-10 pointer-events-none"></div>
+      <div className="flex overflow-hidden">
+        <div className={`flex ${reverse ? 'animate-scroll-reverse' : 'animate-scroll'} hover:pause-animation`}>
+          {track.map((brand, index) => (
+            <SingleBrand key={`${brand._id}-${index}`} brand={brand} />
+          ))}
+        </div>
+      </div>
+    </div>
   );
 }
 
