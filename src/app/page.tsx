@@ -40,11 +40,16 @@ const WHAT_WE_DO_BANNER = {
     'customisation with your own design and branding',
 };
 
-/** "Who We Work With" band — the buyer types this catalogue is built for. */
+/** "Who We Work With" band — the buyer types this catalogue is built for.
+ *  The wide design reads poorly cropped down on a phone, so a separate 3:4
+ *  poster (4686x6250) is shown below `md` instead. */
 const WHO_WE_WORK_WITH_BANNER = {
   light: '/banners/homePage/whoWeWorkWithLight.webp',
   dark: '/banners/homePage/whoWeWorkWithDark.webp',
   aspectRatio: '7000 / 3938',
+  mobileLight: '/banners/homePage/whoWeWorkWithMobileLight.webp',
+  mobileDark: '/banners/homePage/whoWeWorkWithMobileDark.webp',
+  mobileAspectRatio: '4686 / 6250',
   alt:
     'Who we work with — startups, brands, corporates, schools, events, gyms and fitness, ' +
     'restaurants and resellers',
@@ -137,6 +142,9 @@ export default async function Home() {
         dark={WHO_WE_WORK_WITH_BANNER.dark}
         alt={WHO_WE_WORK_WITH_BANNER.alt}
         aspectRatio={WHO_WE_WORK_WITH_BANNER.aspectRatio}
+        mobileLight={WHO_WE_WORK_WITH_BANNER.mobileLight}
+        mobileDark={WHO_WE_WORK_WITH_BANNER.mobileDark}
+        mobileAspectRatio={WHO_WE_WORK_WITH_BANNER.mobileAspectRatio}
         bgClass="bg-[#AACBFE] dark:bg-[#861424]"
         href="/contact-us"
       />
