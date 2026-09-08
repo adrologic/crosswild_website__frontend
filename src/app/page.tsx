@@ -10,11 +10,16 @@ import HomeBrandContent from "@/components/Home/HomeBrandContent";
 import ThemeBanner from "@/components/Common/ThemeBanner";
 
 /** "Grow your Business with us" band — one designed image per theme (7000x3937).
- *  The artwork has a "Start" button drawn into it, so the band links out. */
+ *  The artwork has a "Start" button drawn into it, so the band links out.
+ *  The wide design reads poorly cropped down on a phone, so a separate 3:4
+ *  poster (4686x6250) is shown below `md` instead. */
 const GROW_BANNER = {
   light: '/banners/homePage/growLight.png',
   dark: '/banners/homePage/growDark.png',
   aspectRatio: '7000 / 3937',
+  mobileLight: '/banners/homePage/growMobileLight.webp',
+  mobileDark: '/banners/homePage/growMobileDark.webp',
+  mobileAspectRatio: '4686 / 6250',
   alt: 'Grow your business with us — big or small, we give our best to every order',
   href: '/contact-us',
 };
@@ -79,6 +84,9 @@ export default async function Home() {
         dark={GROW_BANNER.dark}
         alt={GROW_BANNER.alt}
         aspectRatio={GROW_BANNER.aspectRatio}
+        mobileLight={GROW_BANNER.mobileLight}
+        mobileDark={GROW_BANNER.mobileDark}
+        mobileAspectRatio={GROW_BANNER.mobileAspectRatio}
         bgClass="bg-[#AACBFE] dark:bg-[#861424]"
         href={GROW_BANNER.href}
         priority

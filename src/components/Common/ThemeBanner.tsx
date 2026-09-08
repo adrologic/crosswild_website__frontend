@@ -1,3 +1,4 @@
+import type { CSSProperties } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 
@@ -23,6 +24,15 @@ interface Props {
    * CTA edge to edge, and any crop eats the wording.
    */
   aspectRatio: string;
+  /**
+   * Phone-specific artwork, laid out at its own ratio (`mobileAspectRatio`)
+   * rather than the wide `light`/`dark` design cropped down. Provide both or
+   * neither — omit for artwork that already reads fine on a phone.
+   */
+  mobileLight?: string;
+  mobileDark?: string;
+  /** Natural ratio of the mobile artwork, e.g. '4686 / 6250'. Required with `mobileLight`. */
+  mobileAspectRatio?: string;
   /** Tailwind classes for the colour behind the artwork while it loads, e.g.
    *  'bg-[#AACBFE] dark:bg-[#861424]'. Sample it from the artwork's background. */
   bgClass?: string;
@@ -51,6 +61,9 @@ export default function ThemeBanner({
   dark,
   alt,
   aspectRatio,
+  mobileLight,
+  mobileDark,
+  mobileAspectRatio,
   bgClass = '',
   href,
   priority = false,
@@ -62,14 +75,64 @@ export default function ThemeBanner({
   const [w, h] = aspectRatio.split('/').map((part) => parseFloat(part));
   const ratio = w && h ? w / h : 16 / 9;
 
+  const hasMobile = Boolean(mobileLight && mobileDark);
+  const [mw, mh] = (mobileAspectRatio || aspectRatio).split('/').map((part) => parseFloat(part));
+  const mobileRatio = mw && mh ? mw / mh : ratio;
+
   // A single image when the artwork suits both themes — no point putting the
   // same file in the markup twice under a class that only hides one of them.
+  //
+  // With mobile artwork, the box's ratio itself differs by breakpoint (a
+  // portrait phone poster vs. the wide desktop design), so the fixed
+  // `aspectRatio` style used for the single-ratio case can't express it —
+  // instead both ratios are handed to the class list as CSS custom
+  // properties and picked between with `md:`, same trick `maxWidth` already
+  // needs since it derives from whichever ratio is active.
+  const containerStyle = hasMobile
+    ? ({ '--tb-mh': maxHeight, '--tb-ar-m': mobileRatio, '--tb-ar-d': ratio } as CSSProperties)
+    : { aspectRatio, maxHeight, maxWidth: `calc(${maxHeight} * ${ratio})` };
+  const containerClass = hasMobile
+    ? `relative mx-auto w-full overflow-hidden aspect-[var(--tb-ar-m)] md:aspect-[var(--tb-ar-d)] max-h-[var(--tb-mh)] max-w-[calc(var(--tb-mh)*var(--tb-ar-m))] md:max-w-[calc(var(--tb-mh)*var(--tb-ar-d))] ${bgClass}`
+    : `relative mx-auto w-full overflow-hidden ${bgClass}`;
+
   const banner = (
-    <div
-      className={`relative mx-auto w-full overflow-hidden ${bgClass}`}
-      style={{ aspectRatio, maxHeight, maxWidth: `calc(${maxHeight} * ${ratio})` }}
-    >
-      {dark ? (
+    <div className={containerClass} style={containerStyle}>
+      {hasMobile ? (
+        // Bare <picture>/<source> rather than a hidden second <Image> — with
+        // `images.unoptimized` on, a hidden eager <Image> would still fetch
+        // its file, and every phone would pull the desktop artwork it never
+        // shows. Each <picture> below fetches exactly one file: the browser
+        // picks mobile vs. desktop natively, and the light/dark pair is
+        // narrowed with CSS the same way the single-ratio case does it.
+        <>
+          <picture className={dark ? 'dark:hidden' : undefined}>
+            <source media="(min-width: 768px)" srcSet={light} />
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={mobileLight}
+              alt={alt}
+              className="absolute inset-0 h-full w-full object-cover"
+              fetchPriority={priority ? 'high' : undefined}
+              loading={priority ? 'eager' : 'lazy'}
+              decoding="async"
+            />
+          </picture>
+          {dark && (
+            <picture className="hidden dark:block">
+              <source media="(min-width: 768px)" srcSet={dark} />
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={mobileDark}
+                alt={alt}
+                className="absolute inset-0 h-full w-full object-cover"
+                fetchPriority={priority ? 'high' : undefined}
+                loading={priority ? 'eager' : 'lazy'}
+                decoding="async"
+              />
+            </picture>
+          )}
+        </>
+      ) : dark ? (
         <>
           <Image
             src={light}
