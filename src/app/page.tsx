@@ -24,11 +24,16 @@ const GROW_BANNER = {
   href: '/contact-us',
 };
 
-/** "What We Do" band — manufacturing, printing & embroidery, customisation. */
+/** "What We Do" band — manufacturing, printing & embroidery, customisation.
+ *  The wide design reads poorly cropped down on a phone, so a separate 3:4
+ *  poster (4686x6250) is shown below `md` instead. */
 const WHAT_WE_DO_BANNER = {
   light: '/banners/homePage/whatWeDoLight.webp',
   dark: '/banners/homePage/whatWeDoDark.webp',
   aspectRatio: '7001 / 3938',
+  mobileLight: '/banners/homePage/whatWeDoMobileLight.webp',
+  mobileDark: '/banners/homePage/whatWeDoMobileDark.webp',
+  mobileAspectRatio: '4686 / 6250',
   alt:
     'What we do — manufacturing of premium t-shirts, polos, hoodies, bags, caps and uniforms; ' +
     'printing and embroidery including screen printing, DTF, DTG, puff and more; and ' +
@@ -106,6 +111,9 @@ export default async function Home() {
         dark={WHAT_WE_DO_BANNER.dark}
         alt={WHAT_WE_DO_BANNER.alt}
         aspectRatio={WHAT_WE_DO_BANNER.aspectRatio}
+        mobileLight={WHAT_WE_DO_BANNER.mobileLight}
+        mobileDark={WHAT_WE_DO_BANNER.mobileDark}
+        mobileAspectRatio={WHAT_WE_DO_BANNER.mobileAspectRatio}
         bgClass="bg-[#AACBFE] dark:bg-[#861424]"
         href="/services"
       />
