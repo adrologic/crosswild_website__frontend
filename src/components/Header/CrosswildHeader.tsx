@@ -715,18 +715,18 @@ export default function CrosswildHeader() {
                     }`}>
                       {/* Rule down the left ties the sub-items to their parent */}
                       <div className="ml-4 border-l border-theme-border pl-2 py-1 space-y-0.5">
-                        {category.slug && (
-                          <Link href={getCategoryUrl(category.slug)} onClick={() => dispatch(closeMenu())}
-                            className="block rounded-lg px-3 py-2 text-sm font-semibold text-primary hover:bg-primary/10 transition-colors">
-                            View All {category.name}
-                          </Link>
-                        )}
                         {category.items.map((item, i) => (
                           <Link key={i} href={item.link} onClick={() => dispatch(closeMenu())}
                             className="block rounded-lg px-3 py-2 text-sm text-theme-text-secondary hover:bg-theme-bg-soft dark:hover:bg-[#26211A] hover:text-primary transition-colors">
                             {item.name}
                           </Link>
                         ))}
+                        {category.slug && (
+                          <Link href={getCategoryUrl(category.slug)} onClick={() => dispatch(closeMenu())}
+                            className="block rounded-lg px-3 py-2 text-sm font-semibold text-primary hover:bg-primary/10 transition-colors">
+                            View All {category.name}
+                          </Link>
+                        )}
                       </div>
                     </div>
                   </div>
