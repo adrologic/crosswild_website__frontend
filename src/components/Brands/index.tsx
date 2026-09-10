@@ -144,7 +144,7 @@ function SingleBrand({ brand }: { brand: Brand }) {
   // pale rectangles floating on dark. White behind them in both themes reads
   // as a deliberate logo wall.
   const tileClass =
-    'relative block h-16 w-40 overflow-hidden rounded-lg bg-white shadow-sm ring-1 ring-black/5';
+    'relative block h-24 w-40 overflow-hidden rounded-lg bg-white shadow-sm ring-1 ring-black/5';
 
   return (
     <div className="flex-shrink-0 mx-6 transition-transform hover:scale-105">
