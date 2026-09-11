@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { Tag, TrendingUp, Zap } from 'lucide-react';
 import { getDeals, type Deal } from '@/lib/cms';
 import { toPlainText } from '@/lib/text';
+import { getCategoryListingUrl } from '@/lib/categoryUrls';
 
 const COLORS = [
   'from-blue-500 to-blue-600',
@@ -17,7 +18,7 @@ const ICONS = [TrendingUp, Zap, Tag];
 // Mirrors the three deals stored in the CMS so the section reads the same if
 // the API is unreachable — keep the two in step when the offers change.
 const FALLBACK: Deal[] = [
-  { _id: '1', title: 'Bulk Order Special', discountLabel: '10% OFF', description: 'On orders above 1,000 pieces', link: '/product/customize-promotional-t-shirt-manufacturer-in-Jaipur' },
+  { _id: '1', title: 'Bulk Order Special', discountLabel: '10% OFF', description: 'On orders above 1,000 pieces', link: getCategoryListingUrl('tshirts') },
   { _id: '2', title: 'First Order', discountLabel: '5% OFF', description: 'On your first order with us', link: '/products' },
   { _id: '3', title: 'Loyal Customers', discountLabel: 'Up to 10% OFF', description: 'For our repeat customers', link: '/products' },
 ];

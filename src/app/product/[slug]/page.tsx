@@ -4,7 +4,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import Breadcrumb from '@/components/Common/Breadcrumb';
 import { generatePageMetadata } from '@/lib/seo';
-import { getCategoryUrl } from '@/lib/categoryUrls';
+import { getCategoryListingUrl } from '@/lib/categoryUrls';
 
 // ── City config ────────────────────────────────────────────────────────────────
 const CITIES: Record<string, { name: string; state: string }> = {
@@ -422,7 +422,7 @@ export default async function ProductServicePage({
                   Get a Free Quote
                 </Link>
                 <Link
-                  href={getCategoryUrl(product.category)}
+                  href={getCategoryListingUrl(product.category)}
                   className="border-2 border-primary text-primary px-6 py-3 rounded-lg font-semibold hover:bg-primary/5 transition-colors"
                 >
                   View All Products

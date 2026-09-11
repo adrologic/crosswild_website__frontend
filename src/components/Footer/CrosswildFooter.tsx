@@ -33,11 +33,20 @@ const FALLBACK_QUICK_LINKS: CmsLink[] = [
   { label: 'Contact Us', href: '/contact-us' },
 ];
 
+// These SEO landing pages (one per category, keyword-rich copy for search
+// ranking) are deliberately kept out of the header nav and every in-app
+// product filter — real visitors browsing/filtering expect a product grid,
+// not marketing copy (see getCategoryListingUrl in lib/categoryUrls). The
+// footer is their only remaining internal link, which keeps them crawlable.
 const FALLBACK_SERVICES: CmsLink[] = [
   { label: 'T-Shirt Manufacturing', href: '/product/customize-promotional-t-shirt-manufacturer-in-Jaipur' },
   { label: 'Bag Manufacturing', href: '/product/school-laptop-bag-manufacturer-in-Jaipur' },
   { label: 'Cap Printing', href: '/product/cap-printing-manufacturer-in-jaipur' },
+  { label: 'Sweatshirt & Hoodie Manufacturing', href: '/product/sweatshirt-hoodie-manufacturer-in-Jaipur' },
+  { label: 'School Uniform Manufacturing', href: '/product/school-uniform' },
   { label: 'Staff Uniforms', href: '/product/staff-uniform-manufacturer' },
+  { label: 'Screen & DTF Printing', href: '/product/printing' },
+  { label: 'Custom Mug Printing', href: '/product/mug-printing-in-Jaipur' },
   { label: 'All Products', href: '/products' },
 ];
 

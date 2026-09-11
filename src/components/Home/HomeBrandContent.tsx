@@ -11,6 +11,7 @@ import {
   type HomeProductHighlight,
 } from '@/lib/cms';
 import { toPlainText } from '@/lib/text';
+import { getCategoryListingUrl } from '@/lib/categoryUrls';
 
 // Last-resort content, used only when the CMS returns an empty list — an
 // unreachable backend or an emptied collection. The database is the source of
@@ -19,9 +20,9 @@ import { toPlainText } from '@/lib/text';
 // crawler reads. These constants exist so an outage degrades to a full section
 // rather than a hole in the page.
 const FALLBACK_CAPABILITIES: HomeCapability[] = [
-  { _id: 'c1', title: 'T-Shirts', items: ['Custom Fabrics and Types', 'All T-Shirt Styles and Fits', 'Custom Designs at Budget-Friendly Prices'], link: '/product/customize-promotional-t-shirt-manufacturer-in-Jaipur', image: '' },
-  { _id: 'c2', title: 'Bags', items: ['Custom Office, School and Gym Bags', 'Wholesale Tote Suppliers', 'Laptop Bags'], link: '/product/school-laptop-bag-manufacturer-in-Jaipur', image: '' },
-  { _id: 'c3', title: 'Caps', items: ['Bulk Orders', 'Custom Hats and Caps', 'Personalized Designs for All Cap Types'], link: '/product/cap-printing-manufacturer-in-jaipur', image: '' },
+  { _id: 'c1', title: 'T-Shirts', items: ['Custom Fabrics and Types', 'All T-Shirt Styles and Fits', 'Custom Designs at Budget-Friendly Prices'], link: getCategoryListingUrl('tshirts'), image: '' },
+  { _id: 'c2', title: 'Bags', items: ['Custom Office, School and Gym Bags', 'Wholesale Tote Suppliers', 'Laptop Bags'], link: getCategoryListingUrl('bags'), image: '' },
+  { _id: 'c3', title: 'Caps', items: ['Bulk Orders', 'Custom Hats and Caps', 'Personalized Designs for All Cap Types'], link: getCategoryListingUrl('caps'), image: '' },
 ];
 
 const FALLBACK_WHY_CHOOSE: HomeWhyChoose[] = [
@@ -31,9 +32,9 @@ const FALLBACK_WHY_CHOOSE: HomeWhyChoose[] = [
 ];
 
 const FALLBACK_HIGHLIGHTS: HomeProductHighlight[] = [
-  { _id: 'h1', title: 'Mug Printing', image: '/banners/homePage/mugPrintingLight.webp', link: '/product/mug-printing-in-Jaipur' },
-  { _id: 'h2', title: 'Cap Printing', image: '/banners/homePage/capPrintingLight.webp', link: '/product/cap-printing-manufacturer-in-jaipur' },
-  { _id: 'h3', title: 'Digital Printing', image: '/banners/homePage/digitalPrintingLight.webp', link: '/product/printing' },
+  { _id: 'h1', title: 'Mug Printing', image: '/banners/homePage/mugPrintingLight.webp', link: getCategoryListingUrl('mugs') },
+  { _id: 'h2', title: 'Cap Printing', image: '/banners/homePage/capPrintingLight.webp', link: getCategoryListingUrl('caps') },
+  { _id: 'h3', title: 'Digital Printing', image: '/banners/homePage/digitalPrintingLight.webp', link: getCategoryListingUrl('printing') },
 ];
 
 /**

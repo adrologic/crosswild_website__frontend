@@ -6,7 +6,7 @@ import Image from 'next/image';
 import { Product } from '@/lib/api';
 import { productImage } from '@/lib/productImage';
 import { useProducts } from '@/hooks/useProducts';
-import { getCategoryUrl } from '@/lib/categoryUrls';
+import { getCategoryListingUrl } from '@/lib/categoryUrls';
 import { Star, ChevronLeft, ChevronRight, ArrowRight, Loader2, Grid3X3, MessageCircle, Mail } from 'lucide-react';
 
 const WHATSAPP_NUMBER = '+919529626262';
@@ -209,7 +209,7 @@ export default function ShopByCategory() {
         {/* View All for this category */}
         <div className="text-center mt-8">
           <Link
-            href={getCategoryUrl(activeCategory)}
+            href={getCategoryListingUrl(activeCategory)}
             className="inline-flex items-center gap-2 px-8 py-4 bg-primary text-white font-semibold rounded-lg hover:bg-primary/90 transition-all shadow-lg hover:shadow-xl"
           >
             <span>View All {CATEGORIES.find(c => c.slug === activeCategory)?.name}</span>

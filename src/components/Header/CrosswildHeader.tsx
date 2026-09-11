@@ -19,7 +19,7 @@ import {
   openCart, toggleMenu, closeMenu, toggleMobileSearch, closeMobileSearch,
 } from '@/store/slices/uiSlice';
 import { productsAPI, categoriesAPI, Product } from '@/lib/api';
-import { getCategoryUrl, getSubCategoryUrl } from '@/lib/categoryUrls';
+import { getCategoryListingUrl, getSubCategoryUrl } from '@/lib/categoryUrls';
 import { getSiteSettings, type SiteSettings } from '@/lib/cms';
 import CartDrawer from '@/components/Cart/CartDrawer';
 import ThemeToggle from '@/components/ThemeToggle/ThemeToggle';
@@ -61,13 +61,13 @@ const FALLBACK_CATEGORIES: NavCategory[] = [
     { name: 'Sports Caps', link: getSubCategoryUrl('sports-caps') },
   ]},
   { name: 'More', slug: '', items: [
-    { name: 'Sweatshirts & Hoodies', link: getCategoryUrl('sweatshirts') },
-    { name: 'Lower & Shorts', link: getCategoryUrl('lowers') },
-    { name: 'Uniforms', link: getCategoryUrl('uniforms') },
-    { name: 'Printing & Embroidery', link: getCategoryUrl('printing') },
-    { name: 'Apron', link: getCategoryUrl('apron') },
-    { name: 'Chef Coat', link: getCategoryUrl('chef-coat') },
-    { name: 'Raincoats', link: getCategoryUrl('raincoats') },
+    { name: 'Sweatshirts & Hoodies', link: getCategoryListingUrl('sweatshirts') },
+    { name: 'Lower & Shorts', link: getCategoryListingUrl('lowers') },
+    { name: 'Uniforms', link: getCategoryListingUrl('uniforms') },
+    { name: 'Printing & Embroidery', link: getCategoryListingUrl('printing') },
+    { name: 'Apron', link: getCategoryListingUrl('apron') },
+    { name: 'Chef Coat', link: getCategoryListingUrl('chef-coat') },
+    { name: 'Raincoats', link: getCategoryListingUrl('raincoats') },
   ]},
 ];
 
@@ -137,7 +137,7 @@ function buildNavCategories(tree: any[]): { nav: NavCategory[]; flat: FlatCatego
         flat.push({ name: sub.name, slug: sub.id });
       }
     } else {
-      standaloneCats.push({ name: cat.name, link: getCategoryUrl(cat.id) });
+      standaloneCats.push({ name: cat.name, link: getCategoryListingUrl(cat.id) });
     }
   }
 
@@ -445,7 +445,7 @@ export default function CrosswildHeader() {
     setShowDropdown(false);
     setSearchQuery('');
     dispatch(closeMobileSearch());
-    router.push(getCategoryUrl(slug));
+    router.push(getCategoryListingUrl(slug));
   }, [dispatch, router]);
 
   const openDropdown = useCallback(() => setShowDropdown(true), []);
@@ -611,7 +611,7 @@ export default function CrosswildHeader() {
                   onMouseEnter={() => setActiveDropdown(category.name)}
                   onMouseLeave={() => setActiveDropdown(null)}>
                   {category.slug ? (
-                    <Link href={getCategoryUrl(category.slug)} className="flex items-center gap-1 text-sm font-medium text-theme-text-secondary hover:text-primary transition-colors py-2">
+                    <Link href={getCategoryListingUrl(category.slug)} className="flex items-center gap-1 text-sm font-medium text-theme-text-secondary hover:text-primary transition-colors py-2">
                       {category.name}<ChevronDown className="w-4 h-4" />
                     </Link>
                   ) : (
@@ -722,7 +722,7 @@ export default function CrosswildHeader() {
                           </Link>
                         ))}
                         {category.slug && (
-                          <Link href={getCategoryUrl(category.slug)} onClick={() => dispatch(closeMenu())}
+                          <Link href={getCategoryListingUrl(category.slug)} onClick={() => dispatch(closeMenu())}
                             className="block rounded-lg px-3 py-2 text-sm font-semibold text-primary hover:bg-primary/10 transition-colors">
                             View All {category.name}
                           </Link>

@@ -7,15 +7,16 @@ import { ArrowRight } from 'lucide-react';
 import { getCategoryHomeCards, type CategoryHomeCard } from '@/lib/cms';
 import { getBannerForTitle } from '@/data/categoryBanners';
 import { toPlainText } from '@/lib/text';
+import { getCategoryListingUrl } from '@/lib/categoryUrls';
 
 const FALLBACK: CategoryHomeCard[] = [
-  { _id: '1', title: 'T-Shirts', description: 'Custom printed & embroidered tees', icon: '👕', link: '/product/customize-promotional-t-shirt-manufacturer-in-Jaipur', popular: true },
-  { _id: '2', title: 'Bags', description: 'School, office, gym & more', icon: '🎒', link: '/product/school-laptop-bag-manufacturer-in-Jaipur', popular: true },
-  { _id: '3', title: 'Caps', description: 'Cotton, polyester & custom caps', icon: '🧢', link: '/product/cap-printing-manufacturer-in-jaipur', popular: false },
-  { _id: '4', title: 'Sweatshirts & Hoodies', description: 'Warm up in custom style', icon: '🧥', link: '/product/sweatshirt-hoodie-manufacturer-in-Jaipur', popular: false },
+  { _id: '1', title: 'T-Shirts', description: 'Custom printed & embroidered tees', icon: '👕', link: getCategoryListingUrl('tshirts'), popular: true },
+  { _id: '2', title: 'Bags', description: 'School, office, gym & more', icon: '🎒', link: getCategoryListingUrl('bags'), popular: true },
+  { _id: '3', title: 'Caps', description: 'Cotton, polyester & custom caps', icon: '🧢', link: getCategoryListingUrl('caps'), popular: false },
+  { _id: '4', title: 'Sweatshirts & Hoodies', description: 'Warm up in custom style', icon: '🧥', link: getCategoryListingUrl('sweatshirts'), popular: false },
   { _id: '5', title: 'Lower & Shorts', description: 'Comfortable active wear', icon: '🩳', link: '/category/lowers', popular: false },
-  { _id: '6', title: 'School & Office Uniform', description: 'Professional workwear solutions', icon: '👔', link: '/product/school-uniform', popular: false },
-  { _id: '7', title: 'Printing & Embroidery', description: 'Screen, digital & sublimation', icon: '🖨️', link: '/product/printing', popular: false },
+  { _id: '6', title: 'School & Office Uniform', description: 'Professional workwear solutions', icon: '👔', link: getCategoryListingUrl('uniforms'), popular: false },
+  { _id: '7', title: 'Printing & Embroidery', description: 'Screen, digital & sublimation', icon: '🖨️', link: getCategoryListingUrl('printing'), popular: false },
   { _id: '8', title: 'Apron & Chef Coat', description: 'Kitchen & hospitality wear', icon: '🧑‍🍳', link: '/category/apron', popular: false },
 ];
 
