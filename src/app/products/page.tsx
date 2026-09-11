@@ -6,8 +6,10 @@ import ThemeBanner from '@/components/Common/ThemeBanner';
 /** Manufacturing banner above the full catalogue — the same story the category
  *  pages tell, for a buyer who lands on "all products" first. */
 const PRODUCTS_BANNER = {
-  src: '/banners/categories/tshirts-alt.webp',
-  aspectRatio: '1672 / 941',
+  src: '/banners/categories/products.webp',
+  mobileSrc: '/banners/categories/products-mobile.webp',
+  aspectRatio: '2172 / 724',
+  mobileAspectRatio: '1200 / 1601',
   alt:
     'Manufacturing premium apparel — quality, consistency, your brand. Premium fabrics, ' +
     'precision cutting, quality stitching and custom printing, with low minimum order ' +
@@ -31,6 +33,10 @@ export default function ProductsPage() {
         light={PRODUCTS_BANNER.src}
         alt={PRODUCTS_BANNER.alt}
         aspectRatio={PRODUCTS_BANNER.aspectRatio}
+        mobileLight={PRODUCTS_BANNER.mobileSrc}
+        mobileDark={PRODUCTS_BANNER.mobileSrc}
+        mobileAspectRatio={PRODUCTS_BANNER.mobileAspectRatio}
+        maxHeight="min(70svh, 44rem)"
         priority
       />
       <ProductsClient />

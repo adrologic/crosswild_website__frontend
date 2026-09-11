@@ -5,7 +5,7 @@ import Link from 'next/link';
 import SafeImage from '@/components/Common/SafeImage';
 import { productImage } from '@/lib/productImage';
 import { productsAPI, type Product } from '@/lib/api';
-import { getCategoryUrl, getSubCategoryUrl } from '@/lib/categoryUrls';
+import { getCategoryListingUrl, getSubCategoryUrl } from '@/lib/categoryUrls';
 import { Package } from 'lucide-react';
 
 // Sidebar row styling — matches the All Products page: a scrolling chip rail
@@ -40,9 +40,14 @@ interface Props {
   subcategories: MiniCategory[];
   topCategories: MiniCategory[];
   description?: string;
+  /** True when a designed ThemeBanner already ran above this component — its
+   *  artwork carries the category name, so the plain-text hero title below
+   *  would just repeat it. Screen-reader-only in that case instead of a
+   *  second visible heading. */
+  hasBanner?: boolean;
 }
 
-export default function CategoryBrowser({ category, parent, subcategories, topCategories, description }: Props) {
+export default function CategoryBrowser({ category, parent, subcategories, topCategories, description, hasBanner = false }: Props) {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -104,6 +109,11 @@ export default function CategoryBrowser({ category, parent, subcategories, topCa
         href={`/products/${product.id}`}
         className="group block bg-card-bg border border-black/5 dark:border-white/10 rounded-2xl p-3.5 shadow-[0_1px_3px_rgba(22,36,59,0.06),0_6px_16px_rgba(22,36,59,0.06)] dark:shadow-[0_2px_10px_rgba(0,0,0,0.35)] hover:-translate-y-[3px] hover:shadow-[0_2px_6px_rgba(22,36,59,0.07),0_12px_26px_rgba(22,36,59,0.11)] dark:hover:shadow-[0_12px_26px_rgba(0,0,0,0.45)] transition-[transform,box-shadow] duration-200 ease-out"
       >
+        {/* Below `sm`, the card is full-width, so the source photos' own
+            generous white margin (shrinking padding alone barely touches it)
+            reads as the product looking small. `scale-150` zooms past that —
+            `overflow-hidden` on this tile crops the excess evenly on every
+            side, so it eats into the margin rather than the product. */}
         <div className="relative aspect-square bg-[#ffffff] rounded-xl overflow-hidden shadow-[0_1px_4px_rgba(22,36,59,0.07)]">
           {product.image ? (
             <>
@@ -111,7 +121,7 @@ export default function CategoryBrowser({ category, parent, subcategories, topCa
                 {...productImage(product)}
                 alt={product.name}
                 fill
-                className={`object-contain p-6 lg:p-7 transition-opacity duration-500 ${hoverImage ? 'group-hover:opacity-0' : ''}`}
+                className={`object-contain scale-150 p-1 sm:scale-100 sm:p-5 lg:p-7 transition-opacity duration-500 ${hoverImage ? 'group-hover:opacity-0' : ''}`}
                 sizes="(max-width: 640px) 100vw, (max-width: 1280px) 50vw, 25vw"
               />
               {hoverImage && (
@@ -119,7 +129,7 @@ export default function CategoryBrowser({ category, parent, subcategories, topCa
                   src={hoverImage}
                   alt={product.name}
                   fill
-                  className="object-contain p-6 lg:p-7 opacity-0 transition-opacity duration-500 group-hover:opacity-100"
+                  className="object-contain scale-150 p-1 sm:scale-100 sm:p-5 lg:p-7 opacity-0 transition-opacity duration-500 group-hover:opacity-100"
                   sizes="(max-width: 640px) 100vw, (max-width: 1280px) 50vw, 25vw"
                 />
               )}
@@ -151,17 +161,25 @@ export default function CategoryBrowser({ category, parent, subcategories, topCa
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
-      {/* Hero Header */}
-      <div className="bg-[#abccff] dark:bg-[#9a0822] pt-28 pb-12">
-        <div className="w-full px-6 lg:px-12">
-          <div className="text-center text-[#ff4f20] dark:text-white">
-            <h1 className="text-4xl md:text-5xl font-bold mb-4">{heroTitle}</h1>
-            <p className="text-lg text-[#ff4f20]/90 dark:text-white/90 max-w-2xl mx-auto">{heroSubtitle}</p>
+      {/* Hero Header — skipped when the banner above already carries the
+          title in its artwork, so the two don't repeat each other. */}
+      {hasBanner ? (
+        <div className="sr-only">
+          <h1>{heroTitle}</h1>
+          <p>{heroSubtitle}</p>
+        </div>
+      ) : (
+        <div className="bg-[#abccff] dark:bg-[#9a0822] pt-28 pb-12">
+          <div className="w-full px-6 lg:px-12">
+            <div className="text-center text-[#ff4f20] dark:text-white">
+              <h1 className="text-4xl md:text-5xl font-bold mb-4">{heroTitle}</h1>
+              <p className="text-lg text-[#ff4f20]/90 dark:text-white/90 max-w-2xl mx-auto">{heroSubtitle}</p>
+            </div>
           </div>
         </div>
-      </div>
+      )}
 
-      <div className="w-full px-6 lg:px-12 -mt-6">
+      <div className={`w-full px-6 lg:px-12 ${hasBanner ? 'pt-6 lg:pt-8' : '-mt-6'}`}>
         <div className="flex flex-col lg:flex-row gap-6 lg:gap-8">
           {/* Categories + sub-categories — chips on mobile, sticky list on
               desktop, always visible (no button/drawer needed to see it).
@@ -177,7 +195,7 @@ export default function CategoryBrowser({ category, parent, subcategories, topCa
                 {sidebarCats.map((c) => {
                   const active = (parent?.id || category.id) === c.id;
                   return (
-                    <Link key={c.id} href={getCategoryUrl(c.id)} className={categoryLinkClass(active)}>
+                    <Link key={c.id} href={getCategoryListingUrl(c.id)} className={categoryLinkClass(active)}>
                       {c.name}
                     </Link>
                   );

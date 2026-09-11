@@ -125,7 +125,24 @@ export default async function CategoryPage({
         <div dangerouslySetInnerHTML={{ __html: category.seo.otherMetaTags }} />
       )}
 
-      {/* Breadcrumb (server-rendered for SEO) */}
+      {/* Category banner — sits flush under the navbar, edge to edge. A
+          sub-category with none of its own inherits the parent's, so
+          /category/laptop-bags still gets the Bags artwork. */}
+      {categoryBanner && (
+        <ThemeBanner
+          light={categoryBanner.src}
+          alt={categoryBanner.alt}
+          aspectRatio={categoryBanner.aspectRatio}
+          mobileLight={categoryBanner.mobileSrc}
+          mobileDark={categoryBanner.mobileSrc}
+          mobileAspectRatio={categoryBanner.mobileAspectRatio}
+          maxHeight="min(70svh, 44rem)"
+          priority
+        />
+      )}
+
+      {/* Breadcrumb (server-rendered for SEO) — below the banner, same
+          layering PageBanner uses elsewhere on the site. */}
       <div className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
           <nav className="flex items-center text-sm text-gray-500 dark:text-gray-400 flex-wrap">
@@ -149,23 +166,13 @@ export default async function CategoryPage({
         </div>
       </div>
 
-      {/* Category banner — a sub-category with none of its own inherits the
-          parent's, so /category/laptop-bags still gets the Bags artwork. */}
-      {categoryBanner && (
-        <ThemeBanner
-          light={categoryBanner.src}
-          alt={categoryBanner.alt}
-          aspectRatio={categoryBanner.aspectRatio}
-          priority
-        />
-      )}
-
       <CategoryBrowser
         category={{ id: category.id, name: category.name, seoUrl: category.seoUrl }}
         parent={parent ? { id: parent.id, name: parent.name, seoUrl: parent.seoUrl } : null}
         subcategories={(siblingSubs || []).map((s: any) => ({ id: s.id, name: s.name, seoUrl: s.seoUrl }))}
         topCategories={topCategories.map((c: any) => ({ id: c.id, name: c.name, seoUrl: c.seoUrl }))}
         description={category.seo?.description || toPlainText(category.description).slice(0, 200)}
+        hasBanner={Boolean(categoryBanner)}
       />
 
       {/* Server-rendered rich descriptions (good for SEO, after the browser) */}

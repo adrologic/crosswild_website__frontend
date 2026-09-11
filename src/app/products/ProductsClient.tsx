@@ -7,6 +7,7 @@ import { productsAPI, categoriesAPI, type Product, type Category } from '@/lib/a
 import SafeImage from '@/components/Common/SafeImage';
 import { productImage } from '@/lib/productImage';
 import Link from 'next/link';
+import { getCategoryListingUrl, getSubCategoryUrl } from '@/lib/categoryUrls';
 import SEOHead from '@/components/SEO/SEOHead';
 import { defaultFAQs } from '@/lib/seo';
 import { toPlainText } from '@/lib/text';
@@ -400,7 +401,13 @@ function ProductsContent() {
       >
         {/* Image tile — fixed square on every card so the grid rows line up.
             Stays white in both themes: the product photos carry a baked-in
-            white background, so a dark tile would frame each one in a box. */}
+            white background, so a dark tile would frame each one in a box.
+
+            Below `sm`, the card is full-width, so the source photos' own
+            generous white margin (shrinking padding alone barely touches it)
+            reads as the product looking small. `scale-150` zooms past that —
+            `overflow-hidden` on this tile crops the excess evenly on every
+            side, so it eats into the margin rather than the product. */}
         <div className="relative aspect-square bg-[#ffffff] rounded-xl overflow-hidden shadow-[0_1px_4px_rgba(22,36,59,0.07)]">
           {product.image ? (
             <>
@@ -408,7 +415,7 @@ function ProductsContent() {
                 {...productImage(product)}
                 alt={product.name}
                 fill
-                className={`object-contain p-6 lg:p-7 transition-opacity duration-500 ${hoverImage ? 'group-hover:opacity-0' : ''}`}
+                className={`object-contain scale-150 p-1 sm:scale-100 sm:p-5 lg:p-7 transition-opacity duration-500 ${hoverImage ? 'group-hover:opacity-0' : ''}`}
                 sizes="(max-width: 640px) 100vw, (max-width: 1280px) 50vw, 25vw"
               />
               {hoverImage && (
@@ -416,7 +423,7 @@ function ProductsContent() {
                   src={hoverImage}
                   alt={product.name}
                   fill
-                  className="object-contain p-6 lg:p-7 opacity-0 transition-opacity duration-500 group-hover:opacity-100"
+                  className="object-contain scale-150 p-1 sm:scale-100 sm:p-5 lg:p-7 opacity-0 transition-opacity duration-500 group-hover:opacity-100"
                   sizes="(max-width: 640px) 100vw, (max-width: 1280px) 50vw, 25vw"
                 />
               )}
@@ -453,24 +460,20 @@ function ProductsContent() {
         faqItems={defaultFAQs}
       />
       <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
-        {/* Hero Header */}
-        <div className="bg-[#abccff] dark:bg-[#9a0822] pt-28 pb-12">
-          <div className="w-full px-6 lg:px-12 sm:px-6 lg:px-8">
-            <div className="text-center text-[#ff4f20] dark:text-white">
-              <h1 className="text-4xl md:text-5xl font-bold mb-4">
-                {currentCategory?.name || 'Our Products'}
-              </h1>
-              <p className="text-lg text-[#ff4f20]/90 dark:text-white/90 max-w-2xl mx-auto">
-                {selectedCategory === 'all'
-                  ? 'Discover premium custom merchandise and promotional products for your brand'
-                  : `Explore our collection of high-quality ${currentCategory?.name?.toLowerCase()}`
-                }
-              </p>
-            </div>
-          </div>
+        {/* Hero Header — the ThemeBanner above this component already carries
+            the page's title in its artwork, so this stays screen-reader-only
+            rather than repeating it as a second visible heading. */}
+        <div className="sr-only">
+          <h1>{currentCategory?.name || 'Our Products'}</h1>
+          <p>
+            {selectedCategory === 'all'
+              ? 'Discover premium custom merchandise and promotional products for your brand'
+              : `Explore our collection of high-quality ${currentCategory?.name?.toLowerCase()}`
+            }
+          </p>
         </div>
 
-        <div className="w-full px-6 lg:px-12 sm:px-6 lg:px-8 -mt-6">
+        <div className="w-full px-6 lg:px-12 sm:px-6 lg:px-8 pt-6 lg:pt-8">
           <div className="flex flex-col lg:flex-row gap-6 lg:gap-8">
             {/* Categories + sub-categories */}
             <aside className="w-full lg:w-64 flex-shrink-0">
@@ -485,13 +488,13 @@ function ProductsContent() {
                     All Products
                   </button>
                   {productCategories.filter(c => c.id !== 'all').map((cat) => (
-                    <button
+                    <Link
                       key={cat.id}
-                      onClick={() => selectCategory(cat.id)}
+                      href={getCategoryListingUrl(cat.id)}
                       className={categoryButtonClass(selectedCategory === cat.id)}
                     >
                       {cat.name}
-                    </button>
+                    </Link>
                   ))}
                 </div>
 
@@ -503,19 +506,19 @@ function ProductsContent() {
                       Browse {currentCategory?.name}
                     </h3>
                     <div className="scroll-fade-x flex gap-2 overflow-x-auto pb-1 lg:flex-col lg:gap-1 lg:overflow-visible lg:pb-0">
-                      <button
-                        onClick={() => setSelectedSub('')}
+                      <Link
+                        href={getCategoryListingUrl(selectedCategory)}
                         className={subButtonClass(!selectedSub)}
                       >
                         <span>All {currentCategory?.name}</span>
-                      </button>
+                      </Link>
                       {visibleSubs.map((sub) => {
                         const active = selectedSub === sub.id;
                         const count = subCounts.get(sub.id) || 0;
                         return (
-                          <button
+                          <Link
                             key={sub.id}
-                            onClick={() => setSelectedSub(sub.id)}
+                            href={getSubCategoryUrl(sub.seoUrl || sub.id)}
                             className={subButtonClass(active)}
                           >
                             <span className="lg:min-w-0 lg:break-words">{sub.name}</span>
@@ -526,7 +529,7 @@ function ProductsContent() {
                                 {count}
                               </span>
                             )}
-                          </button>
+                          </Link>
                         );
                       })}
                     </div>
