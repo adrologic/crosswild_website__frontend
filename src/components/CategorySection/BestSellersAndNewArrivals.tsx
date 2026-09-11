@@ -4,28 +4,9 @@ import React, { useState, useRef, useCallback, memo } from "react";
 import Link from "next/link";
 import SafeImage from "@/components/Common/SafeImage";
 import { productImage } from '@/lib/productImage';
-import ProductCodeBadge from "@/components/Common/ProductCodeBadge";
-import { ChevronLeft, ChevronRight, Star, Award, Sparkles, Loader2, MessageCircle, Mail } from "lucide-react";
+import { ChevronLeft, ChevronRight, Award, Sparkles, Loader2, Package } from "lucide-react";
 import { useProducts } from "@/hooks/useProducts";
 import { Product } from "@/lib/api";
-
-const WHATSAPP_NUMBER = '+919529626262';
-const EMAIL_ADDRESS = 'orders@thecrosswild.com';
-
-const getWhatsAppLink = (product: Product) => {
-  const message = encodeURIComponent(
-    `Hi! I'm interested in:\n\n*${product.name}*\nCategory: ${product.category}\n\nPlease share pricing and availability.`
-  );
-  return `https://wa.me/${WHATSAPP_NUMBER.replace(/[^0-9]/g, '')}?text=${message}`;
-};
-
-const getEmailLink = (product: Product) => {
-  const subject = encodeURIComponent(`Inquiry: ${product.name}`);
-  const body = encodeURIComponent(
-    `Hi,\n\nI'm interested in "${product.name}".\n\nPlease share pricing and availability details.\n\nThank you!`
-  );
-  return `mailto:${EMAIL_ADDRESS}?subject=${subject}&body=${body}`;
-};
 
 const TabButton = memo(({ isActive, label, icon: Icon, onClick }: { isActive: boolean; label: string; icon: any; onClick: () => void }) => (
   <button
@@ -46,85 +27,49 @@ const ProductCard = memo(({ product }: { product: Product }) => {
   const hoverImage = product.images?.find((img) => img && img !== product.image);
 
   return (
-    <div className="flex-none w-72 md:w-80 lg:w-72 xl:w-80 p-3">
-      <div className="group bg-card-bg rounded-[22px] p-[14px] shadow-[0_14px_30px_rgba(22,36,59,0.16)] hover:-translate-y-[5px] hover:shadow-[0_22px_44px_rgba(22,36,59,0.24)] transition-all duration-[220ms] ease-out">
-        {/* Image Container */}
-        <Link href={`/products/${product.id}`} className="block">
-          <div className="relative aspect-[4/3] bg-[#ffffff] rounded-2xl shadow-[0_4px_12px_rgba(22,36,59,0.08)] overflow-hidden">
-            {product.image && (
+    <div className="flex-none w-56 p-3">
+      <Link
+        href={`/products/${product.id}`}
+        className="group block bg-card-bg border border-black/5 dark:border-white/10 rounded-2xl p-3.5 shadow-[0_1px_3px_rgba(22,36,59,0.06),0_6px_16px_rgba(22,36,59,0.06)] dark:shadow-[0_2px_10px_rgba(0,0,0,0.35)] hover:-translate-y-[3px] hover:shadow-[0_2px_6px_rgba(22,36,59,0.07),0_12px_26px_rgba(22,36,59,0.11)] dark:hover:shadow-[0_12px_26px_rgba(0,0,0,0.45)] transition-[transform,box-shadow] duration-200 ease-out"
+      >
+        <div className="relative aspect-square bg-[#ffffff] rounded-xl overflow-hidden shadow-[0_1px_4px_rgba(22,36,59,0.07)]">
+          {product.image ? (
+            <>
               <SafeImage
                 {...productImage(product)}
                 alt={product.name}
                 fill
-                className={`object-contain p-[22px] transition-all duration-500 group-hover:scale-105 ${hoverImage ? 'group-hover:opacity-0' : ''}`}
-                sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                className={`object-contain p-4 sm:p-6 transition-opacity duration-500 ${hoverImage ? 'group-hover:opacity-0' : ''}`}
+                sizes="224px"
               />
-            )}
-            {hoverImage && (
-              <SafeImage
-                src={hoverImage}
-                alt={product.name}
-                fill
-                className="object-contain p-[22px] opacity-0 transition-all duration-500 group-hover:opacity-100 group-hover:scale-105"
-                sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
-              />
-            )}
-
-            {/* Product code, top-left of the photo — the only badge these cards carry */}
-            <div className="absolute top-[14px] left-[14px] right-[14px] flex flex-wrap items-start gap-2">
-              <ProductCodeBadge code={product.sku} inline />
-            </div>
-
-            {/* Quick View Overlay */}
-            <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-          </div>
-        </Link>
-
-        {/* Product Info */}
-        <div className="pt-4 px-2 pb-1.5">
-          {product.category && (
-            <span className="inline-flex items-center bg-[#ffffff] text-primary text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full shadow-[0_2px_6px_rgba(22,36,59,0.08)] mb-2 capitalize">{product.category}</span>
-          )}
-          <Link href={`/products/${product.id}`}>
-            <h3 className="font-bold text-base text-[#16243b] dark:text-white mb-3.5 line-clamp-2 group-hover:text-primary transition-colors">
-              {product.title || product.name}
-            </h3>
-          </Link>
-
-          {/* Rating */}
-          {product.rating > 0 && (
-            <div className="flex items-center gap-2 mb-3">
-              <div className="flex items-center gap-1">
-                <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
-                <span className="text-sm font-semibold">{product.rating}</span>
-              </div>
-              <span className="text-xs text-gray-500 dark:text-gray-400">
-                ({product.reviews} reviews)
-              </span>
+              {hoverImage && (
+                <SafeImage
+                  src={hoverImage}
+                  alt={product.name}
+                  fill
+                  className="object-contain p-4 sm:p-6 opacity-0 transition-opacity duration-500 group-hover:opacity-100"
+                  sizes="224px"
+                />
+              )}
+            </>
+          ) : (
+            <div className="absolute inset-0 flex items-center justify-center">
+              <Package className="w-16 h-16 text-[#c9d2e0]" />
             </div>
           )}
-
-          {/* CTA Buttons - WhatsApp, Email, View */}
-          <div className="flex items-center gap-2">
-            <a
-              href={getWhatsAppLink(product)}
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label={`Inquire about ${product.name} on WhatsApp`}
-              className="flex items-center justify-center w-[38px] h-[38px] bg-[#ffffff] text-primary rounded-[11px] shadow-[0_3px_8px_rgba(22,36,59,0.10)] hover:bg-primary hover:text-white transition-colors"
-            >
-              <MessageCircle className="w-4 h-4" aria-hidden="true" />
-            </a>
-            <a
-              href={getEmailLink(product)}
-              aria-label={`Email inquiry about ${product.name}`}
-              className="flex items-center justify-center w-[38px] h-[38px] bg-[#ffffff] text-primary rounded-[11px] shadow-[0_3px_8px_rgba(22,36,59,0.10)] hover:bg-primary hover:text-white transition-colors"
-            >
-              <Mail className="w-4 h-4" aria-hidden="true" />
-            </a>
-          </div>
         </div>
-      </div>
+
+        <div className="pt-3 pb-0.5 px-0.5">
+          {product.category && (
+            <p className="text-[10px] sm:text-[11px] font-semibold uppercase tracking-[0.14em] text-[#4a5a73] dark:text-white/55">
+              {product.category}
+            </p>
+          )}
+          <h3 className="mt-1 min-h-[2.375rem] text-sm font-medium leading-snug text-[#16243b] dark:text-white line-clamp-2">
+            {product.title || product.name}
+          </h3>
+        </div>
+      </Link>
     </div>
   );
 });
