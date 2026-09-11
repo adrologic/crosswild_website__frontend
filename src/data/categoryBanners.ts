@@ -68,7 +68,9 @@ const BANNERS: Record<string, CategoryBanner> = {
   printing: {
     src: '/banners/categories/printing.webp',
     alt: 'Printing and embroidery services — screen printing, DTF, DTG, puff printing and embroidery on apparel.',
-    aspectRatio: '1536 / 1024',
+    aspectRatio: '2172 / 724',
+    mobileSrc: '/banners/categories/printing-mobile.webp',
+    mobileAspectRatio: '1200 / 1601',
   },
   apron: {
     src: '/banners/categories/apron.webp',
