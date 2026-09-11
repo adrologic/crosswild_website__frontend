@@ -91,8 +91,13 @@ export default function ThemeBanner({
   const containerStyle = hasMobile
     ? ({ '--tb-mh': maxHeight, '--tb-ar-m': mobileRatio, '--tb-ar-d': ratio } as CSSProperties)
     : { aspectRatio, maxHeight, maxWidth: `calc(${maxHeight} * ${ratio})` };
+  // The height ceiling only makes sense for the wide desktop crop (see
+  // `maxHeight` above) — pairing it with the portrait mobile ratio derives a
+  // max-width narrower than most phones' actual viewport width, so the phone
+  // poster would center with `bgClass` showing on both sides instead of
+  // running edge to edge. Scoping the cap to `md:` keeps mobile uncapped.
   const containerClass = hasMobile
-    ? `relative mx-auto w-full overflow-hidden aspect-[var(--tb-ar-m)] md:aspect-[var(--tb-ar-d)] max-h-[var(--tb-mh)] max-w-[calc(var(--tb-mh)*var(--tb-ar-m))] md:max-w-[calc(var(--tb-mh)*var(--tb-ar-d))] ${bgClass}`
+    ? `relative mx-auto w-full overflow-hidden aspect-[var(--tb-ar-m)] md:aspect-[var(--tb-ar-d)] md:max-h-[var(--tb-mh)] md:max-w-[calc(var(--tb-mh)*var(--tb-ar-d))] ${bgClass}`
     : `relative mx-auto w-full overflow-hidden ${bgClass}`;
 
   const banner = (
