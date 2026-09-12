@@ -448,6 +448,30 @@
   animation-play-state: paused;
 }
 
+/* Mountain-fill loading mark (splash screen + page-transition overlay).
+   Rises from the bottom and resets — used wherever there's no real progress
+   to track (a client-side route change), so it reads as "still working"
+   without claiming a specific percentage. The initial splash instead drives
+   this with real, JS-computed progress (see MountainMark's `progress` prop)
+   and skips this loop. */
+@keyframes mountain-fill-loop {
+  0% { clip-path: inset(100% 0 0 0); }
+  45% { clip-path: inset(0% 0 0 0); }
+  80% { clip-path: inset(0% 0 0 0); }
+  100% { clip-path: inset(100% 0 0 0); }
+}
+
+.animate-mountain-fill-loop {
+  animation: mountain-fill-loop 1.8s cubic-bezier(0.65, 0, 0.35, 1) infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-mountain-fill-loop {
+    animation: none;
+    clip-path: inset(0 0 0 0);
+  }
+}
+
 /* Scroll-snap carousels (product gallery, thumbnail strip) still need to
    scroll on desktop — they just shouldn't show a scrollbar over the photo. */
 .no-scrollbar {

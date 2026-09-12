@@ -8,6 +8,8 @@ import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { store } from "@/store";
 import { hydrateCart, loadFromStorage } from "@/store/slices/cartSlice";
 import { queryClient } from "@/lib/queryClient";
+import InitialSplash from "@/components/Common/InitialSplash";
+import PageTransitionOverlay from "@/components/Common/PageTransitionOverlay";
 
 // Load the persisted cart after mount so SSR markup matches the first client
 // render (the store starts with an empty cart on both server and client).
@@ -24,6 +26,8 @@ export function Providers({ children }: { children: React.ReactNode }) {
       <CartHydrator />
       <QueryClientProvider client={queryClient}>
         <ThemeProvider attribute="class" enableSystem={false} defaultTheme="dark">
+          <InitialSplash />
+          <PageTransitionOverlay />
           {children}
         </ThemeProvider>
         {process.env.NODE_ENV === "development" && (
