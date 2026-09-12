@@ -7,8 +7,24 @@ import CategoryBrowser from './CategoryBrowser';
 import ThemeBanner from '@/components/Common/ThemeBanner';
 import { getCategoryBanner } from '@/data/categoryBanners';
 import { toPlainText } from '@/lib/text';
+import { productCategories } from '@/data/products';
 
 const API_URL = (process.env.BACKEND_URL || 'https://crosswild-backend-p5l3.onrender.com') + '/api';
+
+// The API returns top-level categories alphabetically and carries no order
+// field. The sidebar should lead with the same categories the nav bar does
+// (see NAV_PRIORITY_SLUGS in CrosswildHeader.tsx), so we rank them using the
+// curated order already defined for the All Products page filter. Anything
+// not listed there keeps the API's order, after these.
+const SIDEBAR_CATEGORY_ORDER = productCategories.map((c) => c.id);
+
+function byCategoryOrder(a: { id: string }, b: { id: string }): number {
+  const rank = (cat: { id: string }) => {
+    const i = SIDEBAR_CATEGORY_ORDER.indexOf(cat.id);
+    return i === -1 ? SIDEBAR_CATEGORY_ORDER.length : i;
+  };
+  return rank(a) - rank(b);
+}
 
 async function getCategory(slug: string) {
   try {
@@ -170,7 +186,7 @@ export default async function CategoryPage({
         category={{ id: category.id, name: category.name, seoUrl: category.seoUrl }}
         parent={parent ? { id: parent.id, name: parent.name, seoUrl: parent.seoUrl } : null}
         subcategories={(siblingSubs || []).map((s: any) => ({ id: s.id, name: s.name, seoUrl: s.seoUrl }))}
-        topCategories={topCategories.map((c: any) => ({ id: c.id, name: c.name, seoUrl: c.seoUrl }))}
+        topCategories={[...topCategories].sort(byCategoryOrder).map((c: any) => ({ id: c.id, name: c.name, seoUrl: c.seoUrl }))}
         description={category.seo?.description || toPlainText(category.description).slice(0, 200)}
         hasBanner={Boolean(categoryBanner)}
       />
