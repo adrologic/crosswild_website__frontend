@@ -401,13 +401,7 @@ function ProductsContent() {
       >
         {/* Image tile — fixed square on every card so the grid rows line up.
             Stays white in both themes: the product photos carry a baked-in
-            white background, so a dark tile would frame each one in a box.
-
-            Below `sm`, the card is full-width, so the source photos' own
-            generous white margin (shrinking padding alone barely touches it)
-            reads as the product looking small. `scale-150` zooms past that —
-            `overflow-hidden` on this tile crops the excess evenly on every
-            side, so it eats into the margin rather than the product. */}
+            white background, so a dark tile would frame each one in a box. */}
         <div className="relative aspect-square bg-[#ffffff] rounded-xl overflow-hidden shadow-[0_1px_4px_rgba(22,36,59,0.07)]">
           {product.image ? (
             <>
@@ -415,7 +409,7 @@ function ProductsContent() {
                 {...productImage(product)}
                 alt={product.name}
                 fill
-                className={`object-contain scale-150 p-1 sm:scale-100 sm:p-5 lg:p-7 transition-opacity duration-500 ${hoverImage ? 'group-hover:opacity-0' : ''}`}
+                className={`object-contain p-4 sm:p-6 transition-opacity duration-500 ${hoverImage ? 'group-hover:opacity-0' : ''}`}
                 sizes="(max-width: 640px) 100vw, (max-width: 1280px) 50vw, 25vw"
               />
               {hoverImage && (
@@ -423,7 +417,7 @@ function ProductsContent() {
                   src={hoverImage}
                   alt={product.name}
                   fill
-                  className="object-contain scale-150 p-1 sm:scale-100 sm:p-5 lg:p-7 opacity-0 transition-opacity duration-500 group-hover:opacity-100"
+                  className="object-contain p-4 sm:p-6 opacity-0 transition-opacity duration-500 group-hover:opacity-100"
                   sizes="(max-width: 640px) 100vw, (max-width: 1280px) 50vw, 25vw"
                 />
               )}

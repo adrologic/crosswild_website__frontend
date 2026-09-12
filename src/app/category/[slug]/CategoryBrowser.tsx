@@ -109,11 +109,6 @@ export default function CategoryBrowser({ category, parent, subcategories, topCa
         href={`/products/${product.id}`}
         className="group block bg-card-bg border border-black/5 dark:border-white/10 rounded-2xl p-3.5 shadow-[0_1px_3px_rgba(22,36,59,0.06),0_6px_16px_rgba(22,36,59,0.06)] dark:shadow-[0_2px_10px_rgba(0,0,0,0.35)] hover:-translate-y-[3px] hover:shadow-[0_2px_6px_rgba(22,36,59,0.07),0_12px_26px_rgba(22,36,59,0.11)] dark:hover:shadow-[0_12px_26px_rgba(0,0,0,0.45)] transition-[transform,box-shadow] duration-200 ease-out"
       >
-        {/* Below `sm`, the card is full-width, so the source photos' own
-            generous white margin (shrinking padding alone barely touches it)
-            reads as the product looking small. `scale-150` zooms past that —
-            `overflow-hidden` on this tile crops the excess evenly on every
-            side, so it eats into the margin rather than the product. */}
         <div className="relative aspect-square bg-[#ffffff] rounded-xl overflow-hidden shadow-[0_1px_4px_rgba(22,36,59,0.07)]">
           {product.image ? (
             <>
@@ -121,7 +116,7 @@ export default function CategoryBrowser({ category, parent, subcategories, topCa
                 {...productImage(product)}
                 alt={product.name}
                 fill
-                className={`object-contain scale-150 p-1 sm:scale-100 sm:p-5 lg:p-7 transition-opacity duration-500 ${hoverImage ? 'group-hover:opacity-0' : ''}`}
+                className={`object-contain p-4 sm:p-6 transition-opacity duration-500 ${hoverImage ? 'group-hover:opacity-0' : ''}`}
                 sizes="(max-width: 640px) 100vw, (max-width: 1280px) 50vw, 25vw"
               />
               {hoverImage && (
@@ -129,7 +124,7 @@ export default function CategoryBrowser({ category, parent, subcategories, topCa
                   src={hoverImage}
                   alt={product.name}
                   fill
-                  className="object-contain scale-150 p-1 sm:scale-100 sm:p-5 lg:p-7 opacity-0 transition-opacity duration-500 group-hover:opacity-100"
+                  className="object-contain p-4 sm:p-6 opacity-0 transition-opacity duration-500 group-hover:opacity-100"
                   sizes="(max-width: 640px) 100vw, (max-width: 1280px) 50vw, 25vw"
                 />
               )}
